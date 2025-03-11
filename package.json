@@ -1,0 +1,54 @@
+{
+  "name": "hyperbolic-ts",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Hyperbolic Labs",
+    "url": "https://twitter.com/hyperbolic_labs"
+  },
+  "workspaces": [
+    "packages/*",
+    "tooling/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "build:ai-sdk-provider": "turbo --filter=@hyperbolic/ai-sdk-provider build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo run clean",
+    "dev": "turbo watch dev --parallel",
+    "dev:ai-sdk-provider": "turbo watch --filter=@hyperbolic/ai-sdk-provider dev",
+    "test": "turbo run test --force",
+    "test:ai-sdk-provider": "turbo --filter=@hyperbolic/ai-sdk-provider test",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "lint:ws": "pnpm dlx sherif@latest",
+    "typecheck": "turbo run typecheck",
+    "typecheck:ai-sdk-provider": "turbo --filter=@hyperbolic/ai-sdk-provider typecheck",
+    "changeset": "changeset",
+    "postinstall": "pnpm lint:ws",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.1",
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
+    "@hyperbolic/prettier-config": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv-cli": "^8.0.0",
+    "prettier": "catalog:",
+    "tsx": "^4.19.3",
+    "turbo": "^2.3.4",
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^2.0.5"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22.10.0",
+    "pnpm": "^9.15.4"
+  },
+  "prettier": "@hyperbolic/prettier-config"
+}

@@ -1,0 +1,56 @@
+name: Release Canary
+
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+      - "!changeset-release/main"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  release:
+    if: ${{ github.repository_owner == 'HyperbolicLabs' }}
+    name: Release (canary)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm/node and install dependencies
+        uses: ./tooling/github/setup
+
+      - name: Create ENV file
+        run: |
+          touch .env
+
+      - name: Build
+        run: |
+          pnpm build:ai-sdk-provider
+
+      - name: Extract Canary Subject From Branch Name
+        id: get-canary-subject
+        uses: ./tooling/github/get-canary-subject
+
+      - name: Log Canary Subject
+        run: |
+          echo "Canary subject: ${{ steps.get-canary-subject.outputs.canary-subject }}"
+
+      - name: Setup NPM Authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish Canary to npm
+        run: |
+          pnpm changeset version --snapshot ${{ steps.get-canary-subject.outputs.canary-subject }}
+          pnpm changeset publish --tag ${{ steps.get-canary-subject.outputs.canary-subject }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

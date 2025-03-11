@@ -1,0 +1,33 @@
+{
+  "name": "@hyperbolic/api",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "codegen": "openapi-ts"
+  },
+  "prettier": "@hyperbolic/prettier-config",
+  "devDependencies": {
+    "@hey-api/client-fetch": "0.8.3",
+    "@hey-api/openapi-ts": "0.64.11",
+    "@hyperbolic/eslint-config": "workspace:*",
+    "@hyperbolic/prettier-config": "workspace:*",
+    "@hyperbolic/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}

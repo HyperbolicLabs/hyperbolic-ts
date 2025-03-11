@@ -1,0 +1,5 @@
+{
+  "extends": "@hyperbolic/tsconfig/external-package.json",
+  "include": ["."],
+  "exclude": ["*/dist", "dist", "build", "node_modules"]
+}
