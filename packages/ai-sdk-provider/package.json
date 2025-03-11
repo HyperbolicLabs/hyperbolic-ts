@@ -1,0 +1,30 @@
+{
+  "name": "@hyperbolic/ai-sdk-provider",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": "./src/*.ts"
+    }
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "prettier": "@hyperbolic/prettier-config",
+  "devDependencies": {
+    "@hyperbolic/eslint-config": "workspace:*",
+    "@hyperbolic/prettier-config": "workspace:*",
+    "@hyperbolic/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}
