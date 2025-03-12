@@ -41,5 +41,5 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          pnpx changeset version --snapshot ${{ steps.get-canary-subject.outputs.canary-subject }}
-          pnpx changeset publish --tag ${{ steps.get-canary-subject.outputs.canary-subject }}
+          pnpm dlx @changesets/cli version --snapshot ${{ steps.get-canary-subject.outputs.canary-subject }}
+          pnpm dlx @changesets/cli publish --tag ${{ steps.get-canary-subject.outputs.canary-subject }}
