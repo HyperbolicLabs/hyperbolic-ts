@@ -13,4 +13,4 @@ runs:
       shell: bash
       id: canary-subject-script
       run: |
-        echo "subject=$(npx tsx $(dirname $GITHUB_ACTION_PATH)/index.ts)" >> $GITHUB_OUTPUT
+        echo "subject=$(npx tsx $(dirname $GITHUB_ACTION_PATH)/get-canary-subject/index.ts)" >> $GITHUB_OUTPUT
