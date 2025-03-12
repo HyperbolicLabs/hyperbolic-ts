@@ -21,7 +21,7 @@ export function run() {
       colors.whiteBright("The subject of your canary deploy will be: "),
       colors.greenBright(sanitizedBranchName),
     );
-    core.setOutput("canary-subject", sanitizedBranchName); // Set the environment variable
+    core.setOutput("canary-subject", sanitizedBranchName);
   } catch (error) {
     console.error(colors.redBright("Error getting canary subject:"));
     console.error(colors.redBright((error as { message: string }).message));

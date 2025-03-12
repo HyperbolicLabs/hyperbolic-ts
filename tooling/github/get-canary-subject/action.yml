@@ -1,6 +1,11 @@
 name: "Get Canary Subject"
 description: "Gets a name used as the subject of our canary deploy (in the label and tag).  Just the branch name with invalid characters removed."
 
+outputs:
+  canary-subject:
+    description: "The name used in our canary deploy.  Just the branch name with invalid characters removed."
+    value: ${{ steps.get-canary-subject.outputs.canary-subject }}
+
 runs:
   using: composite
   steps:
@@ -16,5 +21,6 @@ runs:
 
     - name: Run canary subject script
       shell: bash
+      id: get-canary-subject
       run: |
-        tsx $(dirname $GITHUB_ACTION_PATH)/get-canary-subject/index.ts
+        tsx $(dirname $GITHUB_ACTION_PATH)/index.ts
