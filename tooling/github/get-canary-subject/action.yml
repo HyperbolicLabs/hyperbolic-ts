@@ -1,26 +1,8 @@
 name: "Get Canary Subject"
 description: "Gets a name used as the subject of our canary deploy (in the label and tag).  Just the branch name with invalid characters removed."
-
 outputs:
   canary-subject:
     description: "The name used in our canary deploy.  Just the branch name with invalid characters removed."
-    value: ${{ steps.canary-subject-script.outputs.subject }}
-
 runs:
-  using: composite
-  steps:
-    - uses: pnpm/action-setup@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: ".nvmrc"
-        cache: "pnpm"
-
-    - name: Install tsx
-      shell: bash
-      run: pnpm add -g tsx
-
-    - name: Run canary subject script
-      shell: bash
-      id: canary-subject-script
-      run: |
-        echo "subject=$(tsx $(dirname $GITHUB_ACTION_PATH)/index.ts)" >> $GITHUB_OUTPUT
+  using: node20
+  main: npx tsx $(dirname $GITHUB_ACTION_PATH)/index.ts
