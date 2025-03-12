@@ -1,15 +1,16 @@
-# Adapted from create-t3-app.
-
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Code Check"]
+    branches: [main]
+    types: [completed]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    if: ${{ github.repository_owner == 'hyperbolic' }}
+    if: ${{ github.repository_owner == 'HyperbolicLabs' }}
     name: Create a PR for release workflow
     runs-on: ubuntu-latest
     steps:
