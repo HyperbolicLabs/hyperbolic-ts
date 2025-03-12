@@ -15,16 +15,10 @@ jobs:
     if: ${{ github.repository_owner == 'HyperbolicLabs' }}
     name: Release (canary)
     runs-on: ubuntu-latest
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Create .npmrc
-        run: |
-          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> .npmrc
 
       - name: Setup pnpm/node and install dependencies
         uses: ./tooling/github/setup
@@ -36,11 +30,20 @@ jobs:
       - name: Extract Canary Subject From Branch Name
         id: get-canary-subject
         uses: ./tooling/github/get-canary-subject
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup NPM Authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Canary to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pnpm dlx @changesets/cli version --snapshot ${{ steps.get-canary-subject.outputs.canary-subject }}
           pnpm dlx @changesets/cli publish --tag ${{ steps.get-canary-subject.outputs.canary-subject }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
