@@ -3,8 +3,8 @@ description: "Gets a name used as the subject of our canary deploy (in the label
 
 outputs:
   canary-subject:
-    description: "The name used in our canary deploy. Just the branch name with invalid characters removed."
-    value: ${{ steps.canary-subject-script.outputs.canary-subject }}
+    description: "The sanitized branch name to use as canary subject"
+    value: ${{ steps.get-subject.outputs.canary-subject }}
 
 runs:
   using: composite
@@ -21,16 +21,17 @@ runs:
 
     - name: Run canary subject script
       shell: bash
-      id: canary-subject-script
+      id: get-subject
       run: |
-        tsx $(dirname $GITHUB_ACTION_PATH)/index.ts
+        SUBJECT=$(tsx $(dirname $GITHUB_ACTION_PATH)/index.ts)
+        echo "canary-subject=$SUBJECT" >> $GITHUB_OUTPUT
 
     - name: Verify Canary Subject
       shell: bash
       run: |
-        if [ -z "${{ steps.canary-subject-script.outputs.canary-subject }}" ]; then
+        if [ -z "${{ steps.get-subject.outputs.canary-subject }}" ]; then
           echo "Error: Canary subject is empty or not set"
           exit 1
         else
-          echo "Canary subject is: ${{ steps.canary-subject-script.outputs.canary-subject }}"
+          echo "Canary subject is: ${{ steps.get-subject.outputs.canary-subject }}"
         fi
