@@ -51,6 +51,7 @@ jobs:
 
       - name: Test
         run: pnpm test
+
   release:
     needs: [lint, format, typecheck, test]
     if: ${{ github.repository_owner == 'HyperbolicLabs' }}
@@ -67,6 +68,13 @@ jobs:
       - name: Build the package
         run: pnpm build:ai-sdk-provider
 
+      - name: Setup NPM Authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Create Version PR or Publish to NPM
         id: changesets
         uses: changesets/action@v1.4.1
@@ -74,8 +82,8 @@ jobs:
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
           version: node .github/changeset-version.js
-          publish: npx changeset publish
+          publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_ENV: "production"
