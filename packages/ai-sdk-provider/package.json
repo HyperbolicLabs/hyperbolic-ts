@@ -26,5 +26,10 @@
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^1.0.10",
+    "@ai-sdk/provider-utils": "^2.1.12",
+    "zod": "^3.24.2"
   }
 }
