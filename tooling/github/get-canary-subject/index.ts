@@ -26,7 +26,6 @@ export function run() {
     console.error(colors.redBright("Error getting canary subject:"));
     console.error(colors.redBright((error as { message: string }).message));
     core.setFailed((error as { message: string }).message);
-    process.exit(1);
   }
 }
 
