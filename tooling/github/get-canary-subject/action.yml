@@ -14,8 +14,7 @@ runs:
       shell: bash
       run: pnpm add -g tsx
 
-    - name: Get pnpm store directory
+    - name: Run canary subject script
       shell: bash
-      id: pnpm-cache
       run: |
-        tsx ../../tooling/github/get-canary-subject/index.ts
+        tsx $(dirname $GITHUB_ACTION_PATH)/index.ts
