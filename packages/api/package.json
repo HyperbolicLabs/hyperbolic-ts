@@ -1,7 +1,7 @@
 {
-  "name": "@hyperbolic/ai-sdk-provider",
-  "private": false,
-  "version": "0.0.3",
+  "name": "@hyperbolic/api",
+  "private": true,
+  "version": "0.0.1",
   "type": "module",
   "exports": {
     "./*": {
@@ -16,21 +16,18 @@
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "codegen": "openapi-ts && pnpm format --write ./src/__generated__/"
   },
   "prettier": "@hyperbolic/prettier-config",
   "devDependencies": {
+    "@hey-api/client-fetch": "0.8.3",
+    "@hey-api/openapi-ts": "0.64.11",
     "@hyperbolic/eslint-config": "workspace:*",
     "@hyperbolic/prettier-config": "workspace:*",
     "@hyperbolic/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
-  },
-  "dependencies": {
-    "@ai-sdk/provider": "^1.0.10",
-    "@ai-sdk/provider-utils": "^2.1.12",
-    "@hyperbolic/api": "workspace:*",
-    "zod": "^3.24.2"
   }
 }
