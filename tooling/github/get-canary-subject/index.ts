@@ -16,12 +16,6 @@ export function run(): string {
     // replace all non-alphanumeric characters with a dash
     const sanitizedBranchName = rawBranchName.slice(0, 30).replace(/[^a-zA-Z0-9]/g, "-");
 
-    // Log info but don't use core.setOutput since we're returning the value directly
-    console.info(
-      colors.whiteBright("The subject of your canary deploy will be: "),
-      colors.greenBright(sanitizedBranchName),
-    );
-
     return sanitizedBranchName;
   } catch (error) {
     console.error(colors.redBright("Error getting canary subject:"));
