@@ -1,5 +1,5 @@
 {
-  "extends": "@hyperbolic/tsconfig/internal-package.json",
+  "extends": "@hyperbolic/tsconfig/external-package.json",
   "compilerOptions": {
     "rootDir": "."
   },
