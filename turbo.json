@@ -44,6 +44,7 @@
   "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",
+    "HYPERBOLIC_API_KEY",
     "VERCEL",
     "VERCEL_ENV",
     "VERCEL_URL",

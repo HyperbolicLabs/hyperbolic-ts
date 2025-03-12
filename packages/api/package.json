@@ -17,7 +17,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "codegen": "openapi-ts && pnpm format --write ./src/__generated__/"
+    "codegen": "openapi-ts"
   },
   "prettier": "@hyperbolic/prettier-config",
   "devDependencies": {
