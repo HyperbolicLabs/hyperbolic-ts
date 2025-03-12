@@ -4,6 +4,7 @@ import * as colors from "colorette";
 
 export function run() {
   try {
+    console.info("Getting canary subject...");
     // Remove the `refs/heads/` prefix from the branch name
     const rawBranchName = github.context.ref.split("refs/heads/").pop();
 
@@ -18,10 +19,12 @@ export function run() {
 
     console.info(
       colors.whiteBright("The subject of your canary deploy will be: "),
-      colors.blueBright(sanitizedBranchName),
+      colors.greenBright(sanitizedBranchName),
     );
     core.setOutput("canary-subject", sanitizedBranchName); // Set the environment variable
   } catch (error) {
+    console.error(colors.redBright("Error getting canary subject:"));
+    console.error(colors.redBright((error as { message: string }).message));
     core.setFailed((error as { message: string }).message);
   }
 }
