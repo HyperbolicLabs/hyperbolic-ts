@@ -1,0 +1,44 @@
+name: Release Canary
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - changeset-release/main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  release:
+    name: Release (canary)
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create .npmrc
+        run: |
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> .npmrc
+
+      - name: Setup pnpm/node and install dependencies
+        uses: ./tooling/github/setup
+
+      - name: Create ENV file
+        run: |
+          touch .env
+
+      - name: Extract Canary Subject From Branch Name
+        id: get-canary-subject
+        uses: ./packages-internal/github-actions/src/get-canary-subject
+
+      - name: Publish Canary to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          pnpx changeset version --snapshot ${{ steps.get-canary-subject.outputs.canary-subject }}
+          pnpx changeset publish --tag ${{ steps.get-canary-subject.outputs.canary-subject }}

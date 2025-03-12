@@ -1,0 +1,21 @@
+name: "Get Canary Subject"
+description: "Gets a name used as the subject of our canary deploy (in the label and tag).  Just the branch name with invalid characters removed."
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "pnpm"
+
+    - name: Install tsx
+      shell: bash
+      run: pnpm add -g tsx
+
+    - name: Get pnpm store directory
+      shell: bash
+      id: pnpm-cache
+      run: |
+        tsx ./index.ts

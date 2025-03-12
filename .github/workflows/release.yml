@@ -1,5 +1,3 @@
-# Adapted from create-t3-app.
-
 name: Release
 
 on:
@@ -7,9 +5,11 @@ on:
     branches:
       - main
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   release:
-    if: ${{ github.repository_owner == 'hyperbolic' }}
+    if: ${{ github.repository_owner == 'HyperbolicLabs' }}
     name: Create a PR for release workflow
     runs-on: ubuntu-latest
     steps:
