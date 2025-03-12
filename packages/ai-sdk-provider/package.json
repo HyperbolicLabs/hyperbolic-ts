@@ -4,10 +4,7 @@
   "version": "0.0.3",
   "type": "module",
   "exports": {
-    "./*": {
-      "types": "./dist/src/*.d.ts",
-      "default": "./src/*.ts"
-    }
+    "./*": "./dist/src/*.d.ts"
   },
   "license": "Apache-2.0",
   "scripts": {
