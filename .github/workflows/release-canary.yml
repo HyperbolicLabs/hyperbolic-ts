@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   release:
+    if: ${{ github.repository_owner == 'HyperbolicLabs' }}
     name: Release (canary)
     runs-on: ubuntu-latest
     env:
