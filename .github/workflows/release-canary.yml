@@ -35,7 +35,7 @@ jobs:
 
       - name: Extract Canary Subject From Branch Name
         id: get-canary-subject
-        uses: ../../tooling/github/get-canary-subject
+        uses: ./tooling/github/get-canary-subject
 
       - name: Publish Canary to npm
         env:
