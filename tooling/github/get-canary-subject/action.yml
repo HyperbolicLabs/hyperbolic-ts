@@ -5,4 +5,4 @@ outputs:
     description: "The name used in our canary deploy.  Just the branch name with invalid characters removed."
 runs:
   using: node20
-  main: npx tsx $(dirname $GITHUB_ACTION_PATH)/index.ts
+  main: npx tsx ../../get-canary-subject/index.ts
