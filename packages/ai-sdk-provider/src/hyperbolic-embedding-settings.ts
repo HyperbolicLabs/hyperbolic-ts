@@ -1,6 +1,6 @@
-export type MistralEmbeddingModelId = "mistral-embed" | (string & {});
+export type HyperbolicEmbeddingModelId = "hyperbolic-embed" | (string & {});
 
-export interface MistralEmbeddingSettings {
+export interface HyperbolicEmbeddingSettings {
   /**
 Override the maximum number of embeddings per call.
    */

@@ -2,7 +2,7 @@ import type { EmbeddingModelV1Embedding } from "@ai-sdk/provider";
 import { JsonTestServer } from "@ai-sdk/provider-utils/test";
 import { describe, expect, it } from "vitest";
 
-import { createMistral } from "./mistral-provider";
+import { createHyperbolic } from "./hyperbolic-provider";
 
 const dummyEmbeddings = [
   [0.1, 0.2, 0.3, 0.4, 0.5],
@@ -10,11 +10,11 @@ const dummyEmbeddings = [
 ];
 const testValues = ["sunny day at the beach", "rainy day in the city"];
 
-const provider = createMistral({ apiKey: "test-api-key" });
-const model = provider.embedding("mistral-embed");
+const provider = createHyperbolic({ apiKey: "test-api-key" });
+const model = provider.embedding("hyperbolic-embed");
 
 describe("doEmbed", () => {
-  const server = new JsonTestServer("https://api.mistral.ai/v1/embeddings");
+  const server = new JsonTestServer("https://api.hyperbolic.ai/v1/embeddings");
 
   server.setupTestEnvironment();
 
@@ -33,7 +33,7 @@ describe("doEmbed", () => {
         embedding,
         index: i,
       })),
-      model: "mistral-embed",
+      model: "hyperbolic-embed",
       usage,
     };
   }
@@ -81,7 +81,7 @@ describe("doEmbed", () => {
     await model.doEmbed({ values: testValues });
 
     expect(await server.getRequestBodyJson()).toStrictEqual({
-      model: "mistral-embed",
+      model: "hyperbolic-embed",
       input: testValues,
       encoding_format: "float",
     });
@@ -90,14 +90,14 @@ describe("doEmbed", () => {
   it("should pass headers", async () => {
     prepareJsonResponse();
 
-    const provider = createMistral({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       headers: {
         "Custom-Provider-Header": "provider-header-value",
       },
     });
 
-    await provider.embedding("mistral-embed").doEmbed({
+    await provider.embedding("hyperbolic-embed").doEmbed({
       values: testValues,
       headers: {
         "Custom-Request-Header": "request-header-value",

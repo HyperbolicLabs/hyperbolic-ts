@@ -14,34 +14,34 @@ import {
 } from "@ai-sdk/provider-utils";
 import { z } from "zod";
 
-import type { MistralChatModelId, MistralChatSettings } from "./mistral-chat-settings";
-import { convertToMistralChatMessages } from "./convert-to-mistral-chat-messages";
+import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
+import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { getResponseMetadata } from "./get-response-metadata";
-import { mapMistralFinishReason } from "./map-mistral-finish-reason";
-import { mistralFailedResponseHandler } from "./mistral-error";
-import { prepareTools } from "./mistral-prepare-tools";
+import { hyperbolicFailedResponseHandler } from "./hyperbolic-error";
+import { prepareTools } from "./hyperbolic-prepare-tools";
+import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
-type MistralChatConfig = {
+type HyperbolicChatConfig = {
   provider: string;
   baseURL: string;
   headers: () => Record<string, string | undefined>;
   fetch?: FetchFunction;
 };
 
-export class MistralChatLanguageModel implements LanguageModelV1 {
+export class HyperbolicChatLanguageModel implements LanguageModelV1 {
   readonly specificationVersion = "v1";
   readonly defaultObjectGenerationMode = "json";
   readonly supportsImageUrls = false;
 
-  readonly modelId: MistralChatModelId;
-  readonly settings: MistralChatSettings;
+  readonly modelId: HyperbolicChatModelId;
+  readonly settings: HyperbolicChatSettings;
 
-  private readonly config: MistralChatConfig;
+  private readonly config: HyperbolicChatConfig;
 
   constructor(
-    modelId: MistralChatModelId,
-    settings: MistralChatSettings,
-    config: MistralChatConfig,
+    modelId: HyperbolicChatModelId,
+    settings: HyperbolicChatSettings,
+    config: HyperbolicChatConfig,
   ) {
     this.modelId = modelId;
     this.settings = settings;
@@ -126,12 +126,12 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
       // response format:
       response_format: responseFormat?.type === "json" ? { type: "json_object" } : undefined,
 
-      // mistral-specific provider options:
-      document_image_limit: providerMetadata?.mistral?.documentImageLimit,
-      document_page_limit: providerMetadata?.mistral?.documentPageLimit,
+      // hyperbolic-specific provider options:
+      document_image_limit: providerMetadata?.hyperbolic?.documentImageLimit,
+      document_page_limit: providerMetadata?.hyperbolic?.documentPageLimit,
 
       // messages:
-      messages: convertToMistralChatMessages(prompt),
+      messages: convertToHyperbolicChatMessages(prompt),
     };
 
     switch (type) {
@@ -185,8 +185,8 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
       url: `${this.config.baseURL}/chat/completions`,
       headers: combineHeaders(this.config.headers(), options.headers),
       body: args,
-      failedResponseHandler: mistralFailedResponseHandler,
-      successfulResponseHandler: createJsonResponseHandler(mistralChatResponseSchema),
+      failedResponseHandler: hyperbolicFailedResponseHandler,
+      successfulResponseHandler: createJsonResponseHandler(hyperbolicChatResponseSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
     });
@@ -205,7 +205,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
     // image content or reference content is currently ignored.
     let text = extractTextContent(choice.message.content);
 
-    // when there is a trailing assistant message, mistral will send the
+    // when there is a trailing assistant message, hyperbolic will send the
     // content of that message again. we skip this repeated content to
     // avoid duplication, e.g. in continuation mode.
     const lastMessage = rawPrompt[rawPrompt.length - 1];
@@ -228,7 +228,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
         toolName: toolCall.function.name,
         args: toolCall.function.arguments,
       })),
-      finishReason: mapMistralFinishReason(choice.finish_reason),
+      finishReason: mapHyperbolicFinishReason(choice.finish_reason),
       usage: {
         promptTokens: response.usage.prompt_tokens,
         completionTokens: response.usage.completion_tokens,
@@ -255,8 +255,8 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
       url: `${this.config.baseURL}/chat/completions`,
       headers: combineHeaders(this.config.headers(), options.headers),
       body,
-      failedResponseHandler: mistralFailedResponseHandler,
-      successfulResponseHandler: createEventSourceResponseHandler(mistralChatChunkSchema),
+      failedResponseHandler: hyperbolicFailedResponseHandler,
+      successfulResponseHandler: createEventSourceResponseHandler(hyperbolicChatChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
     });
@@ -274,7 +274,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
     return {
       stream: response.pipeThrough(
         new TransformStream<
-          ParseResult<z.infer<typeof mistralChatChunkSchema>>,
+          ParseResult<z.infer<typeof hyperbolicChatChunkSchema>>,
           LanguageModelV1StreamPart
         >({
           transform(chunk, controller) {
@@ -304,7 +304,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
             const choice = value.choices[0];
 
             if (choice?.finish_reason != null) {
-              finishReason = mapMistralFinishReason(choice.finish_reason);
+              finishReason = mapHyperbolicFinishReason(choice.finish_reason);
             }
 
             if (choice?.delta == null) {
@@ -317,7 +317,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
             // image content or reference content is currently ignored.
             const textContent = extractTextContent(delta.content);
 
-            // when there is a trailing assistant message, mistral will send the
+            // when there is a trailing assistant message, hyperbolic will send the
             // content of that message again. we skip this repeated content to
             // avoid duplication, e.g. in continuation mode.
             if (chunkNumber <= 2) {
@@ -333,7 +333,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
                 lastMessage.role === "assistant" &&
                 textContent === lastMessage.content.trimEnd()
               ) {
-                // Mistral moves the trailing space from the prefix to the next chunk.
+                // Hyperbolic moves the trailing space from the prefix to the next chunk.
                 // We trim the leading space to avoid duplication.
                 if (textContent.length < lastMessage.content.length) {
                   trimLeadingSpace = true;
@@ -355,7 +355,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
 
             if (delta.tool_calls != null) {
               for (const toolCall of delta.tool_calls) {
-                // mistral tool calls come in one piece:
+                // hyperbolic tool calls come in one piece:
                 controller.enqueue({
                   type: "tool-call-delta",
                   toolCallType: "function",
@@ -387,7 +387,7 @@ export class MistralChatLanguageModel implements LanguageModelV1 {
   }
 }
 
-function extractTextContent(content: z.infer<typeof mistralContentSchema>) {
+function extractTextContent(content: z.infer<typeof hyperbolicContentSchema>) {
   if (typeof content === "string") {
     return content;
   }
@@ -419,7 +419,7 @@ function extractTextContent(content: z.infer<typeof mistralContentSchema>) {
   return textContent.length ? textContent.join("") : undefined;
 }
 
-const mistralContentSchema = z
+const hyperbolicContentSchema = z
   .union([
     z.string(),
     z.array(
@@ -449,7 +449,7 @@ const mistralContentSchema = z
 
 // limited version of the schema, focussed on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-const mistralChatResponseSchema = z.object({
+const hyperbolicChatResponseSchema = z.object({
   id: z.string().nullish(),
   created: z.number().nullish(),
   model: z.string().nullish(),
@@ -457,7 +457,7 @@ const mistralChatResponseSchema = z.object({
     z.object({
       message: z.object({
         role: z.literal("assistant"),
-        content: mistralContentSchema,
+        content: hyperbolicContentSchema,
         tool_calls: z
           .array(
             z.object({
@@ -480,7 +480,7 @@ const mistralChatResponseSchema = z.object({
 
 // limited version of the schema, focussed on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-const mistralChatChunkSchema = z.object({
+const hyperbolicChatChunkSchema = z.object({
   id: z.string().nullish(),
   created: z.number().nullish(),
   model: z.string().nullish(),
@@ -488,7 +488,7 @@ const mistralChatChunkSchema = z.object({
     z.object({
       delta: z.object({
         role: z.enum(["assistant"]).optional(),
-        content: mistralContentSchema,
+        content: hyperbolicContentSchema,
         tool_calls: z
           .array(
             z.object({

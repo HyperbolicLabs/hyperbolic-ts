@@ -5,24 +5,24 @@ import { combineHeaders, createJsonResponseHandler, postJsonToApi } from "@ai-sd
 import { z } from "zod";
 
 import type {
-  MistralEmbeddingModelId,
-  MistralEmbeddingSettings,
-} from "./mistral-embedding-settings";
-import { mistralFailedResponseHandler } from "./mistral-error";
+  HyperbolicEmbeddingModelId,
+  HyperbolicEmbeddingSettings,
+} from "./hyperbolic-embedding-settings";
+import { hyperbolicFailedResponseHandler } from "./hyperbolic-error";
 
-type MistralEmbeddingConfig = {
+type HyperbolicEmbeddingConfig = {
   provider: string;
   baseURL: string;
   headers: () => Record<string, string | undefined>;
   fetch?: FetchFunction;
 };
 
-export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
+export class HyperbolicEmbeddingModel implements EmbeddingModelV1<string> {
   readonly specificationVersion = "v1";
-  readonly modelId: MistralEmbeddingModelId;
+  readonly modelId: HyperbolicEmbeddingModelId;
 
-  private readonly config: MistralEmbeddingConfig;
-  private readonly settings: MistralEmbeddingSettings;
+  private readonly config: HyperbolicEmbeddingConfig;
+  private readonly settings: HyperbolicEmbeddingSettings;
 
   get provider(): string {
     return this.config.provider;
@@ -39,9 +39,9 @@ export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
   }
 
   constructor(
-    modelId: MistralEmbeddingModelId,
-    settings: MistralEmbeddingSettings,
-    config: MistralEmbeddingConfig,
+    modelId: HyperbolicEmbeddingModelId,
+    settings: HyperbolicEmbeddingSettings,
+    config: HyperbolicEmbeddingConfig,
   ) {
     this.modelId = modelId;
     this.settings = settings;
@@ -72,8 +72,8 @@ export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
         input: values,
         encoding_format: "float",
       },
-      failedResponseHandler: mistralFailedResponseHandler,
-      successfulResponseHandler: createJsonResponseHandler(MistralTextEmbeddingResponseSchema),
+      failedResponseHandler: hyperbolicFailedResponseHandler,
+      successfulResponseHandler: createJsonResponseHandler(HyperbolicTextEmbeddingResponseSchema),
       abortSignal,
       fetch: this.config.fetch,
     });
@@ -88,7 +88,7 @@ export class MistralEmbeddingModel implements EmbeddingModelV1<string> {
 
 // minimal version of the schema, focussed on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-const MistralTextEmbeddingResponseSchema = z.object({
+const HyperbolicTextEmbeddingResponseSchema = z.object({
   data: z.array(z.object({ embedding: z.array(z.number()) })),
   usage: z.object({ prompt_tokens: z.number() }).nullish(),
 });

@@ -2,10 +2,10 @@ import type { LanguageModelV1Prompt } from "@ai-sdk/provider";
 import { UnsupportedFunctionalityError } from "@ai-sdk/provider";
 import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 
-import type { MistralPrompt } from "./mistral-chat-prompt";
+import type { HyperbolicPrompt } from "./hyperbolic-chat-prompt";
 
-export function convertToMistralChatMessages(prompt: LanguageModelV1Prompt): MistralPrompt {
-  const messages: MistralPrompt = [];
+export function convertToHyperbolicChatMessages(prompt: LanguageModelV1Prompt): HyperbolicPrompt {
+  const messages: HyperbolicPrompt = [];
 
   for (let i = 0; i < prompt.length; i++) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

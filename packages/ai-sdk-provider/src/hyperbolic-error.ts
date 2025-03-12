@@ -1,7 +1,7 @@
 import { createJsonErrorResponseHandler } from "@ai-sdk/provider-utils";
 import { z } from "zod";
 
-const mistralErrorDataSchema = z.object({
+const hyperbolicErrorDataSchema = z.object({
   object: z.literal("error"),
   message: z.string(),
   type: z.string(),
@@ -9,9 +9,9 @@ const mistralErrorDataSchema = z.object({
   code: z.string().nullable(),
 });
 
-export type MistralErrorData = z.infer<typeof mistralErrorDataSchema>;
+export type HyperbolicErrorData = z.infer<typeof hyperbolicErrorDataSchema>;
 
-export const mistralFailedResponseHandler = createJsonErrorResponseHandler({
-  errorSchema: mistralErrorDataSchema,
+export const hyperbolicFailedResponseHandler = createJsonErrorResponseHandler({
+  errorSchema: hyperbolicErrorDataSchema,
   errorToMessage: (data) => data.message,
 });

@@ -1,2 +1,2 @@
-export { createMistral, mistral } from "./mistral-provider";
-export type { MistralProvider, MistralProviderSettings } from "./mistral-provider";
+export { createHyperbolic, hyperbolic } from "./hyperbolic-provider";
+export type { HyperbolicProvider, HyperbolicProviderSettings } from "./hyperbolic-provider";

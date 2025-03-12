@@ -32,7 +32,7 @@ export function prepareTools(
     return { tools: undefined, tool_choice: undefined, toolWarnings };
   }
 
-  const mistralTools: Array<{
+  const hyperbolicTools: Array<{
     type: "function";
     function: {
       name: string;
@@ -45,7 +45,7 @@ export function prepareTools(
     if (tool.type === "provider-defined") {
       toolWarnings.push({ type: "unsupported-tool", tool });
     } else {
-      mistralTools.push({
+      hyperbolicTools.push({
         type: "function",
         function: {
           name: tool.name,
@@ -59,7 +59,7 @@ export function prepareTools(
   const toolChoice = mode.toolChoice;
 
   if (toolChoice == null) {
-    return { tools: mistralTools, tool_choice: undefined, toolWarnings };
+    return { tools: hyperbolicTools, tool_choice: undefined, toolWarnings };
   }
 
   const type = toolChoice.type;
@@ -67,15 +67,15 @@ export function prepareTools(
   switch (type) {
     case "auto":
     case "none":
-      return { tools: mistralTools, tool_choice: type, toolWarnings };
+      return { tools: hyperbolicTools, tool_choice: type, toolWarnings };
     case "required":
-      return { tools: mistralTools, tool_choice: "any", toolWarnings };
+      return { tools: hyperbolicTools, tool_choice: "any", toolWarnings };
 
-    // mistral does not support tool mode directly,
+    // hyperbolic does not support tool mode directly,
     // so we filter the tools and force the tool choice through 'any'
     case "tool":
       return {
-        tools: mistralTools.filter((tool) => tool.function.name === toolChoice.toolName),
+        tools: hyperbolicTools.filter((tool) => tool.function.name === toolChoice.toolName),
         tool_choice: "any",
         toolWarnings,
       };
