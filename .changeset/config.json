@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "HyperbolicLabs/hyperbolic-monorepo" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "HyperbolicLabs/hyperbolic-ts" }],
   "commit": false,
   "fixed": [],
   "linked": [],
