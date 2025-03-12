@@ -30,8 +30,6 @@ jobs:
       - name: Extract Canary Subject From Branch Name
         id: get-canary-subject
         uses: ./tooling/github/get-canary-subject
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup NPM Authentication
         run: |
