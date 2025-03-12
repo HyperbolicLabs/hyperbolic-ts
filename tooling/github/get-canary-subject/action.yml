@@ -18,4 +18,4 @@ runs:
       shell: bash
       id: pnpm-cache
       run: |
-        tsx ./index.ts
+        tsx ../../tooling/github/get-canary-subject/index.ts
