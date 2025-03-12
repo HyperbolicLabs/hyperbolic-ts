@@ -54,7 +54,7 @@ The default prefix is `https://api.hyperbolic.ai/v1`.
 
   /**
 API key that is being send using the `Authorization` header.
-It defaults to the `MISTRAL_API_KEY` environment variable.
+It defaults to the `HYPERBOLIC_API_KEY` environment variable.
    */
   apiKey?: string;
 
@@ -79,7 +79,7 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
   const getHeaders = () => ({
     Authorization: `Bearer ${loadApiKey({
       apiKey: options.apiKey,
-      environmentVariableName: "MISTRAL_API_KEY",
+      environmentVariableName: "HYPERBOLIC_API_KEY",
       description: "Hyperbolic",
     })}`,
     ...options.headers,
