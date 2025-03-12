@@ -38,6 +38,15 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Verify Canary Subject
+        run: |
+          if [ -z "${{ steps.get-canary-subject.outputs.canary-subject }}" ]; then
+            echo "Error: Canary subject is empty or not set"
+            exit 1
+          else
+            echo "Canary subject is: ${{ steps.get-canary-subject.outputs.canary-subject }}"
+          fi
+
       - name: Publish Canary to npm
         run: |
           pnpm changeset version --snapshot ${{ steps.get-canary-subject.outputs.canary-subject }}
