@@ -8,6 +8,7 @@
     "url": "https://twitter.com/hyperbolic_labs"
   },
   "workspaces": [
+    "apps/*",
     "packages/*",
     "tooling/*"
   ],
