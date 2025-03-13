@@ -15,7 +15,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env -c --",
-    "codegen:update-models": "pnpm with-env npx tsx src/scripts/update-models-list.ts"
+    "codegen:update-models": "pnpm with-env npx tsx src/scripts/update-models-list.ts",
+    "test": "vitest run"
   },
   "prettier": "@hyperbolic/prettier-config",
   "devDependencies": {
