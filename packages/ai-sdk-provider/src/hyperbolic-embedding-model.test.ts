@@ -14,7 +14,7 @@ const provider = createHyperbolic({ apiKey: "test-api-key" });
 const model = provider.embedding("hyperbolic-embed");
 
 describe("doEmbed", () => {
-  const server = new JsonTestServer("https://api.hyperbolic.ai/v1/embeddings");
+  const server = new JsonTestServer("https://api.hyperbolic.xyz/v1/embeddings");
 
   server.setupTestEnvironment();
 

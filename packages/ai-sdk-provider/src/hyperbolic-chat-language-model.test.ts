@@ -16,7 +16,7 @@ const provider = createHyperbolic({ apiKey: "test-api-key" });
 const model = provider.chat("hyperbolic-small-latest");
 
 describe("doGenerate", () => {
-  const server = new JsonTestServer("https://api.hyperbolic.ai/v1/chat/completions");
+  const server = new JsonTestServer("https://api.hyperbolic.xyz/v1/chat/completions");
 
   server.setupTestEnvironment();
 
@@ -343,7 +343,7 @@ describe("doGenerate", () => {
 });
 
 describe("doStream", () => {
-  const server = new StreamingTestServer("https://api.hyperbolic.ai/v1/chat/completions");
+  const server = new StreamingTestServer("https://api.hyperbolic.xyz/v1/chat/completions");
 
   server.setupTestEnvironment();
 

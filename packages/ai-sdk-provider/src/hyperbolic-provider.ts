@@ -49,7 +49,7 @@ Creates a model for text generation.
 export interface HyperbolicProviderSettings {
   /**
 Use a different URL prefix for API calls, e.g. to use proxy servers.
-The default prefix is `https://api.hyperbolic.ai/v1`.
+The default prefix is `https://api.hyperbolic.xyz/v1`.
    */
   baseURL?: string;
 
@@ -75,7 +75,7 @@ or to provide a custom fetch implementation for e.g. testing.
 Create a Hyperbolic AI provider instance.
  */
 export function createHyperbolic(options: HyperbolicProviderSettings = {}): HyperbolicProvider {
-  const baseURL = withoutTrailingSlash(options.baseURL) ?? "https://api.hyperbolic.ai/v1";
+  const baseURL = withoutTrailingSlash(options.baseURL) ?? "https://api.hyperbolic.xyz/v1";
 
   const getHeaders = () => ({
     Authorization: `Bearer ${loadApiKey({
