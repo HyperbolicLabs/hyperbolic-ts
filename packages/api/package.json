@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
-    "./*": {
-      "types": "./dist/src/*.d.ts",
-      "default": "./src/*.ts"
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
     }
   },
   "license": "Apache-2.0",

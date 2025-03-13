@@ -2,7 +2,8 @@ import type { EmbeddingModelV1, LanguageModelV1, ProviderV1 } from "@ai-sdk/prov
 import type { FetchFunction } from "@ai-sdk/provider-utils";
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
-import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
+import type { HyperbolicChatModelId } from "./__generated__/models.gen";
+import type { HyperbolicChatSettings } from "./hyperbolic-chat-settings";
 import type {
   HyperbolicEmbeddingModelId,
   HyperbolicEmbeddingSettings,

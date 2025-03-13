@@ -14,7 +14,8 @@ import {
 } from "@ai-sdk/provider-utils";
 import { z } from "zod";
 
-import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
+import type { HyperbolicChatModelId } from "./__generated__/models.gen";
+import type { HyperbolicChatSettings } from "./hyperbolic-chat-settings";
 import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { getResponseMetadata } from "./get-response-metadata";
 import { hyperbolicFailedResponseHandler } from "./hyperbolic-error";
