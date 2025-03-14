@@ -2,8 +2,9 @@ name: Code Check
 
 on:
   pull_request:
-    branches-ignore: ["main"] # Main runs checks in `release.yml`.
-  merge_group:
+    branches:
+      - "**"
+      - "!main"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
