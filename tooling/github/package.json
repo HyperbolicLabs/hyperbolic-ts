@@ -2,6 +2,9 @@
   "name": "@hyperbolic/github",
   "private": true,
   "version": "0.0.1",
+  "scripts": {
+    "test": "vitest run"
+  },
   "devDependencies": {
     "@actions/core": "1.10.0",
     "@actions/github": "5.1.1",
