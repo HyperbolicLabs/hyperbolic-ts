@@ -27,4 +27,4 @@ const _models = [
   "deepseek-ai/DeepSeek-R1",
 ] as const;
 
-export type HyperbolicChatModelId = (typeof _models)[number] | (string & {});;
+export type HyperbolicModelId = (typeof _models)[number] | (string & {});

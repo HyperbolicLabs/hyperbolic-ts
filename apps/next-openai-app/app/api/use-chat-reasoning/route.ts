@@ -1,5 +1,12 @@
-import { fireworks } from '@ai-sdk/fireworks';
-import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
+import { fireworks } from "@ai-sdk/fireworks";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { extractReasoningMiddleware, streamText, wrapLanguageModel } from "ai";
+
+const openRouter = createOpenRouter({
+  apiKey: process.env.HYPERBOLIC_API_KEY,
+  baseURL: "https://api.hyperbolic.xyz/v1",
+  compatibility: "compatible",
+});
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -10,11 +17,15 @@ export async function POST(req: Request) {
   console.log(JSON.stringify(messages, null, 2));
 
   const result = streamText({
-    model: wrapLanguageModel({
-      model: fireworks('accounts/fireworks/models/deepseek-r1'),
-      middleware: extractReasoningMiddleware({ tagName: 'think' }),
-    }),
+    model: openRouter("deepseek-ai/DeepSeek-R1"),
     messages,
+    providerOptions: {
+      openrouter: {
+        reasoning: {
+          max_tokens: 10,
+        },
+      },
+    },
   });
 
   // const result = streamText({

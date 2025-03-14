@@ -1,128 +1,52 @@
-import type { EmbeddingModelV1, LanguageModelV1, ProviderV1 } from "@ai-sdk/provider";
-import type { FetchFunction } from "@ai-sdk/provider-utils";
-import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
+import type { OpenRouterProviderSettings } from "@openrouter/ai-sdk-provider";
+import type { Except } from "type-fest";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 
-import type { HyperbolicChatModelId } from "./__generated__/models.gen";
-import type { HyperbolicChatSettings } from "./hyperbolic-chat-settings";
+import type { HyperbolicModelId } from "./__generated__/models.gen";
 import type {
-  HyperbolicEmbeddingModelId,
-  HyperbolicEmbeddingSettings,
-} from "./hyperbolic-embedding-settings";
-import { HyperbolicChatLanguageModel } from "./hyperbolic-chat-language-model";
-import { HyperbolicEmbeddingModel } from "./hyperbolic-embedding-model";
+  HyperbolicChatLanguageModel,
+  HyperbolicChatSettings,
+} from "./hyperbolic-chat-language-model";
+import type {
+  HyperbolicCompletionLanguageModel,
+  HyperbolicCompletionSettings,
+} from "./hyperbolic-completion-language-model";
 
-export interface HyperbolicProvider extends ProviderV1 {
-  (modelId: HyperbolicChatModelId, settings?: HyperbolicChatSettings): LanguageModelV1;
+export interface HyperbolicProvider {
+  (
+    modelId: HyperbolicModelId,
+    settings?: HyperbolicCompletionSettings,
+  ): HyperbolicCompletionLanguageModel;
+  (modelId: HyperbolicModelId, settings?: HyperbolicChatSettings): HyperbolicChatLanguageModel;
+
+  languageModel(
+    modelId: HyperbolicModelId,
+    settings?: HyperbolicCompletionSettings,
+  ): HyperbolicCompletionLanguageModel;
+  languageModel(
+    modelId: HyperbolicModelId,
+    settings?: HyperbolicChatSettings,
+  ): HyperbolicChatLanguageModel;
 
   /**
-Creates a model for text generation.
-*/
-  languageModel(modelId: HyperbolicChatModelId, settings?: HyperbolicChatSettings): LanguageModelV1;
-
-  /**
-Creates a model for text generation.
-*/
-  chat(modelId: HyperbolicChatModelId, settings?: HyperbolicChatSettings): LanguageModelV1;
-
-  /**
-@deprecated Use `textEmbeddingModel()` instead.
+   * Creates a Hyperbolic chat model for text generation.
    */
-  embedding(
-    modelId: HyperbolicEmbeddingModelId,
-    settings?: HyperbolicEmbeddingSettings,
-  ): EmbeddingModelV1<string>;
+  chat(modelId: HyperbolicModelId, settings?: HyperbolicChatSettings): HyperbolicChatLanguageModel;
 
   /**
-@deprecated Use `textEmbeddingModel()` instead.
+   * Creates a Hyperbolic completion model for text generation.
    */
-  textEmbedding(
-    modelId: HyperbolicEmbeddingModelId,
-    settings?: HyperbolicEmbeddingSettings,
-  ): EmbeddingModelV1<string>;
-
-  textEmbeddingModel: (
-    modelId: HyperbolicEmbeddingModelId,
-    settings?: HyperbolicEmbeddingSettings,
-  ) => EmbeddingModelV1<string>;
+  completion(
+    modelId: HyperbolicModelId,
+    settings?: HyperbolicCompletionSettings,
+  ): HyperbolicCompletionLanguageModel;
 }
 
-export interface HyperbolicProviderSettings {
-  /**
-Use a different URL prefix for API calls, e.g. to use proxy servers.
-The default prefix is `https://api.hyperbolic.xyz/v1`.
-   */
-  baseURL?: string;
+export type HyperbolicProviderSettings = Except<OpenRouterProviderSettings, "compatibility">;
 
-  /**
-API key that is being send using the `Authorization` header.
-It defaults to the `HYPERBOLIC_API_KEY` environment variable.
-   */
-  apiKey?: string;
-
-  /**
-Custom headers to include in the requests.
-     */
-  headers?: Record<string, string>;
-
-  /**
-Custom fetch implementation. You can use it as a middleware to intercept requests,
-or to provide a custom fetch implementation for e.g. testing.
-    */
-  fetch?: FetchFunction;
-}
-
-/**
-Create a Hyperbolic AI provider instance.
- */
-export function createHyperbolic(options: HyperbolicProviderSettings = {}): HyperbolicProvider {
-  const baseURL = withoutTrailingSlash(options.baseURL) ?? "https://api.hyperbolic.xyz/v1";
-
-  const getHeaders = () => ({
-    Authorization: `Bearer ${loadApiKey({
-      apiKey: options.apiKey,
-      environmentVariableName: "HYPERBOLIC_API_KEY",
-      description: "Hyperbolic",
-    })}`,
-    ...options.headers,
-  });
-
-  const createChatModel = (modelId: HyperbolicChatModelId, settings: HyperbolicChatSettings = {}) =>
-    new HyperbolicChatLanguageModel(modelId, settings, {
-      provider: "hyperbolic.chat",
-      baseURL,
-      headers: getHeaders,
-      fetch: options.fetch,
-    });
-
-  const createEmbeddingModel = (
-    modelId: HyperbolicEmbeddingModelId,
-    settings: HyperbolicEmbeddingSettings = {},
-  ) =>
-    new HyperbolicEmbeddingModel(modelId, settings, {
-      provider: "hyperbolic.embedding",
-      baseURL,
-      headers: getHeaders,
-      fetch: options.fetch,
-    });
-
-  const provider = function (modelId: HyperbolicChatModelId, settings?: HyperbolicChatSettings) {
-    if (new.target) {
-      throw new Error("The Hyperbolic model function cannot be called with the new keyword.");
-    }
-
-    return createChatModel(modelId, settings);
-  };
-
-  provider.languageModel = createChatModel;
-  provider.chat = createChatModel;
-  provider.embedding = createEmbeddingModel;
-  provider.textEmbedding = createEmbeddingModel;
-  provider.textEmbeddingModel = createEmbeddingModel;
-
-  return provider;
-}
-
-/**
-Default Hyperbolic provider instance.
- */
-export const hyperbolic = createHyperbolic();
+export const createHyperbolic = (options?: HyperbolicProviderSettings): HyperbolicProvider =>
+  createOpenRouter({
+    compatibility: "compatible",
+    baseURL: "https://api.hyperbolic.xyz/v1",
+    ...options,
+  }) as unknown as HyperbolicProvider; // typescript can't infer that the
