@@ -19,7 +19,7 @@ const main = async () => {
   const modelIds = models.map((model) => model.id);
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const templatePath = path.join(__dirname, "templates", "models.hbs");
+  const templatePath = path.join(__dirname, "templates", "models.ts.hbs");
   const templateContent = readFileSync(templatePath, "utf-8");
   const template = Handlebars.compile(templateContent);
 

@@ -23,8 +23,7 @@ const _models = [
   "meta-llama/Llama-3.3-70B-Instruct",
   "NousResearch/Hermes-3-Llama-3.1-70B",
   "meta-llama/Meta-Llama-3.1-405B",
-  "meta-llama/Meta-Llama-3.1-405B-Instruct-Virtuals",
   "deepseek-ai/DeepSeek-R1",
 ] as const;
 
-export type HyperbolicModelId = (typeof _models)[number] | (string & {});
+export type HyperbolicChatModelId = (typeof _models)[number] | (string & {});
