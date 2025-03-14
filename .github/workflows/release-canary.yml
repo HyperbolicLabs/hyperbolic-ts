@@ -1,10 +1,11 @@
 name: Release Canary
 
 on:
-  push:
-    branches-ignore:
-      - main
-      - changeset-release/main
+  pull_request:
+    branches:
+      - "**"
+      - "!main"
+      - "!changeset-release/main"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
