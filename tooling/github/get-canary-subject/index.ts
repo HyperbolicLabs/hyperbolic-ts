@@ -2,7 +2,9 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 import * as colors from "colorette";
 
-export function run(): string {
+import { sanitizeBranchName } from "./sanitize-branch-name";
+
+function run(): string {
   try {
     // Remove the `refs/heads/` prefix from the branch name
     const rawBranchName = github.context.ref.split("refs/heads/").pop();
@@ -12,9 +14,7 @@ export function run(): string {
       throw new Error("Unable to detect branch name.");
     }
 
-    // Truncate the name to a reasonable length and
-    // replace all non-alphanumeric characters with a dash
-    const sanitizedBranchName = rawBranchName.slice(0, 30).replace(/[^a-zA-Z0-9]/g, "-");
+    const sanitizedBranchName = sanitizeBranchName(rawBranchName);
 
     return sanitizedBranchName;
   } catch (error) {
