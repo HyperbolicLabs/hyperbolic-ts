@@ -28,6 +28,10 @@ jobs:
         run: |
           touch .env
 
+      - name: Build
+        run: |
+          pnpm build:ai-sdk-provider
+
       - name: Extract Canary Subject From Branch Name
         id: get-canary-subject
         uses: ./tooling/github/get-canary-subject
