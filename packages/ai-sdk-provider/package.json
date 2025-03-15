@@ -4,7 +4,17 @@
   "version": "0.0.3",
   "type": "module",
   "exports": {
-    "./*": "./dist/src/*.d.ts"
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json",
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "import": "./dist/src/*.js",
+      "default": "./dist/src/*.js"
+    }
   },
   "license": "Apache-2.0",
   "scripts": {
@@ -34,5 +44,12 @@
     "@ai-sdk/provider-utils": "^2.1.12",
     "@openrouter/ai-sdk-provider": "^0.4.3",
     "zod": "^3.24.2"
-  }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts"
 }
