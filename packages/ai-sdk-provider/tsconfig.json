@@ -1,7 +1,7 @@
 {
   "extends": "@hyperbolic/tsconfig/external-package.json",
   "compilerOptions": {
-    "rootDir": "."
+    "rootDir": "./src"
   },
   "include": ["*.ts", "src"],
   "exclude": ["node_modules"]
