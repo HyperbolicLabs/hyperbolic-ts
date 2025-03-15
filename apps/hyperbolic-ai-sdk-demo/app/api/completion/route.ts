@@ -1,6 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
-import { createHyperbolic } from "@hyperbolic/ai-sdk-provider/dist/index";
+
+import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
 
 const hyperbolic = createHyperbolic({
   apiKey: process.env.HYPERBOLIC_API_KEY,
