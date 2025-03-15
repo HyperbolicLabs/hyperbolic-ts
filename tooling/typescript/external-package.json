@@ -13,7 +13,9 @@
     "stripInternal": true,
     "importHelpers": true,
     "newLine": "lf",
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node"
   },
   "include": ["src/**/*"],
   "exclude": ["**/*.test.*", "**/*.spec.*", "**/__tests__/*", "node_modules", "dist"]
