@@ -1,22 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "External Package",
   "extends": "./base.json",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
-    "noEmit": false,
-    "outDir": "${configDir}/dist",
-    "composite": true,
-    "sourceMap": true,
-    "inlineSources": true,
-    "stripInternal": true,
-    "importHelpers": true,
-    "newLine": "lf",
-    "forceConsistentCasingInFileNames": true,
+    "lib": ["dom", "ES2018"],
     "module": "ESNext",
-    "moduleResolution": "Node"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["**/*.test.*", "**/*.spec.*", "**/__tests__/*", "node_modules", "dist"]
+    "moduleResolution": "Bundler",
+    "target": "ES2018",
+    "stripInternal": true
+  }
 }
