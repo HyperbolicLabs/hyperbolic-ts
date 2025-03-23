@@ -27,7 +27,7 @@ export interface HyperbolicProvider {
   ): HyperbolicChatLanguageModel;
 
   /**
-Creates a Hyperbolic chat model for text generation.
+   * Creates a Hyperbolic chat model for text generation.
    */
   chat(
     modelId: HyperbolicChatModelId,
@@ -45,46 +45,46 @@ Creates a Hyperbolic chat model for text generation.
 
 export interface HyperbolicProviderSettings {
   /**
-Base URL for the Hyperbolic API calls.
-     */
+   * Base URL for the Hyperbolic API calls.
+   */
   baseURL?: string;
 
   /**
-@deprecated Use `baseURL` instead.
-     */
+   * @deprecated Use `baseURL` instead.
+   */
   baseUrl?: string;
 
   /**
-API key for authenticating requests.
-     */
+   * API key for authenticating requests.
+   */
   apiKey?: string;
 
   /**
-Custom headers to include in the requests.
-     */
+   * Custom headers to include in the requests.
+   */
   headers?: Record<string, string>;
 
   /**
-Hyperbolic compatibility mode. Should be set to `strict` when using the Hyperbolic API,
-and `compatible` when using 3rd party providers. In `compatible` mode, newer
-information such as streamOptions are not being sent. Defaults to 'compatible'.
+   * Hyperbolic compatibility mode. Should be set to `strict` when using the Hyperbolic API,
+   * and `compatible` when using 3rd party providers. In `compatible` mode, newer
+   * information such as streamOptions are not being sent. Defaults to 'compatible'.
    */
   compatibility?: "strict" | "compatible";
 
   /**
-Custom fetch implementation. You can use it as a middleware to intercept requests,
-or to provide a custom fetch implementation for e.g. testing.
-    */
+   * Custom fetch implementation. You can use it as a middleware to intercept requests,
+   * or to provide a custom fetch implementation for e.g. testing.
+   */
   fetch?: typeof fetch;
 
   /**
-A JSON object to send as the request body to access Hyperbolic features & upstream provider features.
-  */
+   * A JSON object to send as the request body to access Hyperbolic features & upstream provider features.
+   */
   extraBody?: Record<string, unknown>;
 }
 
 /**
-Create an Hyperbolic provider instance.
+ * Create an Hyperbolic provider instance.
  */
 export function createHyperbolic(options: HyperbolicProviderSettings = {}): HyperbolicProvider {
   const baseURL =
