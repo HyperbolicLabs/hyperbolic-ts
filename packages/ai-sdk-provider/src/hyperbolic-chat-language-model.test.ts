@@ -4,6 +4,7 @@ import {
   JsonTestServer,
   StreamingTestServer,
 } from "@ai-sdk/provider-utils/test";
+import { describe, expect, it } from "vitest";
 
 import { createHyperbolic } from "./hyperbolic-provider";
 import { mapHyperbolicChatLogProbsOutput } from "./map-hyperbolic-chat-logprobs";
@@ -826,7 +827,7 @@ describe("doStream", () => {
   it("should handle error stream parts", async () => {
     server.responseChunks = [
       `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
-        `help center at help.openrouter.com if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
+        `help center at app.hyperbolic.xyz/support if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
       "data: [DONE]\n\n",
     ];
 
@@ -843,7 +844,7 @@ describe("doStream", () => {
           message:
             "The server had an error processing your request. Sorry about that! " +
             "You can retry your request, or contact us through our help center at " +
-            "help.openrouter.com if you keep seeing this error.",
+            "app.hyperbolic.xyz/support if you keep seeing this error.",
           type: "server_error",
           code: null,
           param: null,

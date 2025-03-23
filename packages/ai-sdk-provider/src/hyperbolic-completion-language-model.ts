@@ -19,7 +19,7 @@ import type {
   HyperbolicCompletionSettings,
 } from "./hyperbolic-completion-settings";
 import { convertToHyperbolicCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
-import { HyperbolicErrorResponseSchema, openrouterFailedResponseHandler } from "./hyperbolic-error";
+import { HyperbolicErrorResponseSchema, hyperbolicFailedResponseHandler } from "./hyperbolic-error";
 import { mapHyperbolicCompletionLogProbs } from "./map-hyperbolic-completion-logprobs";
 import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
@@ -46,8 +46,6 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV1 {
     settings: HyperbolicCompletionSettings,
     config: HyperbolicCompletionConfig,
   ) {
-    console.log("here!!!!!!!!!!!!!!!!! HyperbolicCompletionLanguageModel");
-
     this.modelId = modelId;
     this.settings = settings;
     this.config = config;
@@ -74,7 +72,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV1 {
   }: Parameters<LanguageModelV1["doGenerate"]>[0]) {
     const type = mode.type;
 
-    const extraCallingBody = providerMetadata?.["openrouter"] ?? {};
+    const extraCallingBody = providerMetadata?.["hyperbolic"] ?? {};
 
     const { prompt: completionPrompt } = convertToHyperbolicCompletionPrompt({
       prompt,
@@ -175,7 +173,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV1 {
       }),
       headers: combineHeaders(this.config.headers(), options.headers),
       body: args,
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createJsonResponseHandler(HyperbolicCompletionChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
@@ -230,7 +228,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV1 {
         stream_options:
           this.config.compatibility === "strict" ? { include_usage: true } : undefined,
       },
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createEventSourceResponseHandler(HyperbolicCompletionChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,

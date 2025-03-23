@@ -20,7 +20,7 @@ import { z } from "zod";
 
 import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
 import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
-import { HyperbolicErrorResponseSchema, openrouterFailedResponseHandler } from "./hyperbolic-error";
+import { HyperbolicErrorResponseSchema, hyperbolicFailedResponseHandler } from "./hyperbolic-error";
 import { mapHyperbolicChatLogProbsOutput } from "./map-hyperbolic-chat-logprobs";
 import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
@@ -53,7 +53,6 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
     settings: HyperbolicChatSettings,
     config: HyperbolicChatConfig,
   ) {
-    console.log("here!!!!!!!!!!!!!!!!! HyperbolicChatLanguageModel");
     this.modelId = modelId;
     this.settings = settings;
     this.config = config;
@@ -78,7 +77,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
     providerMetadata,
   }: Parameters<LanguageModelV1["doGenerate"]>[0]) {
     const type = mode.type;
-    const extraCallingBody = providerMetadata?.["openrouter"] ?? {};
+    const extraCallingBody = providerMetadata?.["hyperbolic"] ?? {};
 
     const baseArgs = {
       // model id:
@@ -177,7 +176,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
       }),
       headers: combineHeaders(this.config.headers(), options.headers),
       body: args,
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createJsonResponseHandler(
         HyperbolicNonStreamChatCompletionResponseSchema,
       ),
@@ -237,7 +236,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
         stream_options:
           this.config.compatibility === "strict" ? { include_usage: true } : undefined,
       },
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createEventSourceResponseHandler(
         HyperbolicStreamChatCompletionChunkSchema,
       ),

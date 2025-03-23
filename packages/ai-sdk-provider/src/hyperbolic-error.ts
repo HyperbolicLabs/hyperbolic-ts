@@ -12,7 +12,7 @@ export const HyperbolicErrorResponseSchema = z.object({
 
 export type HyperbolicErrorData = z.infer<typeof HyperbolicErrorResponseSchema>;
 
-export const openrouterFailedResponseHandler = createJsonErrorResponseHandler({
+export const hyperbolicFailedResponseHandler = createJsonErrorResponseHandler({
   errorSchema: HyperbolicErrorResponseSchema,
   errorToMessage: (data) => data.error.message,
 });

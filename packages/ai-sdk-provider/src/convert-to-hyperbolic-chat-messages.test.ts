@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
 
 describe("user messages", () => {

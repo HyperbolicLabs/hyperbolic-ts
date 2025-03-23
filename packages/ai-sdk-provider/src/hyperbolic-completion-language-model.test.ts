@@ -4,6 +4,7 @@ import {
   JsonTestServer,
   StreamingTestServer,
 } from "@ai-sdk/provider-utils/test";
+import { describe, expect, it } from "vitest";
 
 import { createHyperbolic } from "./hyperbolic-provider";
 import { mapHyperbolicCompletionLogProbs } from "./map-hyperbolic-completion-logprobs";
@@ -46,7 +47,6 @@ const model = provider.completion("openai/gpt-3.5-turbo-instruct");
 
 describe("doGenerate", () => {
   const server = new JsonTestServer("https://api.hyperbolic.xyz/v1/completions");
-
   server.setupTestEnvironment();
 
   function prepareJsonResponse({
@@ -333,7 +333,7 @@ describe("doStream", () => {
   it("should handle error stream parts", async () => {
     server.responseChunks = [
       `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
-        `help center at help.openrouter.com if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
+        `help center at app.hyperbolic.xyz/support if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
       "data: [DONE]\n\n",
     ];
 
@@ -350,7 +350,7 @@ describe("doStream", () => {
           message:
             "The server had an error processing your request. Sorry about that! " +
             "You can retry your request, or contact us through our help center at " +
-            "help.openrouter.com if you keep seeing this error.",
+            "app.hyperbolic.xyz/support if you keep seeing this error.",
           type: "server_error",
           code: null,
           param: null,

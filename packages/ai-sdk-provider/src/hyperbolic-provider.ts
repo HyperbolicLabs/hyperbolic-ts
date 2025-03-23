@@ -96,7 +96,7 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
   const getHeaders = () => ({
     Authorization: `Bearer ${loadApiKey({
       apiKey: options.apiKey,
-      environmentVariableName: "OPENROUTER_API_KEY",
+      environmentVariableName: "HYPERBOLIC_API_KEY",
       description: "Hyperbolic",
     })}`,
     ...options.headers,
@@ -104,7 +104,7 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
 
   const createChatModel = (modelId: HyperbolicChatModelId, settings: HyperbolicChatSettings = {}) =>
     new HyperbolicChatLanguageModel(modelId, settings, {
-      provider: "openrouter.chat",
+      provider: "hyperbolic.chat",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       compatibility,
@@ -117,7 +117,7 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
     settings: HyperbolicCompletionSettings = {},
   ) =>
     new HyperbolicCompletionLanguageModel(modelId, settings, {
-      provider: "openrouter.completion",
+      provider: "hyperbolic.completion",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       compatibility,
@@ -153,10 +153,3 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
 
   return provider as HyperbolicProvider;
 }
-
-/**
-Default Hyperbolic provider instance. It uses 'strict' compatibility mode.
- */
-export const openrouter = createHyperbolic({
-  compatibility: "strict", // strict for Hyperbolic API
-});
