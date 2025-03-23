@@ -2,6 +2,7 @@
   "name": "hyperbolic-ai-sdk-demo",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "_dev": "pnpm with-env next dev",
     "_build": "pnpm with-env next build",
