@@ -5,8 +5,10 @@ import type {
   HyperbolicCompletionModelId,
   HyperbolicCompletionSettings,
 } from "./hyperbolic-completion-settings";
+import type { HyperbolicImageModelId, HyperbolicImageSettings } from "./hyperbolic-image-settings";
 import { HyperbolicChatLanguageModel } from "./hyperbolic-chat-language-model";
 import { HyperbolicCompletionLanguageModel } from "./hyperbolic-completion-language-model";
+import { HyperbolicImageModel } from "./hyperbolic-image-language-model";
 
 export type { HyperbolicCompletionSettings };
 
@@ -41,6 +43,11 @@ export interface HyperbolicProvider {
     modelId: HyperbolicCompletionModelId,
     settings?: HyperbolicCompletionSettings,
   ): HyperbolicCompletionLanguageModel;
+
+  /**
+   * Creates a Hyperbolic image model for image generation.
+   */
+  image(modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings): HyperbolicImageModel;
 }
 
 export interface HyperbolicProviderSettings {
@@ -125,6 +132,19 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
       extraBody: options.extraBody,
     });
 
+  const createImageModel = (
+    modelId: HyperbolicImageModelId,
+    settings: HyperbolicImageSettings = {},
+  ) =>
+    new HyperbolicImageModel(modelId, settings, {
+      provider: "hyperbolic.image",
+      url: ({ path }) => `${baseURL}${path}`,
+      headers: getHeaders,
+      compatibility,
+      fetch: options.fetch,
+      extraBody: options.extraBody,
+    });
+
   const createLanguageModel = (
     modelId: HyperbolicChatModelId | HyperbolicCompletionModelId,
     settings?: HyperbolicChatSettings | HyperbolicCompletionSettings,
@@ -150,6 +170,7 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
   provider.languageModel = createLanguageModel;
   provider.chat = createChatModel;
   provider.completion = createCompletionModel;
+  provider.image = createImageModel;
 
   return provider as HyperbolicProvider;
 }
