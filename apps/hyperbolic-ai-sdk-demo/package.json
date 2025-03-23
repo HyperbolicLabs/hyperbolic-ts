@@ -3,10 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm with-env next dev",
-    "build": "pnpm with-env next build",
-    "start": "pnpm with-env next start",
-    "lint": "next lint",
+    "_dev": "pnpm with-env next dev",
+    "_build": "pnpm with-env next build",
+    "_start": "pnpm with-env next start",
     "with-env": "dotenv -e ./.env.local -c --"
   },
   "dependencies": {
