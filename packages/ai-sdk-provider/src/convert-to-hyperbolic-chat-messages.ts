@@ -1,7 +1,7 @@
 import type { LanguageModelV1Prompt, LanguageModelV1ProviderMetadata } from "@ai-sdk/provider";
 import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 
-import type { ChatCompletionContentPart, HyperbolicChatPrompt } from "./openrouter-chat-prompt";
+import type { ChatCompletionContentPart, HyperbolicChatPrompt } from "./hyperbolic-chat-prompt";
 
 // Type for Hyperbolic Cache Control following Anthropic's pattern
 export type HyperbolicCacheControl = { type: "ephemeral" };

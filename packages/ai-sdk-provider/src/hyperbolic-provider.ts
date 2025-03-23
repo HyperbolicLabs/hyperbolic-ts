@@ -1,12 +1,12 @@
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
-import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./openrouter-chat-settings";
+import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
 import type {
   HyperbolicCompletionModelId,
   HyperbolicCompletionSettings,
-} from "./openrouter-completion-settings";
-import { HyperbolicChatLanguageModel } from "./openrouter-chat-language-model";
-import { HyperbolicCompletionLanguageModel } from "./openrouter-completion-language-model";
+} from "./hyperbolic-completion-settings";
+import { HyperbolicChatLanguageModel } from "./hyperbolic-chat-language-model";
+import { HyperbolicCompletionLanguageModel } from "./hyperbolic-completion-language-model";
 
 export type { HyperbolicCompletionSettings };
 
@@ -88,7 +88,7 @@ Create an Hyperbolic provider instance.
  */
 export function createHyperbolic(options: HyperbolicProviderSettings = {}): HyperbolicProvider {
   const baseURL =
-    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://openrouter.ai/api/v1";
+    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://api.hyperbolic.xyz/v1";
 
   // we default to compatible, because strict breaks providers like Groq:
   const compatibility = options.compatibility ?? "compatible";

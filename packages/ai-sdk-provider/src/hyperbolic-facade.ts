@@ -1,13 +1,13 @@
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
-import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./openrouter-chat-settings";
+import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
 import type {
   HyperbolicCompletionModelId,
   HyperbolicCompletionSettings,
-} from "./openrouter-completion-settings";
-import type { HyperbolicProviderSettings } from "./openrouter-provider";
-import { HyperbolicChatLanguageModel } from "./openrouter-chat-language-model";
-import { HyperbolicCompletionLanguageModel } from "./openrouter-completion-language-model";
+} from "./hyperbolic-completion-settings";
+import type { HyperbolicProviderSettings } from "./hyperbolic-provider";
+import { HyperbolicChatLanguageModel } from "./hyperbolic-chat-language-model";
+import { HyperbolicCompletionLanguageModel } from "./hyperbolic-completion-language-model";
 
 /**
 @deprecated Use `createHyperbolic` instead.
@@ -15,7 +15,7 @@ import { HyperbolicCompletionLanguageModel } from "./openrouter-completion-langu
 export class Hyperbolic {
   /**
 Use a different URL prefix for API calls, e.g. to use proxy servers.
-The default prefix is `https://openrouter.ai/api/v1`.
+The default prefix is `https://api.hyperbolic.xyz/v1`.
    */
   readonly baseURL: string;
 
@@ -35,7 +35,7 @@ Custom headers to include in the requests.
    */
   constructor(options: HyperbolicProviderSettings = {}) {
     this.baseURL =
-      withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://openrouter.ai/api/v1";
+      withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://api.hyperbolic.xyz/v1";
     this.apiKey = options.apiKey;
     this.headers = options.headers;
   }

@@ -1,3 +1,3 @@
-export * from './openrouter-facade';
-export * from './openrouter-provider';
-export * from './types';
+export * from "./hyperbolic-facade";
+export * from "./hyperbolic-provider";
+export * from "./types";

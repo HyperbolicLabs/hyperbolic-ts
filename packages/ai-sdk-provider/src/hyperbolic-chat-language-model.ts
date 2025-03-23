@@ -18,11 +18,11 @@ import {
 } from "@ai-sdk/provider-utils";
 import { z } from "zod";
 
-import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./openrouter-chat-settings";
-import { convertToHyperbolicChatMessages } from "./convert-to-openrouter-chat-messages";
-import { mapHyperbolicChatLogProbsOutput } from "./map-openrouter-chat-logprobs";
-import { mapHyperbolicFinishReason } from "./map-openrouter-finish-reason";
-import { HyperbolicErrorResponseSchema, openrouterFailedResponseHandler } from "./openrouter-error";
+import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
+import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
+import { HyperbolicErrorResponseSchema, openrouterFailedResponseHandler } from "./hyperbolic-error";
+import { mapHyperbolicChatLogProbsOutput } from "./map-hyperbolic-chat-logprobs";
+import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
 function isFunctionTool(
   tool: LanguageModelV1FunctionTool | LanguageModelV1ProviderDefinedTool,

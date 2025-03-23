@@ -17,11 +17,11 @@ import { z } from "zod";
 import type {
   HyperbolicCompletionModelId,
   HyperbolicCompletionSettings,
-} from "./openrouter-completion-settings";
-import { convertToHyperbolicCompletionPrompt } from "./convert-to-openrouter-completion-prompt";
-import { mapHyperbolicCompletionLogProbs } from "./map-openrouter-completion-logprobs";
-import { mapHyperbolicFinishReason } from "./map-openrouter-finish-reason";
-import { HyperbolicErrorResponseSchema, openrouterFailedResponseHandler } from "./openrouter-error";
+} from "./hyperbolic-completion-settings";
+import { convertToHyperbolicCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
+import { HyperbolicErrorResponseSchema, openrouterFailedResponseHandler } from "./hyperbolic-error";
+import { mapHyperbolicCompletionLogProbs } from "./map-hyperbolic-completion-logprobs";
+import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
 type HyperbolicCompletionConfig = {
   provider: string;

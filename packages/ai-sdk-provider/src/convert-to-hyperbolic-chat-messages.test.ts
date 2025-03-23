@@ -1,4 +1,4 @@
-import { convertToHyperbolicChatMessages } from "./convert-to-openrouter-chat-messages";
+import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
 
 describe("user messages", () => {
   it("should convert messages with image parts to multiple parts", async () => {

@@ -5,8 +5,8 @@ import {
   StreamingTestServer,
 } from "@ai-sdk/provider-utils/test";
 
-import { mapHyperbolicChatLogProbsOutput } from "./map-openrouter-chat-logprobs";
-import { createHyperbolic } from "./openrouter-provider";
+import { createHyperbolic } from "./hyperbolic-provider";
+import { mapHyperbolicChatLogProbsOutput } from "./map-hyperbolic-chat-logprobs";
 
 const TEST_PROMPT: LanguageModelV1Prompt = [
   { role: "user", content: [{ type: "text", text: "Hello" }] },
@@ -115,7 +115,7 @@ const provider = createHyperbolic({
 const model = provider.chat("anthropic/claude-3.5-sonnet");
 
 describe("doGenerate", () => {
-  const server = new JsonTestServer("https://openrouter.ai/api/v1/chat/completions");
+  const server = new JsonTestServer("https://api.hyperbolic.xyz/v1/chat/completions");
 
   server.setupTestEnvironment();
 
@@ -409,7 +409,7 @@ describe("doGenerate", () => {
 });
 
 describe("doStream", () => {
-  const server = new StreamingTestServer("https://openrouter.ai/api/v1/chat/completions");
+  const server = new StreamingTestServer("https://api.hyperbolic.xyz/v1/chat/completions");
 
   server.setupTestEnvironment();
 

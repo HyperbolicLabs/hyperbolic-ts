@@ -3,7 +3,7 @@ import { createTestServer } from "@ai-sdk/provider-utils/test";
 import { streamText } from "ai";
 import { describe, expect, it, vi } from "vitest";
 
-import { createHyperbolic } from "./openrouter-provider";
+import { createHyperbolic } from "./hyperbolic-provider";
 
 // Add type assertions for the mocked classes
 const TEST_MESSAGES: LanguageModelV1Prompt = [
@@ -12,7 +12,7 @@ const TEST_MESSAGES: LanguageModelV1Prompt = [
 
 describe("providerOptions", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: {
         type: "stream-chunks",
         chunks: [],

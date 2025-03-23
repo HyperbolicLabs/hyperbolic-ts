@@ -5,8 +5,8 @@ import {
   StreamingTestServer,
 } from "@ai-sdk/provider-utils/test";
 
-import { mapHyperbolicCompletionLogProbs } from "./map-openrouter-completion-logprobs";
-import { createHyperbolic } from "./openrouter-provider";
+import { createHyperbolic } from "./hyperbolic-provider";
+import { mapHyperbolicCompletionLogProbs } from "./map-hyperbolic-completion-logprobs";
 
 const TEST_PROMPT: LanguageModelV1Prompt = [
   { role: "user", content: [{ type: "text", text: "Hello" }] },
@@ -45,7 +45,7 @@ const provider = createHyperbolic({
 const model = provider.completion("openai/gpt-3.5-turbo-instruct");
 
 describe("doGenerate", () => {
-  const server = new JsonTestServer("https://openrouter.ai/api/v1/completions");
+  const server = new JsonTestServer("https://api.hyperbolic.xyz/v1/completions");
 
   server.setupTestEnvironment();
 
@@ -251,7 +251,7 @@ describe("doGenerate", () => {
 });
 
 describe("doStream", () => {
-  const server = new StreamingTestServer("https://openrouter.ai/api/v1/completions");
+  const server = new StreamingTestServer("https://api.hyperbolic.xyz/v1/completions");
 
   server.setupTestEnvironment();
 
