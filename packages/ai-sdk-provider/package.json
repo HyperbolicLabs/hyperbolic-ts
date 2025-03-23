@@ -10,14 +10,14 @@
     "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./internal": {
       "types": "./internal/dist/index.d.ts",
-      "import": "./internal/dist/index.mjs",
-      "module": "./internal/dist/index.mjs",
-      "require": "./internal/dist/index.js"
+      "import": "./internal/dist/index.js",
+      "module": "./internal/dist/index.js",
+      "require": "./internal/dist/index.cjs"
     }
   },
   "files": [
@@ -29,7 +29,7 @@
   "scripts": {
     "build": "tsup",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "pnpm with-env tsc",
+    "dev": "pnpm with-env tsup",
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
@@ -53,6 +53,7 @@
     "@ai-sdk/provider": "^1.0.10",
     "@ai-sdk/provider-utils": "^2.1.12",
     "@openrouter/ai-sdk-provider": "^0.4.3",
+    "ai": "4.1.58",
     "zod": "^3.24.2"
   }
 }

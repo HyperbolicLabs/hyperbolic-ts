@@ -8,4 +8,25 @@ const _models = [
 {{/each}}
 ] as const;
 
-export type HyperbolicModelId = (typeof _models)[number] | (string & {});
+const _imageModels = [
+{{#each imageModelId}}
+  "{{this}}",
+{{/each}}
+] as const;
+
+const _chatModels = [
+{{#each chatModelId}}
+  "{{this}}",
+{{/each}}
+] as const;
+
+const _completionModels = [
+{{#each completionModelId}}
+  "{{this}}",
+{{/each}}
+] as const;
+
+export type HyperbolicImageModelId = (typeof _imageModels)[number] | (string & {});
+export type HyperbolicChatModelId = (typeof _chatModels)[number] | (string & {});
+export type HyperbolicCompletionModelId = (typeof _completionModels)[number] | (string & {});
+export type HyperbolicModelId = HyperbolicImageModelId | HyperbolicChatModelId | HyperbolicCompletionModelId;

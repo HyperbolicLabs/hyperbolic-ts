@@ -144,6 +144,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.15
         version: 3.4.17(ts-node@10.9.2(@types/node@17.0.45)(typescript@5.6.3))
+      type-fest:
+        specifier: ^4.37.0
+        version: 4.37.0
       typescript:
         specifier: 5.6.3
         version: 5.6.3
@@ -159,6 +162,9 @@ importers:
       '@openrouter/ai-sdk-provider':
         specifier: ^0.4.3
         version: 0.4.3(zod@3.24.2)
+      ai:
+        specifier: 4.1.58
+        version: 4.1.58(react@18.3.1)(zod@3.24.2)
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -5169,6 +5175,16 @@ snapshots:
       react: 18.3.1
       zod: 3.24.1
 
+  '@ai-sdk/react@1.1.22(react@18.3.1)(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider-utils': 2.1.12(zod@3.24.2)
+      '@ai-sdk/ui-utils': 1.1.18(zod@3.24.2)
+      swr: 2.3.3(react@18.3.1)
+      throttleit: 2.1.0
+    optionalDependencies:
+      react: 18.3.1
+      zod: 3.24.2
+
   '@ai-sdk/ui-utils@1.1.18(zod@3.24.1)':
     dependencies:
       '@ai-sdk/provider': 1.0.10
@@ -5176,6 +5192,14 @@ snapshots:
       zod-to-json-schema: 3.24.4(zod@3.24.1)
     optionalDependencies:
       zod: 3.24.1
+
+  '@ai-sdk/ui-utils@1.1.18(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.10
+      '@ai-sdk/provider-utils': 2.1.12(zod@3.24.2)
+      zod-to-json-schema: 3.24.4(zod@3.24.2)
+    optionalDependencies:
+      zod: 3.24.2
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -6578,6 +6602,19 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
       zod: 3.24.1
+
+  ai@4.1.58(react@18.3.1)(zod@3.24.2):
+    dependencies:
+      '@ai-sdk/provider': 1.0.10
+      '@ai-sdk/provider-utils': 2.1.12(zod@3.24.2)
+      '@ai-sdk/react': 1.1.22(react@18.3.1)(zod@3.24.2)
+      '@ai-sdk/ui-utils': 1.1.18(zod@3.24.2)
+      '@opentelemetry/api': 1.9.0
+      eventsource-parser: 3.0.0
+      jsondiffpatch: 0.6.0
+    optionalDependencies:
+      react: 18.3.1
+      zod: 3.24.2
 
   ajv@6.12.6:
     dependencies:
@@ -10545,6 +10582,10 @@ snapshots:
   zod-to-json-schema@3.24.4(zod@3.24.1):
     dependencies:
       zod: 3.24.1
+
+  zod-to-json-schema@3.24.4(zod@3.24.2):
+    dependencies:
+      zod: 3.24.2
 
   zod@3.24.1: {}
 

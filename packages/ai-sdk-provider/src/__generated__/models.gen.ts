@@ -4,18 +4,11 @@
 
 const _models = [
   "Qwen/Qwen2.5-72B-Instruct",
-  "meta-llama/Llama-3.2-3B-Instruct",
   "Qwen/Qwen2.5-VL-72B-Instruct",
-  "FLUX.1-dev",
-  "mistralai/Pixtral-12B-2409",
-  "StableDiffusion",
   "meta-llama/Meta-Llama-3-70B-Instruct",
   "meta-llama/Meta-Llama-3.1-70B-Instruct",
-  "meta-llama/Meta-Llama-3.1-8B-Instruct",
-  "Qwen/Qwen2.5-Coder-32B-Instruct",
   "meta-llama/Meta-Llama-3.1-405B-FP8",
   "Qwen/Qwen2.5-VL-7B-Instruct",
-  "TTS",
   "meta-llama/Meta-Llama-3.1-405B-Instruct",
   "Qwen/QwQ-32B",
   "deepseek-ai/DeepSeek-V3",
@@ -23,7 +16,26 @@ const _models = [
   "meta-llama/Llama-3.3-70B-Instruct",
   "NousResearch/Hermes-3-Llama-3.1-70B",
   "meta-llama/Meta-Llama-3.1-405B",
+  "meta-llama/Llama-3.2-3B-Instruct",
+  "FLUX.1-dev",
+  "mistralai/Pixtral-12B-2409",
+  "StableDiffusion",
+  "meta-llama/Meta-Llama-3.1-8B-Instruct",
+  "Qwen/Qwen2.5-Coder-32B-Instruct",
+  "TTS",
   "deepseek-ai/DeepSeek-R1",
 ] as const;
 
-export type HyperbolicModelId = (typeof _models)[number] | (string & {});
+const _imageModels = [] as const;
+
+const _chatModels = [] as const;
+
+const _completionModels = [] as const;
+
+export type HyperbolicImageModelId = (typeof _imageModels)[number] | string;
+export type HyperbolicChatModelId = (typeof _chatModels)[number] | string;
+export type HyperbolicCompletionModelId = (typeof _completionModels)[number] | string;
+export type HyperbolicModelId =
+  | HyperbolicImageModelId
+  | HyperbolicChatModelId
+  | HyperbolicCompletionModelId;
