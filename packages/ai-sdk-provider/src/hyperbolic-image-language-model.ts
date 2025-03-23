@@ -93,7 +93,7 @@ export class HyperbolicImageModel implements ImageModelV1 {
     });
 
     return {
-      images: response.images,
+      images: response.images.map((image) => image.image),
       warnings,
       response: {
         timestamp: currentDate,
@@ -106,5 +106,11 @@ export class HyperbolicImageModel implements ImageModelV1 {
 
 // minimal version of the schema, focussed on what is needed for the implementation to avoid breaking changes
 const hyperbolicImageResponseSchema = z.object({
-  images: z.array(z.string()),
+  images: z.array(
+    z.object({
+      image: z.string(),
+      index: z.number(),
+      random_seed: z.number(),
+    }),
+  ),
 });
