@@ -17,3 +17,8 @@ export type HyperbolicImageProviderOptions = {
   strength?: number;
   enableRefiner?: boolean;
 };
+
+export type HyperbolicImageProviderResponseMetadata = {
+  inferenceTime: number;
+  randomSeeds: number[];
+};

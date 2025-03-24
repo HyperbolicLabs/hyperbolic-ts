@@ -5,6 +5,7 @@ import { z } from "zod";
 import type {
   HyperbolicImageModelId,
   HyperbolicImageProviderOptions,
+  HyperbolicImageProviderResponseMetadata,
   HyperbolicImageSettings,
 } from "./hyperbolic-image-settings";
 import { hyperbolicFailedResponseHandler } from "./hyperbolic-error";
@@ -41,10 +42,7 @@ export class HyperbolicImageModel implements ImageModelV1 {
   ): Promise<
     Omit<Awaited<ReturnType<ImageModelV1["doGenerate"]>>, "response"> & {
       response: Awaited<ReturnType<ImageModelV1["doGenerate"]>>["response"] & {
-        hyperbolic: {
-          inferenceTime: number;
-          randomSeeds: number[];
-        };
+        hyperbolic: HyperbolicImageProviderResponseMetadata;
       };
     }
   > {
