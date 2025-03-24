@@ -38,7 +38,16 @@ export class HyperbolicImageModel implements ImageModelV1 {
         hyperbolic?: HyperbolicImageProviderOptions;
       };
     },
-  ): Promise<Awaited<ReturnType<ImageModelV1["doGenerate"]>>> {
+  ): Promise<
+    Omit<Awaited<ReturnType<ImageModelV1["doGenerate"]>>, "response"> & {
+      response: Awaited<ReturnType<ImageModelV1["doGenerate"]>>["response"] & {
+        hyperbolic: {
+          inferenceTime: number;
+          randomSeeds: number[];
+        };
+      };
+    }
+  > {
     const warnings: Array<ImageModelV1CallWarning> = [];
     const [width, height] = options.size ? options.size.split("x").map(Number) : [];
 
@@ -78,7 +87,6 @@ export class HyperbolicImageModel implements ImageModelV1 {
       });
     }
 
-    const currentDate = new Date();
     const { value: response, responseHeaders } = await postJsonToApi({
       url: this.config.url({
         path: "/image/generation",
@@ -96,9 +104,13 @@ export class HyperbolicImageModel implements ImageModelV1 {
       images: response.images.map((image) => image.image),
       warnings,
       response: {
-        timestamp: currentDate,
+        timestamp: new Date(),
         modelId: this.modelId,
         headers: responseHeaders,
+        hyperbolic: {
+          inferenceTime: response.inference_time,
+          randomSeeds: response.images.map((image) => image.random_seed),
+        },
       },
     };
   }
@@ -113,4 +125,5 @@ const hyperbolicImageResponseSchema = z.object({
       random_seed: z.number(),
     }),
   ),
+  inference_time: z.number(),
 });
