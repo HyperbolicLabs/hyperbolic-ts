@@ -1,3 +1,5 @@
+import type { Experimental_GenerateImageResult } from "ai";
+
 import type { HyperbolicSharedSettings } from "./types";
 
 export type HyperbolicImageModelId = string;
@@ -21,4 +23,13 @@ export type HyperbolicImageProviderOptions = {
 export type HyperbolicImageProviderResponseMetadata = {
   inferenceTime: number;
   randomSeeds: number[];
+};
+
+export type Experimental_HyperbolicGenerateImageResult = Omit<
+  Experimental_GenerateImageResult,
+  "responses"
+> & {
+  responses: (Experimental_GenerateImageResult["responses"][number] & {
+    hyperbolic: HyperbolicImageProviderResponseMetadata;
+  })[];
 };
