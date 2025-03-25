@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2025-03-25
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
 import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";

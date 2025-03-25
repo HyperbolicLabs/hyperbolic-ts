@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2025-03-25
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV1Prompt, LanguageModelV1ProviderMetadata } from "@ai-sdk/provider";
 import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 

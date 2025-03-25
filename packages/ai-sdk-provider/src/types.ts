@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2025-03-25
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV1 } from "@ai-sdk/provider";
 
 // Re-export the LanguageModelV1 type to ensure proper type compatibility

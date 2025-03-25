@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2025-03-25
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 // Type for Hyperbolic Cache Control following Anthropic's pattern
 export type HyperbolicCacheControl = { type: "ephemeral" };
 
