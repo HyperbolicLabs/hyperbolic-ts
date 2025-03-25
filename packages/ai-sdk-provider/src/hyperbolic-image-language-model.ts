@@ -59,8 +59,7 @@ export class HyperbolicImageModel implements ImageModelV1 {
       negative_prompt: options.providerOptions?.hyperbolic?.negativePrompt,
       steps: options.providerOptions?.hyperbolic?.steps,
       strength: options.providerOptions?.hyperbolic?.strength,
-
-      // image?: string, // TODO: enable reference images
+      image: options.providerOptions?.hyperbolic?.image,
     };
 
     if (options.aspectRatio != undefined) {

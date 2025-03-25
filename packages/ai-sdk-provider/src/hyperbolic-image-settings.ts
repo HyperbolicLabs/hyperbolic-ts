@@ -18,6 +18,7 @@ export type HyperbolicImageProviderOptions = {
   steps?: number;
   strength?: number;
   enableRefiner?: boolean;
+  image?: string;
 };
 
 export type HyperbolicImageProviderResponseMetadata = {
