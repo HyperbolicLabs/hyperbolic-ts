@@ -6,17 +6,16 @@ import { createJsonErrorResponseHandler } from "@ai-sdk/provider-utils";
 import { z } from "zod";
 
 export const HyperbolicErrorResponseSchema = z.object({
-  error: z.object({
-    message: z.string(),
-    type: z.string(),
-    param: z.any().nullable(),
-    code: z.string().nullable(),
-  }),
+  object: z.string(),
+  message: z.string(),
+  type: z.string(),
+  param: z.any().nullable(),
+  code: z.coerce.number().nullable(),
 });
 
 export type HyperbolicErrorData = z.infer<typeof HyperbolicErrorResponseSchema>;
 
 export const hyperbolicFailedResponseHandler = createJsonErrorResponseHandler({
   errorSchema: HyperbolicErrorResponseSchema,
-  errorToMessage: (data) => data.error.message,
+  errorToMessage: (data) => data.message,
 });
