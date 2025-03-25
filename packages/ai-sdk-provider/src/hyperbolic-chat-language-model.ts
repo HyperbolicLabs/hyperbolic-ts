@@ -24,7 +24,11 @@ import { z } from "zod";
 
 import type { HyperbolicChatModelId, HyperbolicChatSettings } from "./hyperbolic-chat-settings";
 import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
-import { HyperbolicErrorResponseSchema, hyperbolicFailedResponseHandler } from "./hyperbolic-error";
+import {
+  HyperbolicErrorResponseSchema,
+  hyperbolicFailedResponseHandler,
+  isHyperbolicError,
+} from "./hyperbolic-error";
 import { mapHyperbolicChatLogProbsOutput } from "./map-hyperbolic-chat-logprobs";
 import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
@@ -283,9 +287,9 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
             const value = chunk.value;
 
             // handle error chunks:
-            if ("error" in value) {
+            if (isHyperbolicError(value)) {
               finishReason = "error";
-              controller.enqueue({ type: "error", error: value.error });
+              controller.enqueue({ type: "error", error: value });
               return;
             }
 

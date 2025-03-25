@@ -23,7 +23,11 @@ import type {
   HyperbolicCompletionSettings,
 } from "./hyperbolic-completion-settings";
 import { convertToHyperbolicCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
-import { HyperbolicErrorResponseSchema, hyperbolicFailedResponseHandler } from "./hyperbolic-error";
+import {
+  HyperbolicErrorResponseSchema,
+  hyperbolicFailedResponseHandler,
+  isHyperbolicError,
+} from "./hyperbolic-error";
 import { mapHyperbolicCompletionLogProbs } from "./map-hyperbolic-completion-logprobs";
 import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
 
@@ -184,8 +188,8 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV1 {
     });
 
     const { prompt: rawPrompt, ...rawSettings } = args;
-    if ("error" in response) {
-      throw new Error(`${response.error.message}`);
+    if (isHyperbolicError(response)) {
+      throw new Error(`${response.message}`);
     }
 
     const choice = response.choices[0];
@@ -264,9 +268,9 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV1 {
             const value = chunk.value;
 
             // handle error chunks:
-            if ("error" in value) {
+            if (isHyperbolicError(value)) {
               finishReason = "error";
-              controller.enqueue({ type: "error", error: value.error });
+              controller.enqueue({ type: "error", error: value });
               return;
             }
 
