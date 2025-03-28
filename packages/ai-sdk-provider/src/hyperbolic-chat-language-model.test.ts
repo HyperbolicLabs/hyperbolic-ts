@@ -830,8 +830,8 @@ describe("doStream", () => {
 
   it("should handle error stream parts", async () => {
     server.responseChunks = [
-      `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
-        `help center at app.hyperbolic.xyz/support if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
+      `data: {"object": "error", "message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
+        `help center at app.hyperbolic.xyz/support if you keep seeing this error.","type":"server_error","param":null,"code":null}\n\n`,
       "data: [DONE]\n\n",
     ];
 
@@ -845,6 +845,7 @@ describe("doStream", () => {
       {
         type: "error",
         error: {
+          object: "error",
           message:
             "The server had an error processing your request. Sorry about that! " +
             "You can retry your request, or contact us through our help center at " +

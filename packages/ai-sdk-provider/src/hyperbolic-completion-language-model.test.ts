@@ -47,7 +47,7 @@ const provider = createHyperbolic({
   compatibility: "strict",
 });
 
-const model = provider.completion("openai/gpt-3.5-turbo-instruct");
+const model = provider.completion("meta-llama/Llama-3.1-405B-FP8");
 
 describe("doGenerate", () => {
   const server = new JsonTestServer("https://api.hyperbolic.xyz/v1/completions");
@@ -80,7 +80,7 @@ describe("doGenerate", () => {
       id: "cmpl-96cAM1v77r4jXa4qb2NSmRREV5oWB",
       object: "text_completion",
       created: 1711363706,
-      model: "openai/gpt-3.5-turbo-instruct",
+      model: "meta-llama/Llama-3.1-405B-FP8",
       choices: [
         {
           text: content,
@@ -142,7 +142,7 @@ describe("doGenerate", () => {
       finish_reason: "stop",
     });
 
-    const { finishReason } = await provider.completion("openai/gpt-3.5-turbo-instruct").doGenerate({
+    const { finishReason } = await provider.completion("meta-llama/Llama-3.1-405B-FP8").doGenerate({
       inputFormat: "prompt",
       mode: { type: "regular" },
       prompt: TEST_PROMPT,
@@ -157,7 +157,7 @@ describe("doGenerate", () => {
       finish_reason: "eos",
     });
 
-    const { finishReason } = await provider.completion("openai/gpt-3.5-turbo-instruct").doGenerate({
+    const { finishReason } = await provider.completion("meta-llama/Llama-3.1-405B-FP8").doGenerate({
       inputFormat: "prompt",
       mode: { type: "regular" },
       prompt: TEST_PROMPT,
@@ -199,7 +199,7 @@ describe("doGenerate", () => {
     });
 
     expect(await server.getRequestBodyJson()).toStrictEqual({
-      model: "openai/gpt-3.5-turbo-instruct",
+      model: "meta-llama/Llama-3.1-405B-FP8",
       prompt: "Hello",
     });
   });
@@ -207,7 +207,7 @@ describe("doGenerate", () => {
   it("should pass the models array when provided", async () => {
     prepareJsonResponse({ content: "" });
 
-    const customModel = provider.completion("openai/gpt-3.5-turbo-instruct", {
+    const customModel = provider.completion("meta-llama/Llama-3.1-405B-FP8", {
       models: ["openai/gpt-4", "anthropic/claude-2"],
     });
 
@@ -218,7 +218,7 @@ describe("doGenerate", () => {
     });
 
     expect(await server.getRequestBodyJson()).toStrictEqual({
-      model: "openai/gpt-3.5-turbo-instruct",
+      model: "meta-llama/Llama-3.1-405B-FP8",
       models: ["openai/gpt-4", "anthropic/claude-2"],
       prompt: "Hello",
     });
@@ -234,7 +234,7 @@ describe("doGenerate", () => {
       },
     });
 
-    await provider.completion("openai/gpt-3.5-turbo-instruct").doGenerate({
+    await provider.completion("meta-llama/Llama-3.1-405B-FP8").doGenerate({
       inputFormat: "prompt",
       mode: { type: "regular" },
       prompt: TEST_PROMPT,
@@ -286,15 +286,15 @@ describe("doStream", () => {
       ...content.map((text) => {
         return (
           `data: {"id":"cmpl-96c64EdfhOw8pjFFgVpLuT8k2MtdT","object":"text_completion","created":1711363440,` +
-          `"choices":[{"text":"${text}","index":0,"logprobs":null,"finish_reason":null}],"model":"openai/gpt-3.5-turbo-instruct"}\n\n`
+          `"choices":[{"text":"${text}","index":0,"logprobs":null,"finish_reason":null}],"model":"meta-llama/Llama-3.1-405B-FP8"}\n\n`
         );
       }),
       `data: {"id":"cmpl-96c3yLQE1TtZCd6n6OILVmzev8M8H","object":"text_completion","created":1711363310,` +
         `"choices":[{"text":"","index":0,"logprobs":${JSON.stringify(
           logprobs,
-        )},"finish_reason":"${finish_reason}"}],"model":"openai/gpt-3.5-turbo-instruct"}\n\n`,
+        )},"finish_reason":"${finish_reason}"}],"model":"meta-llama/Llama-3.1-405B-FP8"}\n\n`,
       `data: {"id":"cmpl-96c3yLQE1TtZCd6n6OILVmzev8M8H","object":"text_completion","created":1711363310,` +
-        `"model":"openai/gpt-3.5-turbo-instruct","usage":${JSON.stringify(
+        `"model":"meta-llama/Llama-3.1-405B-FP8","usage":${JSON.stringify(
           usage,
         )},"choices":[]}\n\n`,
       "data: [DONE]\n\n",
@@ -336,8 +336,8 @@ describe("doStream", () => {
 
   it("should handle error stream parts", async () => {
     server.responseChunks = [
-      `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
-        `help center at app.hyperbolic.xyz/support if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
+      `data: {"object": "error", "message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
+        `help center at app.hyperbolic.xyz/support if you keep seeing this error.","type":"server_error","param":null,"code":null}\n\n`,
       "data: [DONE]\n\n",
     ];
 
@@ -351,6 +351,7 @@ describe("doStream", () => {
       {
         type: "error",
         error: {
+          object: "error",
           message:
             "The server had an error processing your request. Sorry about that! " +
             "You can retry your request, or contact us through our help center at " +
@@ -432,7 +433,7 @@ describe("doStream", () => {
     expect(await server.getRequestBodyJson()).toStrictEqual({
       stream: true,
       stream_options: { include_usage: true },
-      model: "openai/gpt-3.5-turbo-instruct",
+      model: "meta-llama/Llama-3.1-405B-FP8",
       prompt: "Hello",
     });
   });
@@ -447,7 +448,7 @@ describe("doStream", () => {
       },
     });
 
-    await provider.completion("openai/gpt-3.5-turbo-instruct").doStream({
+    await provider.completion("meta-llama/Llama-3.1-405B-FP8").doStream({
       inputFormat: "prompt",
       mode: { type: "regular" },
       prompt: TEST_PROMPT,
