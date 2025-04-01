@@ -3,28 +3,60 @@
   "private": false,
   "version": "0.0.3",
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    "./*": {
-      "types": "./dist/src/*.d.ts",
-      "default": "./src/*.ts"
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./internal": {
+      "types": "./dist/internal/index.d.ts",
+      "import": "./dist/internal/index.js",
+      "module": "./dist/internal/index.js",
+      "require": "./dist/internal/index.cjs"
     }
   },
+  "files": [
+    "dist/**/*",
+    "CHANGELOG.md"
+  ],
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "tsc",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "dev": "pnpm with-env tsup",
+    "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../.env -c --",
+    "codegen:update-models": "pnpm with-env npx tsx src/scripts/update-models-list.ts",
+    "test": "pnpm test:node && pnpm test:edge",
+    "test:edge": "pnpm with-env vitest --config vitest.edge.config.ts --run",
+    "test:node": "pnpm with-env vitest --config vitest.node.config.ts --run"
   },
   "prettier": "@hyperbolic/prettier-config",
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
+    "@hyperbolic/api": "workspace:*",
     "@hyperbolic/eslint-config": "workspace:*",
     "@hyperbolic/prettier-config": "workspace:*",
     "@hyperbolic/tsconfig": "workspace:*",
     "eslint": "catalog:",
+    "handlebars": "^4.7.8",
     "prettier": "catalog:",
+    "tsup": "8.4.0",
+    "type-fest": "^4.37.0",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^1.0.10",
+    "@ai-sdk/provider-utils": "^2.1.12",
+    "@openrouter/ai-sdk-provider": "^0.4.3",
+    "ai": "4.1.58",
+    "zod": "^3.24.2"
   }
 }

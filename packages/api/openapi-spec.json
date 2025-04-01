@@ -1,0 +1,1282 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "FastAPI", "version": "0.1.0" },
+  "paths": {
+    "/v1/chat/completions": {
+      "post": {
+        "summary": "Create Chat Completion",
+        "description": "Creates a completion for the chat message",
+        "operationId": "create_chat_completion_v1_chat_completions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChatCompletionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatCompletionResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/completions": {
+      "post": {
+        "summary": "Create Completion",
+        "description": "Creates a completion for the chat message",
+        "operationId": "create_completion_v1_completions_post",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CompletionRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CompletionResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/image/update_configs": {
+      "post": {
+        "summary": "Update Configs",
+        "operationId": "update_configs_v1_image_update_configs_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/images/generations": {
+      "post": {
+        "summary": "Create Image Generation",
+        "description": "Creates a generation for the text prompt",
+        "operationId": "create_image_generation_v1_images_generations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImageGenerationRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ImageGenerationResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/image/generation": {
+      "post": {
+        "summary": "Create Image Generation",
+        "description": "Creates a generation for the text prompt",
+        "operationId": "create_image_generation_v1_image_generation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImageGenerationRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ImageGenerationResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/image/meme_generation": {
+      "post": {
+        "summary": "Create Monad Meme Generation",
+        "description": "Creates a monad meme generation for the text prompt",
+        "operationId": "create_monad_meme_generation_v1_image_meme_generation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MemeGenerationRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ImageGenerationResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/models/{model_name}/price": {
+      "get": {
+        "summary": "Models Price",
+        "operationId": "models_price_models__model_name__price_get",
+        "parameters": [
+          {
+            "name": "model_name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Model Name" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/audio/generation": {
+      "post": {
+        "summary": "Create Image Generation",
+        "description": "Creates a generation for the text prompt",
+        "operationId": "create_image_generation_v1_audio_generation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AudioGenerationRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AudioGenerationResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/janus/generation": {
+      "post": {
+        "summary": "Create Janus Generation",
+        "description": "Creates a generation for the text prompt",
+        "operationId": "create_janus_generation_v1_janus_generation_post",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/JanusRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/JanusOutput" } }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/v1/models": {
+      "get": {
+        "summary": "Show Models",
+        "description": "List the served models along with the count of inference nodes behind.",
+        "operationId": "show_models_v1_models_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ListResponse" } }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AudioGenerationRequest": {
+        "properties": {
+          "text": { "type": "string", "title": "", "description": "" },
+          "language": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "",
+            "description": ""
+          },
+          "speaker": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "",
+            "description": ""
+          },
+          "sdp_ratio": { "type": "number", "title": "", "description": "", "default": 0.2 },
+          "noise_scale": { "type": "number", "title": "", "description": "", "default": 0.6 },
+          "noise_scale_w": { "type": "number", "title": "", "description": "", "default": 0.8 },
+          "speed": { "type": "number", "title": "", "description": "", "default": 1.0 },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The name of the model to query.",
+            "default": "MeloTTS"
+          }
+        },
+        "type": "object",
+        "required": ["text"],
+        "title": "AudioGenerationRequest"
+      },
+      "AudioGenerationResponse": {
+        "properties": {
+          "audio": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Base64 coded audio",
+            "description": "The generated audio"
+          },
+          "inference_time": { "type": "number", "title": "" },
+          "sample_rate": {
+            "type": "number",
+            "title": "Sample Rate",
+            "titile": "Sample rate of the audio"
+          },
+          "usage": { "type": "integer", "title": "usage" }
+        },
+        "type": "object",
+        "required": ["audio", "inference_time", "sample_rate", "usage"],
+        "title": "AudioGenerationResponse"
+      },
+
+      "ChatCompletionContentPartImageParam": {
+        "properties": {
+          "image_url": { "$ref": "#/components/schemas/ImageURL" },
+          "type": { "type": "string", "const": "image_url", "title": "Type" }
+        },
+        "type": "object",
+        "required": ["image_url", "type"],
+        "title": "ChatCompletionContentPartImageParam"
+      },
+      "ChatCompletionContentPartInputAudioParam": {
+        "properties": {
+          "input_audio": { "$ref": "#/components/schemas/InputAudio" },
+          "type": { "type": "string", "const": "input_audio", "title": "Type" }
+        },
+        "type": "object",
+        "required": ["input_audio", "type"],
+        "title": "ChatCompletionContentPartInputAudioParam"
+      },
+      "ChatCompletionContentPartTextParam": {
+        "properties": {
+          "text": { "type": "string", "title": "Text" },
+          "type": { "type": "string", "const": "text", "title": "Type" }
+        },
+        "type": "object",
+        "required": ["text", "type"],
+        "title": "ChatCompletionContentPartTextParam"
+      },
+      "ChatCompletionLogProb": {
+        "properties": {
+          "token": { "type": "string", "title": "Token" },
+          "logprob": { "type": "number", "title": "Logprob", "default": -9999.0 },
+          "bytes": {
+            "anyOf": [{ "items": { "type": "integer" }, "type": "array" }, { "type": "null" }],
+            "title": "Bytes"
+          }
+        },
+        "type": "object",
+        "required": ["token"],
+        "title": "ChatCompletionLogProb"
+      },
+      "ChatCompletionLogProbs": {
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/ChatCompletionLogProbsContent" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "title": "ChatCompletionLogProbs"
+      },
+      "ChatCompletionLogProbsContent": {
+        "properties": {
+          "token": { "type": "string", "title": "Token" },
+          "logprob": { "type": "number", "title": "Logprob", "default": -9999.0 },
+          "bytes": {
+            "anyOf": [{ "items": { "type": "integer" }, "type": "array" }, { "type": "null" }],
+            "title": "Bytes"
+          },
+          "top_logprobs": {
+            "items": { "$ref": "#/components/schemas/ChatCompletionLogProb" },
+            "type": "array",
+            "title": "Top Logprobs"
+          }
+        },
+        "type": "object",
+        "required": ["token"],
+        "title": "ChatCompletionLogProbsContent"
+      },
+      "ChatCompletionNamedFunction": {
+        "properties": { "name": { "type": "string", "title": "Name" } },
+        "type": "object",
+        "required": ["name"],
+        "title": "ChatCompletionNamedFunction"
+      },
+      "ChatCompletionNamedToolChoiceParam": {
+        "properties": {
+          "function": { "$ref": "#/components/schemas/ChatCompletionNamedFunction" },
+          "type": { "type": "string", "const": "function", "title": "Type", "default": "function" }
+        },
+        "type": "object",
+        "required": ["function"],
+        "title": "ChatCompletionNamedToolChoiceParam"
+      },
+      "ChatCompletionRequest": {
+        "properties": {
+          "messages": {
+            "items": { "$ref": "#/components/schemas/ChatMessage" },
+            "type": "array",
+            "title": "Messages",
+            "description": "A list of messages comprising the conversation."
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The name of the model to query.",
+            "default": "mistralai/Mixtral-8x7B-Instruct-v0.1"
+          },
+          "frequency_penalty": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Frequency Penalty",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim..",
+            "default": 0.0
+          },
+          "logit_bias": {
+            "anyOf": [
+              { "additionalProperties": { "type": "number" }, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Logit Bias"
+          },
+          "logprobs": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Logprobs",
+            "description": "Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the content of message.",
+            "default": false
+          },
+          "top_logprobs": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Top Logprobs",
+            "description": "An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. logprobs must be set to true if this parameter is used."
+          },
+          "max_tokens": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Max Tokens",
+            "description": "The maximum number of tokens to generate."
+          },
+          "n": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "N",
+            "description": "How many completions to generate for each prompt.",
+            "default": 1
+          },
+          "presence_penalty": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Presence Penalty",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.",
+            "default": 0.0
+          },
+          "seed": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 9.223372036854776e18,
+                "minimum": -9.223372036854776e18
+              },
+              { "type": "null" }
+            ],
+            "title": "Seed"
+          },
+          "stop": {
+            "anyOf": [
+              { "type": "string" },
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Stop",
+            "description": "A list of string sequences that will truncate (stop) inference text output. For example,  will stop generation as soon as the model generates the given token."
+          },
+          "stream": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Stream",
+            "description": "Whether to stream the response back to the client. If true, stream tokens as Server-Sent Events as the model generates them instead of waiting for the full model response. If false, return a single JSON object containing the results.",
+            "default": false
+          },
+          "temperature": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Temperature",
+            "description": "A decimal number that determines the degree of randomness in the response. A value of 1 will always yield the same output. A temperature less than 1 favors more correctness and is appropriate for question answering or summarization. A value greater than 1 introduces more randomness in the output.",
+            "default": 0.7
+          },
+          "top_p": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Top P",
+            "description": "The top_p (nucleus) parameter is used to dynamically adjust the number of choices for each predicted token based on the cumulative probabilities. It specifies a probability threshold, below which all less likely tokens are filtered out. This technique helps to maintain diversity and generate more fluent and natural-sounding text.",
+            "default": 1.0
+          },
+          "tools": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/ChatCompletionToolsParam" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Tools"
+          },
+          "tool_choice": {
+            "anyOf": [
+              { "type": "string", "const": "none" },
+              { "type": "string", "const": "auto" },
+              { "$ref": "#/components/schemas/ChatCompletionNamedToolChoiceParam" },
+              { "type": "null" }
+            ],
+            "title": "Tool Choice",
+            "default": "none"
+          },
+          "user": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "User",
+            "description": "A unique identifier representing end-user."
+          },
+          "top_k": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Top K",
+            "default": -1
+          },
+          "min_p": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Min P",
+            "default": 0.0
+          },
+          "repetition_penalty": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Repetition Penalty",
+            "default": 1.0
+          }
+        },
+        "type": "object",
+        "required": ["messages"],
+        "title": "ChatCompletionRequest"
+      },
+      "ChatCompletionResponse": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "object": { "type": "string", "title": "Object", "default": "chat.completion" },
+          "created": { "type": "integer", "title": "Created" },
+          "model": { "type": "string", "title": "Model" },
+          "choices": {
+            "items": { "$ref": "#/components/schemas/ChatCompletionResponseChoice" },
+            "type": "array",
+            "title": "Choices"
+          },
+          "usage": { "$ref": "#/components/schemas/UsageInfo" }
+        },
+        "type": "object",
+        "required": ["model", "choices", "usage"],
+        "title": "ChatCompletionResponse"
+      },
+      "ChatCompletionResponseChoice": {
+        "properties": {
+          "index": { "type": "integer", "title": "Index" },
+          "message": { "$ref": "#/components/schemas/ChatResponseMessage" },
+          "finish_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["stop", "length", "tool_calls", "content_filter", "function_call"]
+              },
+              { "type": "null" }
+            ],
+            "title": "Finish Reason"
+          },
+          "logprobs": {
+            "anyOf": [{ "$ref": "#/components/schemas/ChatCompletionLogProbs" }, { "type": "null" }]
+          }
+        },
+        "type": "object",
+        "required": ["index", "message"],
+        "title": "ChatCompletionResponseChoice"
+      },
+      "ChatCompletionToolsParam": {
+        "properties": {
+          "type": { "type": "string", "const": "function", "title": "Type", "default": "function" },
+          "function": { "$ref": "#/components/schemas/FunctionDefinition" }
+        },
+        "type": "object",
+        "required": ["function"],
+        "title": "ChatCompletionToolsParam"
+      },
+      "ChatMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "description": "The role of the messages author. Choice between: system, user, or assistant.",
+            "default": "user"
+          },
+          "content": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "items": {
+                  "anyOf": [
+                    { "$ref": "#/components/schemas/ChatCompletionContentPartTextParam" },
+                    { "$ref": "#/components/schemas/ChatCompletionContentPartImageParam" },
+                    { "$ref": "#/components/schemas/ChatCompletionContentPartInputAudioParam" },
+                    { "$ref": "#/components/schemas/File" }
+                  ]
+                },
+                "type": "array"
+              }
+            ],
+            "title": "Content",
+            "description": "The contents of the message.",
+            "default": "what is GPU?"
+          },
+          "tool_calls": {
+            "items": { "$ref": "#/components/schemas/ToolCall" },
+            "type": "array",
+            "title": "Tool Calls"
+          }
+        },
+        "type": "object",
+        "title": "ChatMessage"
+      },
+      "ChatResponseMessage": {
+        "properties": {
+          "role": { "type": "string", "title": "Role" },
+          "content": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Content" },
+          "tool_calls": {
+            "items": { "$ref": "#/components/schemas/ToolCall" },
+            "type": "array",
+            "title": "Tool Calls"
+          }
+        },
+        "type": "object",
+        "required": ["role"],
+        "title": "ChatResponseMessage"
+      },
+      "CompletionLogProbs": {
+        "properties": {
+          "text_offset": {
+            "items": { "type": "integer" },
+            "type": "array",
+            "title": "Text Offset"
+          },
+          "token_logprobs": {
+            "items": { "anyOf": [{ "type": "number" }, { "type": "null" }] },
+            "type": "array",
+            "title": "Token Logprobs"
+          },
+          "tokens": { "items": { "type": "string" }, "type": "array", "title": "Tokens" },
+          "top_logprobs": {
+            "items": {
+              "anyOf": [
+                { "additionalProperties": { "type": "number" }, "type": "object" },
+                { "type": "null" }
+              ]
+            },
+            "type": "array",
+            "title": "Top Logprobs"
+          }
+        },
+        "type": "object",
+        "title": "CompletionLogProbs"
+      },
+      "CompletionRequest": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The name of the model to query.",
+            "default": "mistralai/Mixtral-8x7B-Instruct-v0.1"
+          },
+          "prompt": {
+            "anyOf": [
+              { "items": { "type": "integer" }, "type": "array" },
+              { "items": { "items": { "type": "integer" }, "type": "array" }, "type": "array" },
+              { "type": "string" },
+              { "items": { "type": "string" }, "type": "array" }
+            ],
+            "title": "Prompt",
+            "description": "The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays."
+          },
+          "images": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/ChatCompletionContentPartImageParam" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Images"
+          },
+          "best_of": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Best Of",
+            "description": "Generates best_of completions server-side and returns the `best` (the one with the highest log probability per token). Results cannot be streamed. When used with n, best_of controls the number of candidate completions and n specifies how many to return - best_of must be greater than n."
+          },
+          "echo": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Echo",
+            "description": "Echo back the prompt in addition to the completion",
+            "default": false
+          },
+          "frequency_penalty": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Frequency Penalty",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim..",
+            "default": 0.0
+          },
+          "logit_bias": {
+            "anyOf": [
+              { "additionalProperties": { "type": "number" }, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Logit Bias"
+          },
+          "logprobs": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Logprobs",
+            "description": "Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the content of message."
+          },
+          "max_tokens": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Max Tokens",
+            "description": "The maximum number of tokens to generate.",
+            "default": 512
+          },
+          "n": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "N",
+            "description": "How many completions to generate for each prompt.",
+            "default": 1
+          },
+          "presence_penalty": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Presence Penalty",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.",
+            "default": 0.0
+          },
+          "seed": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 9.223372036854776e18,
+                "minimum": -9.223372036854776e18
+              },
+              { "type": "null" }
+            ],
+            "title": "Seed"
+          },
+          "stop": {
+            "anyOf": [
+              { "type": "string" },
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Stop",
+            "description": "A list of string sequences that will truncate (stop) inference text output. For example,  will stop generation as soon as the model generates the given token."
+          },
+          "stream": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Stream",
+            "description": "Whether to stream the response back to the client. If true, stream tokens as Server-Sent Events as the model generates them instead of waiting for the full model response. If false, return a single JSON object containing the results.",
+            "default": false
+          },
+          "temperature": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Temperature",
+            "description": "A decimal number that determines the degree of randomness in the response. A value of 1 will always yield the same output. A temperature less than 1 favors more correctness and is appropriate for question answering or summarization. A value greater than 1 introduces more randomness in the output.",
+            "default": 1.0
+          },
+          "top_p": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Top P",
+            "description": "The top_p (nucleus) parameter is used to dynamically adjust the number of choices for each predicted token based on the cumulative probabilities. It specifies a probability threshold, below which all less likely tokens are filtered out. This technique helps to maintain diversity and generate more fluent and natural-sounding text.",
+            "default": 1.0
+          },
+          "user": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "User",
+            "description": "A unique identifier representing end-user."
+          },
+          "top_k": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Top K",
+            "default": -1
+          },
+          "min_p": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Min P",
+            "default": 0.0
+          },
+          "repetition_penalty": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Repetition Penalty",
+            "default": 1.0
+          },
+          "raw_mode": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Raw Mode",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["prompt"],
+        "title": "CompletionRequest"
+      },
+      "CompletionResponse": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "choices": {
+            "items": { "$ref": "#/components/schemas/CompletionResponseChoice" },
+            "type": "array",
+            "title": "Choices"
+          },
+          "created": { "type": "integer", "title": "Created" },
+          "model": { "type": "string", "title": "Model" },
+          "system_fingerprint": { "type": "string", "title": "System Fingerprint", "default": "" },
+          "object": { "type": "string", "title": "Object", "default": "text_completion" },
+          "usage": { "$ref": "#/components/schemas/UsageInfo" }
+        },
+        "type": "object",
+        "required": ["choices", "model", "usage"],
+        "title": "CompletionResponse"
+      },
+      "CompletionResponseChoice": {
+        "properties": {
+          "finish_reason": {
+            "anyOf": [
+              { "type": "string", "enum": ["stop", "length", "content_filter"] },
+              { "type": "null" }
+            ],
+            "title": "Finish Reason"
+          },
+          "index": { "type": "integer", "title": "Index" },
+          "logprobs": {
+            "anyOf": [{ "$ref": "#/components/schemas/CompletionLogProbs" }, { "type": "null" }]
+          },
+          "text": { "type": "string", "title": "Text" }
+        },
+        "type": "object",
+        "required": ["index", "text"],
+        "title": "CompletionResponseChoice"
+      },
+      "File": {
+        "properties": {
+          "file": { "$ref": "#/components/schemas/FileFile" },
+          "type": { "type": "string", "const": "file", "title": "Type" }
+        },
+        "type": "object",
+        "required": ["file", "type"],
+        "title": "File"
+      },
+      "FileFile": {
+        "properties": {
+          "file_data": { "type": "string", "title": "File Data" },
+          "file_id": { "type": "string", "title": "File Id" },
+          "file_name": { "type": "string", "title": "File Name" }
+        },
+        "type": "object",
+        "title": "FileFile"
+      },
+      "FunctionCall": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "arguments": { "type": "string", "title": "Arguments" }
+        },
+        "type": "object",
+        "required": ["name", "arguments"],
+        "title": "FunctionCall"
+      },
+      "FunctionDefinition": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "parameters": {
+            "anyOf": [{ "type": "object" }, { "type": "null" }],
+            "title": "Parameters"
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "FunctionDefinition"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageGenerationRequest": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Stable Diffusion Model Name",
+            "example": "SDXL1.0-base"
+          },
+          "height": {
+            "type": "integer",
+            "maximum": 2496.0,
+            "minimum": 128.0,
+            "title": "Height of the image to generate, in an increment divible by 64",
+            "example": 1024
+          },
+          "width": {
+            "type": "integer",
+            "maximum": 2496.0,
+            "minimum": 128.0,
+            "title": "Width of the image to generate, in an increment divible by 64",
+            "example": 1024
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 20000,
+            "title": "The prompt to guide the image generation",
+            "example": "a photo of an astronaut riding a horse on mars"
+          },
+          "prompt_2": {
+            "anyOf": [{ "type": "string", "maxLength": 20000 }, { "type": "null" }],
+            "title": "The second prompt (only for Stable Diffusion XL)"
+          },
+          "negative_prompt": {
+            "anyOf": [{ "type": "string", "maxLength": 20000 }, { "type": "null" }],
+            "title": "The negative prompt"
+          },
+          "negative_prompt_2": {
+            "anyOf": [{ "type": "string", "maxLength": 20000 }, { "type": "null" }],
+            "title": "The second negative prompt (only for Stable Diffusion XL)"
+          },
+          "backend": {
+            "type": "string",
+            "title": "backend",
+            "description": "backend=auto will automatically select the backend from ['torch', 'tvm']. The torch backend supports various resolutions, but is slower. The tvm backend is faster, but only supports specific heights and widths.",
+            "default": "auto"
+          },
+          "seed": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "seed",
+            "description": "Random noise seed, default a random seed"
+          },
+          "cfg_scale": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Guidance scale",
+            "description": "Higher guidance scale encourages to generate images that are closely linked to the text `prompt`",
+            "default": 5.0
+          },
+          "sampler": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Which sampler to use for the diffusion process",
+            "default": "DPM++ 2M SDE Heun Karras"
+          },
+          "steps": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Number of diffusion steps to run",
+            "default": 30
+          },
+          "style_preset": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "A style preset to guide the image model towards a particular style"
+          },
+          "enable_refiner": { "type": "boolean", "title": "Enable refiner", "default": false },
+          "controlnet_name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name of ControlNet",
+            "description": "If the controlnet_name is provided, please also send the image as the guidance of generation"
+          },
+          "controlnet_image": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "ControlNet reference image input",
+            "description": "The ControlNet input condition to provide guidance to the generation"
+          },
+          "image": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Reference image input"
+          },
+          "lora": {
+            "additionalProperties": { "type": "number" },
+            "type": "object",
+            "title": "Lora",
+            "default": {}
+          },
+          "strength": {
+            "anyOf": [{ "type": "number", "maximum": 1.0, "minimum": 0.0 }, { "type": "null" }],
+            "title": "Strength"
+          }
+        },
+        "type": "object",
+        "required": ["model_name", "height", "width", "prompt"],
+        "title": "ImageGenerationRequest"
+      },
+      "ImageGenerationResponse": {
+        "properties": {
+          "images": {
+            "items": { "$ref": "#/components/schemas/ImageOutput" },
+            "type": "array",
+            "title": "Generated Images"
+          },
+          "inference_time": { "type": "number", "minimum": 0.0, "title": "The inference time" }
+        },
+        "type": "object",
+        "required": ["inference_time"],
+        "title": "ImageGenerationResponse"
+      },
+      "ImageOutput": {
+        "properties": {
+          "index": { "type": "integer", "title": "Index" },
+          "image": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Image",
+            "description": "The generated image",
+            "default": "Base64 coded image"
+          },
+          "random_seed": {
+            "type": "integer",
+            "title": "random seed",
+            "description": "Random seed used to generate the image."
+          }
+        },
+        "type": "object",
+        "required": ["index", "random_seed"],
+        "title": "ImageOutput"
+      },
+      "ImageURL": {
+        "properties": {
+          "url": { "type": "string", "title": "Url" },
+          "detail": { "type": "string", "enum": ["auto", "low", "high"], "title": "Detail" }
+        },
+        "type": "object",
+        "required": ["url"],
+        "title": "ImageURL"
+      },
+      "InputAudio": {
+        "properties": {
+          "data": { "type": "string", "title": "Data" },
+          "format": { "type": "string", "enum": ["wav", "mp3"], "title": "Format" }
+        },
+        "type": "object",
+        "required": ["data", "format"],
+        "title": "InputAudio"
+      },
+      "JanusOutput": {
+        "properties": {
+          "text": { "type": "string", "title": "Text" },
+          "images": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Images",
+            "default": []
+          },
+          "error_code": { "type": "integer", "title": "Error Code" },
+          "error_message": { "type": "string", "title": "Error Message" }
+        },
+        "type": "object",
+        "required": ["text", "error_code", "error_message"],
+        "title": "JanusOutput"
+      },
+      "JanusRequest": {
+        "properties": {
+          "messages": {
+            "items": { "$ref": "#/components/schemas/ChatMessage" },
+            "type": "array",
+            "title": "Messages",
+            "description": "A list of messages comprising the conversation."
+          },
+          "max_tokens": { "type": "integer", "title": "Max Tokens", "default": 50 },
+          "temperature": { "type": "number", "title": "Temperature", "default": 1.0 },
+          "n": { "type": "integer", "title": "N", "default": 1 },
+          "cfg_weight": { "type": "number", "title": "Cfg Weight", "default": 5.0 },
+          "image_size": { "type": "integer", "title": "Image Size", "default": 384 },
+          "type": { "type": "string", "title": "Type", "default": "text" }
+        },
+        "type": "object",
+        "required": ["messages"],
+        "title": "JanusRequest"
+      },
+      "ListResponse": {
+        "properties": {
+          "object": { "type": "string", "title": "Object", "default": "list" },
+          "data": { "items": {}, "type": "array", "title": "Data" }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "ListResponse"
+      },
+      "Meme": { "type": "string", "enum": ["Monad", "Wifhat"], "title": "Meme" },
+      "MemeGenerationRequest": {
+        "properties": {
+          "meme_name": {
+            "$ref": "#/components/schemas/Meme",
+            "title": "The name of the meme",
+            "default": "Monad",
+            "example": "Monad"
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 20000,
+            "title": "The prompt to guide the image generation",
+            "example": "monanimal holding a coke with MONAD hat"
+          },
+          "seed": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "seed",
+            "description": "Random noise seed, default a random seed"
+          },
+          "cfg_scale": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Guidance scale",
+            "description": "Higher guidance scale encourages to generate images that are closely linked to the text `prompt`",
+            "default": 7.5
+          },
+          "steps": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Number of diffusion steps to run",
+            "default": 30
+          }
+        },
+        "type": "object",
+        "required": ["prompt"],
+        "title": "MemeGenerationRequest"
+      },
+      "Model": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "type": { "$ref": "#/components/schemas/ModelType" },
+          "price": { "type": "number", "title": "Price" },
+          "description": { "type": "string", "title": "Description" },
+          "id": { "type": "integer", "title": "Id" }
+        },
+        "type": "object",
+        "required": ["name", "type", "price", "description", "id"],
+        "title": "Model"
+      },
+      "ModelType": { "type": "string", "enum": ["llm", "image", "tts"], "title": "ModelType" },
+      "Role": { "type": "string", "enum": ["user", "admin", "pro", "elite"], "title": "Role" },
+      "ToolCall": {
+        "properties": {
+          "id": { "type": "string", "title": "Id" },
+          "type": { "type": "string", "const": "function", "title": "Type", "default": "function" },
+          "function": { "$ref": "#/components/schemas/FunctionCall" }
+        },
+        "type": "object",
+        "required": ["function"],
+        "title": "ToolCall"
+      },
+      "Provider": {
+        "type": "string",
+        "enum": ["google.com", "github.com", "password"],
+        "title": "Provider"
+      },
+      "User": {
+        "properties": {
+          "email": { "type": "string", "title": "Email" },
+          "picture": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Picture" },
+          "provider": {
+            "anyOf": [{ "$ref": "#/components/schemas/Provider" }, { "type": "null" }],
+            "default": "password"
+          },
+          "email_verified": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Email Verified",
+            "default": false
+          },
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name",
+            "default": ""
+          },
+          "public_key": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Public Key"
+          },
+          "onboarded_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Onboarded At"
+          },
+          "onboarded_for": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Onboarded For"
+          },
+          "meta": { "anyOf": [{ "type": "object" }, { "type": "null" }], "title": "Meta" },
+          "id": { "type": "string", "title": "Id" },
+          "is_active": { "type": "boolean", "title": "Is Active" },
+          "api_key": { "type": "string", "title": "Api Key" },
+          "role": { "type": "string", "title": "Role" }
+        },
+        "type": "object",
+        "required": ["email", "id", "is_active", "api_key", "role"],
+        "title": "User"
+      },
+      "UsageInfo": {
+        "properties": {
+          "prompt_tokens": {
+            "type": "integer",
+            "title": "Prompt Tokens",
+            "default": 0
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens",
+            "default": 0
+          },
+          "completion_tokens": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Completion Tokens",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "UsageInfo"
+      },
+
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": { "password": { "scopes": {}, "tokenUrl": "token" } }
+      }
+    }
+  }
+}
