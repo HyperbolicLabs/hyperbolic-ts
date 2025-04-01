@@ -1,5 +1,11 @@
 # @hyperbolic/ai-sdk-provider
 
+## 0.1.1
+
+### Patch Changes
+
+- [#13](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/13) [`6d53d2982a58215344fa66b3cf45d553e713d7f6`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/6d53d2982a58215344fa66b3cf45d553e713d7f6) Thanks [@connorch](https://github.com/connorch)! - Add links to repo in package.json
+
 ## 0.1.0
 
 ### Minor Changes
