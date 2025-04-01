@@ -1,4 +1,4 @@
-# OpenRouter Provider for Vercel AI SDK
+# Hyperbolic Provider for Vercel AI SDK
 
 The [Hyperbolic](https://hyperbolic.xyz/) provider for the [Vercel AI SDK](https://sdk.vercel.ai/docs) gives access to over 300 large language model on the OpenRouter chat and completion APIs.
 
