@@ -1,5 +1,15 @@
 # @hyperbolic/ai-sdk-provider
 
+## 0.1.0
+
+### Minor Changes
+
+- [#6](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/6) [`9b36bcb6d5e9da65cd39a48797bab82b71c63caf`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/9b36bcb6d5e9da65cd39a48797bab82b71c63caf) Thanks [@connorch](https://github.com/connorch)! - Initial release for the ai-sdk-provider
+
+### Patch Changes
+
+- [#11](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/11) [`8b3904d6d386a545fe09f5af0e92d01f4e618057`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/8b3904d6d386a545fe09f5af0e92d01f4e618057) Thanks [@connorch](https://github.com/connorch)! - Add documentation
+
 ## 0.0.3
 
 ### Patch Changes
