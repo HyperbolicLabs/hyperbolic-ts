@@ -316,9 +316,14 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
 
             const choice = value.choices[0];
 
+            console.log(
+              "raw    finish reason",
+              choice?.finish_reason,
+              choice ? JSON.stringify(choice) : "--",
+            );
             if (choice?.finish_reason != null) {
-              console.log("choice.finish_reason >>", choice.finish_reason);
               finishReason = mapHyperbolicFinishReason(choice.finish_reason);
+              console.log("parsed finish reason", choice.finish_reason);
             }
 
             if (choice?.delta == null) {
