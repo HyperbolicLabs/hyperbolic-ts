@@ -295,7 +295,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
 
               controller.enqueue({
                 type: "error",
-                error: JSONParseError.isInstance(chunk.error) ? chunk.error : chunk.error,
+                error: chunk.error,
               });
               return;
             }
