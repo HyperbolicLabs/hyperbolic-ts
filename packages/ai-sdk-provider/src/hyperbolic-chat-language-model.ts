@@ -11,7 +11,11 @@ import type {
   LanguageModelV1StreamPart,
 } from "@ai-sdk/provider";
 import type { ParseResult } from "@ai-sdk/provider-utils";
-import { InvalidResponseDataError, UnsupportedFunctionalityError } from "@ai-sdk/provider";
+import {
+  InvalidResponseDataError,
+  JSONParseError,
+  UnsupportedFunctionalityError,
+} from "@ai-sdk/provider";
 import {
   combineHeaders,
   createEventSourceResponseHandler,
@@ -28,6 +32,7 @@ import {
   HyperbolicErrorResponseSchema,
   hyperbolicFailedResponseHandler,
   isHyperbolicError,
+  tryParsingHyperbolicError,
 } from "./hyperbolic-error";
 import { mapHyperbolicChatLogProbsOutput } from "./map-hyperbolic-chat-logprobs";
 import { mapHyperbolicFinishReason } from "./map-hyperbolic-finish-reason";
@@ -280,7 +285,18 @@ export class HyperbolicChatLanguageModel implements LanguageModelV1 {
             // handle failed chunk parsing / validation:
             if (!chunk.success) {
               finishReason = "error";
-              controller.enqueue({ type: "error", error: chunk.error });
+
+              // Error messages from the API are sometimes an ugly combo of text and JSON in a single chunk, so attempt to parse it as a hyperbolic error.
+              const maybeHyperbolicError = tryParsingHyperbolicError(chunk.error);
+              if (maybeHyperbolicError) {
+                controller.enqueue({ type: "error", error: maybeHyperbolicError });
+                return;
+              }
+
+              controller.enqueue({
+                type: "error",
+                error: JSONParseError.isInstance(chunk.error) ? chunk.error : chunk.error,
+              });
               return;
             }
 
