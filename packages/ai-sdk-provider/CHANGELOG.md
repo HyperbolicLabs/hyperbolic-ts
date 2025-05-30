@@ -1,5 +1,11 @@
 # @hyperbolic/ai-sdk-provider
 
+## 0.1.2
+
+### Patch Changes
+
+- [#16](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/16) [`78fde27c775553b84af8a1c90b1c08ba6821513c`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/78fde27c775553b84af8a1c90b1c08ba6821513c) Thanks [@connorch](https://github.com/connorch)! - handle error parsing when the termination sequence is appended to the…
+
 ## 0.1.1
 
 ### Patch Changes
