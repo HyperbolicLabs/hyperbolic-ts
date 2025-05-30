@@ -11,11 +11,7 @@ import type {
   LanguageModelV1StreamPart,
 } from "@ai-sdk/provider";
 import type { ParseResult } from "@ai-sdk/provider-utils";
-import {
-  InvalidResponseDataError,
-  JSONParseError,
-  UnsupportedFunctionalityError,
-} from "@ai-sdk/provider";
+import { InvalidResponseDataError, UnsupportedFunctionalityError } from "@ai-sdk/provider";
 import {
   combineHeaders,
   createEventSourceResponseHandler,
