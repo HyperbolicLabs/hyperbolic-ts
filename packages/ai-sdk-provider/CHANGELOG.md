@@ -1,5 +1,11 @@
 # @hyperbolic/ai-sdk-provider
 
+## 0.1.3
+
+### Patch Changes
+
+- [#19](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/19) [`825eb5f6be2f1d9ee959b62b79573a65f56362a5`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/825eb5f6be2f1d9ee959b62b79573a65f56362a5) Thanks [@connorch](https://github.com/connorch)! - bump deps and tweak readme
+
 ## 0.1.2
 
 ### Patch Changes
