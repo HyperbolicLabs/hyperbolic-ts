@@ -127,8 +127,7 @@ export function convertToHyperbolicChatMessages(
             case "redacted-reasoning":
               break;
             default: {
-              const _exhaustiveCheck: never = part;
-              throw new Error(`Unsupported part: ${_exhaustiveCheck}`);
+              throw new Error(`Unsupported part: ${part}`);
             }
           }
         }
@@ -157,8 +156,7 @@ export function convertToHyperbolicChatMessages(
       }
 
       default: {
-        const _exhaustiveCheck: never = role;
-        throw new Error(`Unsupported role: ${_exhaustiveCheck}`);
+        throw new Error(`Unsupported role: ${role}`);
       }
     }
   }

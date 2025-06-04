@@ -103,8 +103,7 @@ export function convertToHyperbolicCompletionPrompt({
               }
 
               default: {
-                const _exhaustiveCheck: never = part;
-                throw new Error(`Unsupported content type: ${_exhaustiveCheck}`);
+                throw new Error(`Unsupported content type: ${part}`);
               }
             }
           })
@@ -121,8 +120,7 @@ export function convertToHyperbolicCompletionPrompt({
       }
 
       default: {
-        const _exhaustiveCheck: never = role;
-        throw new Error(`Unsupported role: ${_exhaustiveCheck}`);
+        throw new Error(`Unsupported role: ${role}`);
       }
     }
   }
