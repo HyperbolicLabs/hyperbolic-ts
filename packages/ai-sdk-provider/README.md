@@ -1,6 +1,6 @@
 # Hyperbolic Provider for Vercel AI SDK
 
-The [Hyperbolic](https://hyperbolic.xyz/) provider for the [Vercel AI SDK](https://sdk.vercel.ai/docs) gives access to over 300 large language model on the OpenRouter chat and completion APIs.
+The [Hyperbolic](https://hyperbolic.xyz/) provider for the [Vercel AI SDK](https://sdk.vercel.ai/docs) gives access to any model found at <https://app.hyperbolic.xyz/models>.
 
 This is based on the [OpenRouter](https://openrouter.ai/) provider for the Vercel AI SDK, with a number of changes to support the Hyperbolic API and add image generation support.
 
@@ -19,7 +19,7 @@ yarn add @hyperbolic/ai-sdk-provider
 
 ## Provider Instance
 
-You can import the default provider instance `openrouter` from `@openrouter/ai-sdk-provider`:
+You can create a provider instance with `createHyperbolic` from `@hyperbolic/ai-sdk-provider`:
 
 ```ts
 import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
@@ -33,7 +33,7 @@ import { generateText } from "ai";
 import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
 
 const hyperbolic = createHyperbolic({
-  apiKey: process.env.HYPERBOLIC_API_KEY,
+  apiKey: process.env.HYPERBOLIC_API_KEY, // Found in settings after logging in at https://app.hyperbolic.xyz
 });
 
 const { text } = await generateText({
