@@ -122,7 +122,7 @@ Create an OpenRouter provider instance.
  */
 export function createOpenRouter(options: OpenRouterProviderSettings = {}): OpenRouterProvider {
   const baseURL =
-    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://openrouter.ai/api/v1";
+    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://api.hyperbolic.xyz/v1";
 
   // we default to compatible, because strict breaks providers like Groq:
   const compatibility = options.compatibility ?? "compatible";
@@ -132,7 +132,7 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
       {
         Authorization: `Bearer ${loadApiKey({
           apiKey: options.apiKey,
-          environmentVariableName: "OPENROUTER_API_KEY",
+          environmentVariableName: "HYPERBOLIC_API_KEY",
           description: "OpenRouter",
         })}`,
         ...options.headers,
