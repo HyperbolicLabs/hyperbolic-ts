@@ -57,6 +57,7 @@ export function convertToOpenRouterCompletionPrompt({
           .map((part: LanguageModelV3TextPart | LanguageModelV3FilePart) => {
             switch (part.type) {
               case "text": {
+                console.log("return 2", part.text);
                 return part.text;
               }
 
@@ -66,6 +67,7 @@ export function convertToOpenRouterCompletionPrompt({
                 });
               }
               default: {
+                console.log("return 3");
                 return "";
               }
             }
@@ -89,6 +91,7 @@ export function convertToOpenRouterCompletionPrompt({
             ) => {
               switch (part.type) {
                 case "text": {
+                  console.log("return 4");
                   return part.text;
                 }
                 case "tool-call": {
@@ -114,6 +117,7 @@ export function convertToOpenRouterCompletionPrompt({
                 }
 
                 default: {
+                  console.log("return 5");
                   return "";
                 }
               }
@@ -139,6 +143,7 @@ export function convertToOpenRouterCompletionPrompt({
 
   // Assistant message prefix:
   text += `${assistant}:\n`;
+  console.log("return 6", { text });
 
   return {
     prompt: text,
