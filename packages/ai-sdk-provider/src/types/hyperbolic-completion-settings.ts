@@ -4,7 +4,7 @@
 
 import type { HyperbolicSharedSettings } from ".";
 
-export type HyperbolicCompletionModelId = string;
+export type { HyperbolicCompletionModelId } from "../__generated__/models.gen";
 
 export type HyperbolicCompletionSettings = {
   /**

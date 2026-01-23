@@ -67,7 +67,7 @@ const _completionModels = [
   "mistralai/Pixtral-12B-2409",
 ] as const;
 
-export type HyperbolicImageModelId = (typeof _imageModels)[number] | string;
-export type HyperbolicChatModelId = (typeof _chatModels)[number] | string;
-export type HyperbolicCompletionModelId = (typeof _completionModels)[number] | string;
+export type HyperbolicImageModelId = (typeof _imageModels)[number] | (string & {});
+export type HyperbolicChatModelId = (typeof _chatModels)[number] | (string & {});
+export type HyperbolicCompletionModelId = (typeof _completionModels)[number] | (string & {});
 export type HyperbolicModelId = HyperbolicImageModelId | HyperbolicChatModelId | HyperbolicCompletionModelId;

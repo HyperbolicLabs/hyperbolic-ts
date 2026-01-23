@@ -2,7 +2,7 @@ import type { GenerateImageResult } from "ai";
 
 import type { HyperbolicSharedSettings } from "../types";
 
-export type HyperbolicImageModelId = string;
+export type { HyperbolicImageModelId } from "../__generated__/models.gen";
 
 export type HyperbolicImageSettings = {
   /**

@@ -7,7 +7,7 @@ import type * as models from "@openrouter/sdk/models";
 import type { HyperbolicSharedSettings } from "..";
 
 // https://api.hyperbolic.xyz/v1/models
-export type HyperbolicChatModelId = string;
+export type { HyperbolicChatModelId } from "../__generated__/models.gen";
 
 export type HyperbolicChatSettings = {
   /**
