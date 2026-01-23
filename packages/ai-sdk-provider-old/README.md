@@ -33,7 +33,7 @@ import { generateText } from "ai";
 import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
 
 const hyperbolic = createHyperbolic({
-  apiKey: process.env.HYPERBOLIC_API_KEY, // Found in settings after logging in at https://app.hyperbolic.ai
+  apiKey: process.env.HYPERBOLIC_API_KEY, // Found in settings after logging in at https://app.hyperbolic.xyz
 });
 
 const { text } = await generateText({
@@ -45,7 +45,7 @@ const { text } = await generateText({
 ## Supported models
 
 This list is not a definitive list of models supported by Hyperbolic, as it constantly changes as we add new models (and deprecate old ones) to our system.  
-You can find the latest list of models supported by Hyperbolic [here](https://app.hyperbolic.ai/models).
+You can find the latest list of models supported by Hyperbolic [here](https://openrouter.ai/models).
 
 ## Using Models
 

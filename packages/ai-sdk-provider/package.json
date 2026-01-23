@@ -54,17 +54,26 @@
     "@hyperbolic/eslint-config": "workspace:*",
     "@hyperbolic/prettier-config": "workspace:*",
     "@hyperbolic/tsconfig": "workspace:*",
+    "@openrouter/sdk": "^0.1.27",
+    "@types/json-schema": "7.0.15",
+    "ai": "^6.0.48",
     "eslint": "catalog:",
     "handlebars": "^4.7.8",
+    "msw": "2.12.4",
     "prettier": "catalog:",
     "tsup": "8.5.0",
     "type-fest": "^4.37.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "3.2.4",
+    "zod": "^4.0.0"
   },
   "dependencies": {
     "@ai-sdk/provider": "^3.0.5",
-    "@ai-sdk/provider-utils": "^4.0.9",
+    "@ai-sdk/provider-utils": "^4.0.9"
+  },
+  "peerDependencies": {
     "ai": "^6.0.48",
-    "zod": "^4.0.0"
+    "zod": "^3.25.0 || ^4.0.0"
   }
 }
