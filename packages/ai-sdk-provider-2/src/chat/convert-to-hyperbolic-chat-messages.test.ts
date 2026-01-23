@@ -1,5 +1,5 @@
 import { ReasoningDetailType } from "../schemas/reasoning-details";
-import { convertToOpenRouterChatMessages } from "./convert-to-openrouter-chat-messages";
+import { convertToOpenRouterChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { MIME_TO_FORMAT } from "./file-url-utils";
 
 describe("user messages", () => {

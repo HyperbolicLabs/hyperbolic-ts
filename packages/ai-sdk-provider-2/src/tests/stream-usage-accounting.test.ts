@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { OpenRouterChatSettings } from "../types/openrouter-chat-settings";
+import type { OpenRouterChatSettings } from "../types/hyperbolic-chat-settings";
 import { OpenRouterChatLanguageModel } from "../chat";
 import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 

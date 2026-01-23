@@ -25,16 +25,16 @@ import {
 
 import type { FileAnnotation } from "../schemas/provider-metadata";
 import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
-import type { OpenRouterUsageAccounting } from "../types/index";
 import type {
   OpenRouterChatModelId,
   OpenRouterChatSettings,
-} from "../types/openrouter-chat-settings";
+} from "../types/hyperbolic-chat-settings";
+import type { OpenRouterUsageAccounting } from "../types/index";
 import { openrouterFailedResponseHandler } from "../schemas/error-response";
 import { OpenRouterProviderMetadataSchema } from "../schemas/provider-metadata";
 import { ReasoningDetailType } from "../schemas/reasoning-details";
 import { createFinishReason, mapOpenRouterFinishReason } from "../utils/map-finish-reason";
-import { convertToOpenRouterChatMessages } from "./convert-to-openrouter-chat-messages";
+import { convertToOpenRouterChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { getBase64FromDataUrl, getMediaType } from "./file-url-utils";
 import { getChatCompletionToolChoice } from "./get-tool-choice";
 import {

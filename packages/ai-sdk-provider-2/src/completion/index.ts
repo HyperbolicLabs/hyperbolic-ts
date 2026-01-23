@@ -24,10 +24,10 @@ import type { OpenRouterUsageAccounting } from "../types";
 import type {
   OpenRouterCompletionModelId,
   OpenRouterCompletionSettings,
-} from "../types/openrouter-completion-settings";
+} from "../types/hyperbolic-completion-settings";
 import { openrouterFailedResponseHandler } from "../schemas/error-response";
 import { createFinishReason, mapOpenRouterFinishReason } from "../utils/map-finish-reason";
-import { convertToOpenRouterCompletionPrompt } from "./convert-to-openrouter-completion-prompt";
+import { convertToOpenRouterCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
 import { OpenRouterCompletionChunkSchema } from "./schemas";
 
 type OpenRouterCompletionConfig = {

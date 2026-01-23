@@ -8,18 +8,13 @@ import type {
 import type {
   OpenRouterChatModelId,
   OpenRouterChatSettings,
-} from "./types/openrouter-chat-settings";
+} from "./types/hyperbolic-chat-settings";
 import type {
   OpenRouterCompletionModelId,
   OpenRouterCompletionSettings,
-} from "./types/openrouter-completion-settings";
-import type {
-  OpenRouterEmbeddingModelId,
-  OpenRouterEmbeddingSettings,
-} from "./types/openrouter-embedding-settings";
+} from "./types/hyperbolic-completion-settings";
 import { OpenRouterChatLanguageModel } from "./chat";
 import { OpenRouterCompletionLanguageModel } from "./completion";
-import { OpenRouterEmbeddingModel } from "./embedding";
 import { HyperbolicImageModel } from "./image";
 import { withUserAgentSuffix } from "./utils/with-user-agent-suffix";
 import { VERSION } from "./version";
@@ -57,23 +52,6 @@ Creates an OpenRouter completion model for text generation.
     modelId: OpenRouterCompletionModelId,
     settings?: OpenRouterCompletionSettings,
   ): OpenRouterCompletionLanguageModel;
-
-  /**
-Creates an OpenRouter text embedding model. (AI SDK v5)
-   */
-  textEmbeddingModel(
-    modelId: OpenRouterEmbeddingModelId,
-    settings?: OpenRouterEmbeddingSettings,
-  ): OpenRouterEmbeddingModel;
-
-  /**
-Creates an OpenRouter text embedding model. (AI SDK v4 - deprecated, use textEmbeddingModel instead)
-@deprecated Use textEmbeddingModel instead
-   */
-  embedding(
-    modelId: OpenRouterEmbeddingModelId,
-    settings?: OpenRouterEmbeddingSettings,
-  ): OpenRouterEmbeddingModel;
 
   image(modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings): HyperbolicImageModel;
 }
@@ -187,18 +165,6 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
       extraBody: options.extraBody,
     });
 
-  const createEmbeddingModel = (
-    modelId: OpenRouterEmbeddingModelId,
-    settings: OpenRouterEmbeddingSettings = {},
-  ) =>
-    new OpenRouterEmbeddingModel(modelId, settings, {
-      provider: "openrouter.embedding",
-      url: ({ path }) => `${baseURL}${path}`,
-      headers: getHeaders,
-      fetch: options.fetch,
-      extraBody: options.extraBody,
-    });
-
   const createLanguageModel = (
     modelId: OpenRouterChatModelId | OpenRouterCompletionModelId,
     settings?: OpenRouterChatSettings | OpenRouterCompletionSettings,
@@ -218,8 +184,6 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
   provider.languageModel = createLanguageModel;
   provider.chat = createChatModel;
   provider.completion = createCompletionModel;
-  provider.textEmbeddingModel = createEmbeddingModel;
-  provider.embedding = createEmbeddingModel; // deprecated alias for v4 compatibility
   provider.image = createImageModel;
 
   return provider as OpenRouterProvider;

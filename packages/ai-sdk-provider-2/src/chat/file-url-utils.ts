@@ -1,8 +1,8 @@
 import type { LanguageModelV3FilePart } from "@ai-sdk/provider";
 import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 
-import type { OpenRouterAudioFormat } from "../types/openrouter-chat-completions-input";
-import { OPENROUTER_AUDIO_FORMATS } from "../types/openrouter-chat-completions-input";
+import type { OpenRouterAudioFormat } from "../types/hyperbolic-chat-completions-input";
+import { OPENROUTER_AUDIO_FORMATS } from "../types/hyperbolic-chat-completions-input";
 import { isUrl } from "./is-url";
 
 export function getFileUrl({

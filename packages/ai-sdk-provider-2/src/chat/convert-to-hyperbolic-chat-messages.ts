@@ -10,7 +10,7 @@ import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
 import type {
   ChatCompletionContentPart,
   OpenRouterChatCompletionsInput,
-} from "../types/openrouter-chat-completions-input";
+} from "../types/hyperbolic-chat-completions-input";
 import { OpenRouterProviderOptionsSchema } from "../schemas/provider-metadata";
 import { getFileUrl, getInputAudioData } from "./file-url-utils";
 import { isUrl } from "./is-url";

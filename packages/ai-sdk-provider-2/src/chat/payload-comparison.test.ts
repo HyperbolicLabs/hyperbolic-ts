@@ -1,8 +1,8 @@
 import type { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { describe, expect, it, vi } from "vitest";
 
-import type { OpenRouterChatCompletionsInput } from "../types/openrouter-chat-completions-input";
-import type { OpenRouterChatSettings } from "../types/openrouter-chat-settings";
+import type { OpenRouterChatCompletionsInput } from "../types/hyperbolic-chat-completions-input";
+import type { OpenRouterChatSettings } from "../types/hyperbolic-chat-settings";
 import { createOpenRouter } from "../provider";
 
 describe("Payload Comparison - Large PDF", () => {
