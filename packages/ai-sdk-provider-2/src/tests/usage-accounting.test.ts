@@ -44,6 +44,7 @@ describe("OpenRouter Usage Accounting", () => {
         : undefined,
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
       type: "json-value",
       body: response,
@@ -78,6 +79,7 @@ describe("OpenRouter Usage Accounting", () => {
     });
 
     // Check request contains usage parameter
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestBody = (await server.calls[0]!.requestBodyJson) as Record<string, unknown>;
     expect(requestBody).toBeDefined();
     expect(requestBody).toHaveProperty("usage");
@@ -207,6 +209,7 @@ describe("OpenRouter Usage Accounting", () => {
       },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
       type: "json-value",
       body: response,
@@ -277,6 +280,7 @@ describe("OpenRouter Usage Accounting", () => {
       },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
       type: "json-value",
       body: response,

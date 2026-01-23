@@ -2,6 +2,7 @@ import type { LanguageModelV3ToolChoice } from "@ai-sdk/provider";
 import { InvalidArgumentError } from "@ai-sdk/provider";
 import { z } from "zod/v4";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ChatCompletionToolChoiceSchema = z.union([
   z.literal("auto"),
   z.literal("none"),

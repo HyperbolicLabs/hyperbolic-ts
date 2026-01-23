@@ -36,6 +36,7 @@ describe("OpenRouter Streaming Usage Accounting", () => {
 
     chunks.push("data: [DONE]\n\n");
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks,
@@ -70,6 +71,7 @@ describe("OpenRouter Streaming Usage Accounting", () => {
     });
 
     // Verify stream options
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestBody = (await server.calls[0]!.requestBodyJson) as Record<string, unknown>;
     expect(requestBody).toBeDefined();
     expect(requestBody.stream).toBe(true);

@@ -101,6 +101,7 @@ describe("Payload Comparison - Large PDF", () => {
     //   usage: { include: true }
     // }
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const messages = capturedRequestBody!.messages;
     expect(messages).toHaveLength(1);
     expect(messages[0]?.role).toBe("user");
@@ -132,9 +133,12 @@ describe("Payload Comparison - Large PDF", () => {
     });
 
     // Check for plugins array
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(capturedRequestBody!.plugins).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(capturedRequestBody!.plugins).toBeInstanceOf(Array);
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { plugins } = capturedRequestBody!;
     if (!plugins) {
       throw new Error("Plugins should be defined");

@@ -22,6 +22,7 @@ describe("Large PDF Response Handling", () => {
     it("should handle HTTP 200 responses with error payloads (500 internal errors)", async () => {
       // This is the actual response OpenRouter returns for large PDF failures
       // HTTP 200 status but contains error object instead of choices
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
         type: "json-value",
         body: {
@@ -44,6 +45,7 @@ describe("Large PDF Response Handling", () => {
 
     it("should parse successful large PDF responses with file annotations", async () => {
       // Successful response with file annotations from FileParserPlugin
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
         type: "json-value",
         body: {

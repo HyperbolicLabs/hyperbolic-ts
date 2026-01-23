@@ -51,6 +51,7 @@ export function createTestServer(config: TestServerConfig): {
 
   const handlers = Object.keys(config).map((url) =>
     http.post(url, async ({ request }) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const urlConfig = urls[url]!;
 
       // Record the call
@@ -135,6 +136,7 @@ export function createTestServer(config: TestServerConfig): {
     // Clear calls between tests
     calls.length = 0;
     for (const url of Object.keys(urls)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       urls[url]!.calls = [];
     }
   });

@@ -40,6 +40,7 @@ export function getMediaType(dataUrl: string, defaultMediaType: string): string 
 
 export function getBase64FromDataUrl(dataUrl: string): string {
   const match = dataUrl.match(/^data:[^;]*;base64,(.+)$/);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return match ? match[1]! : dataUrl;
 }
 

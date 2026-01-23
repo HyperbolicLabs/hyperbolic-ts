@@ -22,6 +22,7 @@ describe("HTTP 200 Error Response Handling", () => {
     it("should throw APICallError for HTTP 200 responses with error payloads", async () => {
       // OpenRouter sometimes returns HTTP 200 with an error object instead of choices
       // This can occur for various server errors (e.g., internal errors, processing failures)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
         type: "json-value",
         body: {
@@ -44,6 +45,7 @@ describe("HTTP 200 Error Response Handling", () => {
 
     it("should parse successful responses normally when no error present", async () => {
       // Normal successful response without error
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
         type: "json-value",
         body: {
