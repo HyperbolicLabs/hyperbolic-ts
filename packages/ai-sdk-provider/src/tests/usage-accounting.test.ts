@@ -123,10 +123,10 @@ describe("Hyperbolic Usage Accounting", () => {
 
     // Check for Hyperbolic usage data
     expect(providerData?.hyperbolic).toBeDefined();
-    const openrouterData = providerData?.hyperbolic as Record<string, unknown>;
-    expect(openrouterData.usage).toBeDefined();
+    const hyperbolicData = providerData?.hyperbolic as Record<string, unknown>;
+    expect(hyperbolicData.usage).toBeDefined();
 
-    const usage = openrouterData.usage;
+    const usage = hyperbolicData.usage;
     expect(usage).toMatchObject({
       promptTokens: 10,
       completionTokens: 20,

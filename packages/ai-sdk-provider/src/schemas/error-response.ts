@@ -8,7 +8,7 @@ import { z } from "zod/v4";
 
 // Use SDK's ChatErrorError type but wrap in response schema
 // SDK type: { code: string | number | null; message: string; param?: string | null; type?: string | null }
-export const OpenRouterErrorResponseSchema = z
+export const HyperbolicErrorResponseSchema = z
   .object({
     error: z
       .object({
@@ -23,9 +23,9 @@ export const OpenRouterErrorResponseSchema = z
   })
   .passthrough();
 
-export type OpenRouterErrorData = z.infer<typeof OpenRouterErrorResponseSchema>;
+export type HyperbolicErrorData = z.infer<typeof HyperbolicErrorResponseSchema>;
 
-export const openrouterFailedResponseHandler = createJsonErrorResponseHandler({
-  errorSchema: OpenRouterErrorResponseSchema,
-  errorToMessage: (data: OpenRouterErrorData) => data.error.message,
+export const hyperbolicFailedResponseHandler = createJsonErrorResponseHandler({
+  errorSchema: HyperbolicErrorResponseSchema,
+  errorToMessage: (data: HyperbolicErrorData) => data.error.message,
 });

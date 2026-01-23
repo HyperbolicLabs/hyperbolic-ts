@@ -4,7 +4,7 @@
 
 import type * as models from "@openrouter/sdk/models";
 
-import type { OpenRouterSharedSettings } from "..";
+import type { HyperbolicSharedSettings } from "..";
 
 // https://api.hyperbolic.xyz/v1/models
 export type HyperbolicChatModelId = string;
@@ -89,7 +89,6 @@ monitor and detect abuse. Learn more.
      * - "native": Use provider's built-in web search
      * - "exa": Use Exa's search API
      * - undefined: Native if supported, otherwise Exa
-     * @see https://openrouter.ai/docs/features/web-search
      */
     engine?: models.Engine;
   };
@@ -97,7 +96,6 @@ monitor and detect abuse. Learn more.
   /**
    * Debug options for troubleshooting API requests.
    * Only works with streaming requests.
-   * @see https://openrouter.ai/docs/api-reference/debugging
    */
   debug?: {
     /**
@@ -160,4 +158,4 @@ monitor and detect abuse. Learn more.
      */
     zdr?: boolean;
   };
-} & OpenRouterSharedSettings;
+} & HyperbolicSharedSettings;

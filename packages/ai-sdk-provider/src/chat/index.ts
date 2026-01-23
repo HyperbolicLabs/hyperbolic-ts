@@ -34,16 +34,16 @@ import type {
   HyperbolicChatSettings,
 } from "../types/hyperbolic-chat-settings";
 import type { HyperbolicUsageAccounting } from "../types/index";
-import { openrouterFailedResponseHandler } from "../schemas/error-response";
+import { hyperbolicFailedResponseHandler } from "../schemas/error-response";
 import { HyperbolicProviderMetadataSchema } from "../schemas/provider-metadata";
 import { ReasoningDetailType } from "../schemas/reasoning-details";
-import { createFinishReason, mapOpenRouterFinishReason } from "../utils/map-finish-reason";
-import { convertToOpenRouterChatMessages } from "./convert-to-hyperbolic-chat-messages";
+import { createFinishReason, mapHyperbolicFinishReason } from "../utils/map-finish-reason";
+import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { getBase64FromDataUrl, getMediaType } from "./file-url-utils";
 import { getChatCompletionToolChoice } from "./get-tool-choice";
 import {
-  OpenRouterNonStreamChatCompletionResponseSchema,
-  OpenRouterStreamChatCompletionChunkSchema,
+  HyperbolicNonStreamChatCompletionResponseSchema,
+  HyperbolicStreamChatCompletionChunkSchema,
 } from "./schemas";
 
 type HyperbolicChatConfig = {
@@ -145,7 +145,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
       top_k: topK,
 
       // messages:
-      messages: convertToOpenRouterChatMessages(prompt),
+      messages: convertToHyperbolicChatMessages(prompt),
 
       // Hyperbolic specific settings:
       include_reasoning: this.settings.includeReasoning,
@@ -207,11 +207,11 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
     };
   }> {
     const providerOptions = options.providerOptions || {};
-    const openrouterOptions = providerOptions.openrouter || {};
+    const hyperbolicOptions = providerOptions.hyperbolic || {};
 
     const args = {
       ...this.getArgs(options),
-      ...openrouterOptions,
+      ...hyperbolicOptions,
     };
 
     const { value: responseValue, responseHeaders } = await postJsonToApi({
@@ -221,9 +221,9 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
       }),
       headers: combineHeaders(this.config.headers(), options.headers),
       body: args,
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createJsonResponseHandler(
-        OpenRouterNonStreamChatCompletionResponseSchema,
+        HyperbolicNonStreamChatCompletionResponseSchema,
       ),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
@@ -437,7 +437,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
 
     const effectiveFinishReason = shouldOverrideFinishReason
       ? createFinishReason("tool-calls", choice.finish_reason ?? undefined)
-      : mapOpenRouterFinishReason(choice.finish_reason);
+      : mapHyperbolicFinishReason(choice.finish_reason);
 
     return {
       content,
@@ -497,11 +497,11 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
     };
   }> {
     const providerOptions = options.providerOptions || {};
-    const openrouterOptions = providerOptions.openrouter || {};
+    const hyperbolicOptions = providerOptions.hyperbolic || {};
 
     const args = {
       ...this.getArgs(options),
-      ...openrouterOptions,
+      ...hyperbolicOptions,
     };
 
     const { value: response, responseHeaders } = await postJsonToApi({
@@ -524,9 +524,9 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
               }
             : undefined,
       },
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createEventSourceResponseHandler(
-        OpenRouterStreamChatCompletionChunkSchema,
+        HyperbolicStreamChatCompletionChunkSchema,
       ),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
@@ -559,7 +559,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
     };
 
     // Track provider-specific usage information
-    const openrouterUsage: Partial<HyperbolicUsageAccounting> = {};
+    const hyperbolicUsage: Partial<HyperbolicUsageAccounting> = {};
 
     // Track reasoning details to preserve for multi-turn conversations
     const accumulatedReasoningDetails: ReasoningDetailUnion[] = [];
@@ -571,13 +571,13 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
     let reasoningStarted = false;
     let textId: string | undefined;
     let reasoningId: string | undefined;
-    let openrouterResponseId: string | undefined;
+    let hyperbolicResponseId: string | undefined;
     let provider: string | undefined;
 
     return {
       stream: response.pipeThrough(
         new TransformStream<
-          ParseResult<z.infer<typeof OpenRouterStreamChatCompletionChunkSchema>>,
+          ParseResult<z.infer<typeof HyperbolicStreamChatCompletionChunkSchema>>,
           LanguageModelV3StreamPart
         >({
           transform(chunk, controller) {
@@ -602,7 +602,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
             }
 
             if (value.id) {
-              openrouterResponseId = value.id;
+              hyperbolicResponseId = value.id;
               controller.enqueue({
                 type: "response-metadata",
                 id: value.id,
@@ -621,32 +621,32 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
               usage.outputTokens.total = value.usage.completion_tokens;
 
               // Collect Hyperbolic specific usage information
-              openrouterUsage.promptTokens = value.usage.prompt_tokens;
+              hyperbolicUsage.promptTokens = value.usage.prompt_tokens;
 
               if (value.usage.prompt_tokens_details) {
                 const cachedInputTokens = value.usage.prompt_tokens_details.cached_tokens ?? 0;
 
                 usage.inputTokens.cacheRead = cachedInputTokens;
-                openrouterUsage.promptTokensDetails = {
+                hyperbolicUsage.promptTokensDetails = {
                   cachedTokens: cachedInputTokens,
                 };
               }
 
-              openrouterUsage.completionTokens = value.usage.completion_tokens;
+              hyperbolicUsage.completionTokens = value.usage.completion_tokens;
               if (value.usage.completion_tokens_details) {
                 const reasoningTokens = value.usage.completion_tokens_details.reasoning_tokens ?? 0;
 
                 usage.outputTokens.reasoning = reasoningTokens;
-                openrouterUsage.completionTokensDetails = {
+                hyperbolicUsage.completionTokensDetails = {
                   reasoningTokens,
                 };
               }
 
-              openrouterUsage.cost = value.usage.cost;
-              openrouterUsage.totalTokens = value.usage.total_tokens;
+              hyperbolicUsage.cost = value.usage.cost;
+              hyperbolicUsage.totalTokens = value.usage.total_tokens;
               const upstreamInferenceCost = value.usage.cost_details?.upstream_inference_cost;
               if (upstreamInferenceCost != null) {
-                openrouterUsage.costDetails = {
+                hyperbolicUsage.costDetails = {
                   upstreamInferenceCost,
                 };
               }
@@ -655,7 +655,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
             const choice = value.choices[0];
 
             if (choice?.finish_reason != null) {
-              finishReason = mapOpenRouterFinishReason(choice.finish_reason);
+              finishReason = mapHyperbolicFinishReason(choice.finish_reason);
             }
 
             if (choice?.delta == null) {
@@ -669,7 +669,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
               providerMetadata?: SharedV3ProviderMetadata,
             ) => {
               if (!reasoningStarted) {
-                reasoningId = openrouterResponseId || generateId();
+                reasoningId = hyperbolicResponseId || generateId();
                 controller.enqueue({
                   providerMetadata,
                   type: "reasoning-start",
@@ -759,7 +759,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
               }
 
               if (!textStarted) {
-                textId = openrouterResponseId || generateId();
+                textId = hyperbolicResponseId || generateId();
                 controller.enqueue({
                   type: "text-start",
                   id: textId,
@@ -1008,28 +1008,28 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
               });
             }
 
-            const openrouterMetadata: {
+            const hyperbolicMetadata: {
               usage: Partial<HyperbolicUsageAccounting>;
               provider?: string;
               reasoning_details?: ReasoningDetailUnion[];
               annotations?: FileAnnotation[];
             } = {
-              usage: openrouterUsage,
+              usage: hyperbolicUsage,
             };
 
             // Only include provider if it's actually set
             if (provider !== undefined) {
-              openrouterMetadata.provider = provider;
+              hyperbolicMetadata.provider = provider;
             }
 
             // Include accumulated reasoning_details if any were received
             if (accumulatedReasoningDetails.length > 0) {
-              openrouterMetadata.reasoning_details = accumulatedReasoningDetails;
+              hyperbolicMetadata.reasoning_details = accumulatedReasoningDetails;
             }
 
             // Include accumulated file annotations if any were received
             if (accumulatedFileAnnotations.length > 0) {
-              openrouterMetadata.annotations = accumulatedFileAnnotations;
+              hyperbolicMetadata.annotations = accumulatedFileAnnotations;
             }
 
             controller.enqueue({
@@ -1037,7 +1037,7 @@ export class HyperbolicChatLanguageModel implements LanguageModelV3 {
               finishReason,
               usage,
               providerMetadata: {
-                openrouter: openrouterMetadata,
+                hyperbolic: hyperbolicMetadata,
               },
             });
           },

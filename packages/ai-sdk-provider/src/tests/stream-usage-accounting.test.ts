@@ -120,10 +120,10 @@ describe("Hyperbolic Streaming Usage Accounting", () => {
 
     // Verify metadata is included
     expect(finishChunk?.providerMetadata).toBeDefined();
-    const openrouterData = finishChunk?.providerMetadata?.hyperbolic;
-    expect(openrouterData).toBeDefined();
+    const hyperbolicData = finishChunk?.providerMetadata?.hyperbolic;
+    expect(hyperbolicData).toBeDefined();
 
-    const usage = openrouterData?.usage;
+    const usage = hyperbolicData?.usage;
     expect(usage).toMatchObject({
       promptTokens: 10,
       completionTokens: 20,

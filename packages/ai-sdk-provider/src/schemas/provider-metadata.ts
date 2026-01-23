@@ -70,7 +70,7 @@ export const HyperbolicProviderMetadataSchema = z
   })
   .catchall(z.any());
 
-export type OpenRouterProviderMetadata = z.infer<typeof HyperbolicProviderMetadataSchema>;
+export type HyperbolicProviderMetadata = z.infer<typeof HyperbolicProviderMetadataSchema>;
 
 /**
  * Schema for parsing provider options that may contain reasoning_details and annotations

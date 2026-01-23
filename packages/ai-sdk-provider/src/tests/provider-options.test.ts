@@ -28,17 +28,17 @@ describe("providerOptions", () => {
     vi.clearAllMocks();
   });
 
-  it("should set providerOptions openrouter to extra body", async () => {
-    const openrouter = createHyperbolic({
+  it("should set providerOptions hyperbolic to extra body", async () => {
+    const hyperbolic = createHyperbolic({
       apiKey: "test",
     });
-    const model = openrouter("anthropic/claude-3.7-sonnet");
+    const model = hyperbolic("anthropic/claude-3.7-sonnet");
 
     await streamText({
       model: model,
       messages: TEST_MESSAGES,
       providerOptions: {
-        openrouter: {
+        hyperbolic: {
           reasoning: {
             max_tokens: 1000,
           },

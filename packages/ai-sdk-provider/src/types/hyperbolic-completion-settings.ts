@@ -2,7 +2,7 @@
 // Original work Copyright 2025 OpenRouter Inc.
 // Licensed under the Apache License, Version 2.0
 
-import type { OpenRouterSharedSettings } from ".";
+import type { HyperbolicSharedSettings } from ".";
 
 export type HyperbolicCompletionModelId = string;
 
@@ -40,4 +40,4 @@ tokens that were generated.
 The suffix that comes after a completion of inserted text.
    */
   suffix?: string;
-} & OpenRouterSharedSettings;
+} & HyperbolicSharedSettings;

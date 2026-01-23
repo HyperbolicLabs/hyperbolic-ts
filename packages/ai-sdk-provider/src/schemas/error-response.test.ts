@@ -2,9 +2,9 @@
 // Original work Copyright 2025 OpenRouter Inc.
 // Licensed under the Apache License, Version 2.0
 
-import { OpenRouterErrorResponseSchema } from "./error-response";
+import { HyperbolicErrorResponseSchema } from "./error-response";
 
-describe("OpenRouterErrorResponseSchema", () => {
+describe("HyperbolicErrorResponseSchema", () => {
   it("should be valid without a type, code, and param", () => {
     const errorWithoutTypeCodeAndParam = {
       error: {
@@ -14,7 +14,7 @@ describe("OpenRouterErrorResponseSchema", () => {
       user_id: "example_1",
     };
 
-    const result = OpenRouterErrorResponseSchema.parse(errorWithoutTypeCodeAndParam);
+    const result = HyperbolicErrorResponseSchema.parse(errorWithoutTypeCodeAndParam);
 
     expect(result).toEqual({
       error: {
@@ -39,7 +39,7 @@ describe("OpenRouterErrorResponseSchema", () => {
       },
     };
 
-    const result = OpenRouterErrorResponseSchema.parse(errorWithType);
+    const result = HyperbolicErrorResponseSchema.parse(errorWithType);
 
     expect(result).toEqual({
       error: {

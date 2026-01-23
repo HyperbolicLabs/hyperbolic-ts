@@ -4,11 +4,11 @@
 
 import { z } from "zod/v4";
 
-import { OpenRouterErrorResponseSchema } from "../schemas/error-response";
+import { HyperbolicErrorResponseSchema } from "../schemas/error-response";
 import { ImageResponseArraySchema } from "../schemas/image";
 import { ReasoningDetailArraySchema } from "../schemas/reasoning-details";
 
-const OpenRouterChatCompletionBaseResponseSchema = z
+const HyperbolicChatCompletionBaseResponseSchema = z
   .object({
     id: z.string().optional(),
     model: z.string().optional(),
@@ -44,9 +44,9 @@ const OpenRouterChatCompletionBaseResponseSchema = z
   .passthrough();
 // limited version of the schema, focussed on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
+export const HyperbolicNonStreamChatCompletionResponseSchema = z.union([
   // Success response with choices
-  OpenRouterChatCompletionBaseResponseSchema.extend({
+  HyperbolicChatCompletionBaseResponseSchema.extend({
     choices: z.array(
       z
         .object({
@@ -163,14 +163,14 @@ export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
     ),
   }),
   // Error response (HTTP 200 with error payload)
-  OpenRouterErrorResponseSchema.extend({
+  HyperbolicErrorResponseSchema.extend({
     user_id: z.string().optional(),
   }),
 ]);
 // limited version of the schema, focussed on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-export const OpenRouterStreamChatCompletionChunkSchema = z.union([
-  OpenRouterChatCompletionBaseResponseSchema.extend({
+export const HyperbolicStreamChatCompletionChunkSchema = z.union([
+  HyperbolicChatCompletionBaseResponseSchema.extend({
     choices: z.array(
       z
         .object({
@@ -286,5 +286,5 @@ export const OpenRouterStreamChatCompletionChunkSchema = z.union([
         .passthrough(),
     ),
   }),
-  OpenRouterErrorResponseSchema,
+  HyperbolicErrorResponseSchema,
 ]);

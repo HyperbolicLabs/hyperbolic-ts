@@ -59,8 +59,7 @@ export interface ChatCompletionContentPartText {
   cache_control?: HyperbolicCacheControl;
 }
 
-/** https://openrouter.ai/docs/guides/overview/multimodal/audio */
-export const OPENROUTER_AUDIO_FORMATS = [
+export const HYPERBOLIC_AUDIO_FORMATS = [
   "wav",
   "mp3",
   "aiff",
@@ -72,13 +71,13 @@ export const OPENROUTER_AUDIO_FORMATS = [
   "pcm24",
 ] as const;
 
-export type OpenRouterAudioFormat = (typeof OPENROUTER_AUDIO_FORMATS)[number];
+export type HyperbolicAudioFormat = (typeof HYPERBOLIC_AUDIO_FORMATS)[number];
 
 export interface ChatCompletionContentPartInputAudio {
   type: "input_audio";
   input_audio: {
     data: string;
-    format: OpenRouterAudioFormat;
+    format: HyperbolicAudioFormat;
   };
   cache_control?: HyperbolicCacheControl;
 }

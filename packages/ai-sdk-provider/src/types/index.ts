@@ -6,11 +6,10 @@ import type { LanguageModelV3, LanguageModelV3Prompt } from "@ai-sdk/provider";
 
 export type { LanguageModelV3, LanguageModelV3Prompt };
 
-export type OpenRouterProviderOptions = {
+export type HyperbolicProviderOptions = {
   models?: string[];
 
   /**
-   * https://openrouter.ai/docs/use-cases/reasoning-tokens
    * One of `max_tokens` or `effort` is required.
    * If `exclude` is true, reasoning will be removed from the response. Default is false.
    */
@@ -33,7 +32,7 @@ export type OpenRouterProviderOptions = {
   user?: string;
 };
 
-export type OpenRouterSharedSettings = OpenRouterProviderOptions & {
+export type HyperbolicSharedSettings = HyperbolicProviderOptions & {
   /**
    * @deprecated use `reasoning` instead
    */
@@ -43,7 +42,6 @@ export type OpenRouterSharedSettings = OpenRouterProviderOptions & {
 
   /**
    * Enable usage accounting to get detailed token usage information.
-   * https://openrouter.ai/docs/use-cases/usage-accounting
    */
   usage?: {
     /**
@@ -55,7 +53,6 @@ export type OpenRouterSharedSettings = OpenRouterProviderOptions & {
 
 /**
  * Usage accounting response
- * @see https://openrouter.ai/docs/use-cases/usage-accounting
  */
 export type HyperbolicUsageAccounting = {
   promptTokens: number;

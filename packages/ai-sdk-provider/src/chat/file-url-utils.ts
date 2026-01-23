@@ -5,8 +5,8 @@
 import type { LanguageModelV3FilePart } from "@ai-sdk/provider";
 import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 
-import type { OpenRouterAudioFormat } from "../types/hyperbolic-chat-completions-input";
-import { OPENROUTER_AUDIO_FORMATS } from "../types/hyperbolic-chat-completions-input";
+import type { HyperbolicAudioFormat } from "../types/hyperbolic-chat-completions-input";
+import { HYPERBOLIC_AUDIO_FORMATS } from "../types/hyperbolic-chat-completions-input";
 import { isUrl } from "./is-url";
 
 export function getFileUrl({
@@ -49,7 +49,7 @@ export function getBase64FromDataUrl(dataUrl: string): string {
 }
 
 /** MIME type to format mapping for normalization */
-export const MIME_TO_FORMAT: Record<string, OpenRouterAudioFormat> = {
+export const MIME_TO_FORMAT: Record<string, HyperbolicAudioFormat> = {
   // MP3 variants
   mpeg: "mp3",
   mp3: "mp3",
@@ -104,7 +104,7 @@ export const MIME_TO_FORMAT: Record<string, OpenRouterAudioFormat> = {
  */
 export function getInputAudioData(part: LanguageModelV3FilePart): {
   data: string;
-  format: OpenRouterAudioFormat;
+  format: HyperbolicAudioFormat;
 } {
   const fileData = getFileUrl({
     part,
@@ -124,8 +124,7 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
         `1. Download the audio file locally\n` +
         `2. Read it as a Buffer or Uint8Array\n` +
         `3. Pass it as the data parameter\n\n` +
-        `The AI SDK will automatically handle base64 encoding.\n\n` +
-        `Learn more: https://openrouter.ai/docs/features/multimodal/audio`,
+        `The AI SDK will automatically handle base64 encoding.`,
     );
   }
 
@@ -140,11 +139,10 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
   const format = MIME_TO_FORMAT[rawFormat];
 
   if (format === undefined) {
-    const supportedList = OPENROUTER_AUDIO_FORMATS.join(", ");
+    const supportedList = HYPERBOLIC_AUDIO_FORMATS.join(", ");
     throw new Error(
       `Unsupported audio format: "${mediaType}"\n\n` +
-        `Hyperbolic supports the following audio formats: ${supportedList}\n\n` +
-        `Learn more: https://openrouter.ai/docs/features/multimodal/audio`,
+        `Hyperbolic supports the following audio formats: ${supportedList}`,
     );
   }
 

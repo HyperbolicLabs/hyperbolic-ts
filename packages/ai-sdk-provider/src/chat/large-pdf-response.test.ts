@@ -24,7 +24,7 @@ const server = createTestServer({
 describe("Large PDF Response Handling", () => {
   describe("doGenerate", () => {
     it("should handle HTTP 200 responses with error payloads (500 internal errors)", async () => {
-      // This is the actual response OpenRouter returns for large PDF failures
+      // This is the actual response Hyperbolic returns for large PDF failures
       // HTTP 200 status but contains error object instead of choices
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {

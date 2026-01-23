@@ -35,7 +35,7 @@ function getCacheControl(
     anthropic?.cache_control) as HyperbolicCacheControl | undefined;
 }
 
-export function convertToOpenRouterChatMessages(
+export function convertToHyperbolicChatMessages(
   prompt: LanguageModelV3Prompt,
 ): HyperbolicChatCompletionsInput {
   const messages: HyperbolicChatCompletionsInput = [];

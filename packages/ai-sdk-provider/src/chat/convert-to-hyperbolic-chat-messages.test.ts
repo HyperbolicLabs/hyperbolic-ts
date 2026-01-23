@@ -3,12 +3,12 @@
 // Licensed under the Apache License, Version 2.0
 
 import { ReasoningDetailType } from "../schemas/reasoning-details";
-import { convertToOpenRouterChatMessages } from "./convert-to-hyperbolic-chat-messages";
+import { convertToHyperbolicChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { MIME_TO_FORMAT } from "./file-url-utils";
 
 describe("user messages", () => {
   it("should convert image Uint8Array", async () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -37,7 +37,7 @@ describe("user messages", () => {
   });
 
   it("should convert image urls", async () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -66,7 +66,7 @@ describe("user messages", () => {
   });
 
   it("should convert messages with image base64", async () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -95,7 +95,7 @@ describe("user messages", () => {
   });
 
   it("should convert messages with only a text part to a string content", async () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [{ type: "text", text: "Hello" }],
@@ -108,7 +108,7 @@ describe("user messages", () => {
   it.each(
     Object.entries(MIME_TO_FORMAT).map(([mimeSubtype, format]) => [`audio/${mimeSubtype}`, format]),
   )("should convert %s to input_audio with %s format", (mediaType, expectedFormat) => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -138,7 +138,7 @@ describe("user messages", () => {
   });
 
   it("should convert audio base64 data URL to input_audio", async () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -168,7 +168,7 @@ describe("user messages", () => {
   });
 
   it("should convert raw audio base64 string to input_audio", async () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -199,7 +199,7 @@ describe("user messages", () => {
 
   it("should throw error for audio URLs", async () => {
     expect(() =>
-      convertToOpenRouterChatMessages([
+      convertToHyperbolicChatMessages([
         {
           role: "user",
           content: [
@@ -216,7 +216,7 @@ describe("user messages", () => {
 
   it("should throw error for unsupported audio formats", async () => {
     expect(() =>
-      convertToOpenRouterChatMessages([
+      convertToHyperbolicChatMessages([
         {
           role: "user",
           content: [
@@ -234,7 +234,7 @@ describe("user messages", () => {
 
 describe("cache control", () => {
   it("should pass cache control from system message provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "system",
         content: "System prompt",
@@ -256,7 +256,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from user message provider metadata (single text part)", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [{ type: "text", text: "Hello" }],
@@ -283,7 +283,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from content part provider metadata (single text part)", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -315,7 +315,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from user message provider metadata (multiple parts)", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -354,7 +354,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from user message provider metadata without cache control (single text part)", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [{ type: "text", text: "Hello" }],
@@ -370,7 +370,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control to multiple image parts from user message provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -419,7 +419,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control to file parts from user message provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -466,7 +466,7 @@ describe("cache control", () => {
   });
 
   it("should handle mixed part-specific and message-level cache control for multiple parts", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -533,7 +533,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from individual content part provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -574,7 +574,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from assistant message provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "assistant",
         content: [{ type: "text", text: "Assistant response" }],
@@ -596,7 +596,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control from tool message provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "tool",
         content: [
@@ -629,7 +629,7 @@ describe("cache control", () => {
   });
 
   it("should support the alias cache_control field", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "system",
         content: "System prompt",
@@ -651,7 +651,7 @@ describe("cache control", () => {
   });
 
   it("should support cache control on last message in content array", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "system",
         content: "System prompt",
@@ -691,7 +691,7 @@ describe("cache control", () => {
   });
 
   it("should pass cache control to audio input parts from user message provider metadata", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "user",
         content: [
@@ -735,7 +735,7 @@ describe("cache control", () => {
 
 describe("reasoning_details accumulation", () => {
   it("should accumulate reasoning_details from reasoning part providerOptions", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "assistant",
         content: [
@@ -809,7 +809,7 @@ describe("reasoning_details accumulation", () => {
   });
 
   it("should use preserved reasoning_details from message-level providerOptions when available", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "assistant",
         content: [
@@ -860,7 +860,7 @@ describe("reasoning_details accumulation", () => {
   });
 
   it("should not include reasoning_details when not present in providerOptions", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "assistant",
         content: [
@@ -890,7 +890,7 @@ describe("reasoning_details accumulation", () => {
   });
 
   it("should handle mixed reasoning parts with and without providerOptions", () => {
-    const result = convertToOpenRouterChatMessages([
+    const result = convertToHyperbolicChatMessages([
       {
         role: "assistant",
         content: [

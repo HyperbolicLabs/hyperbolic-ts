@@ -22,7 +22,7 @@ function mapToUnified(finishReason: string | null | undefined): UnifiedFinishRea
   }
 }
 
-export function mapOpenRouterFinishReason(
+export function mapHyperbolicFinishReason(
   finishReason: string | null | undefined,
 ): LanguageModelV3FinishReason {
   return {

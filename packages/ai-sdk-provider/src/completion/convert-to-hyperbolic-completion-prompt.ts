@@ -12,7 +12,7 @@ import type {
 } from "@ai-sdk/provider";
 import { InvalidPromptError, UnsupportedFunctionalityError } from "@ai-sdk/provider";
 
-export function convertToOpenRouterCompletionPrompt({
+export function convertToHyperbolicCompletionPrompt({
   prompt,
   inputFormat,
   user = "user",

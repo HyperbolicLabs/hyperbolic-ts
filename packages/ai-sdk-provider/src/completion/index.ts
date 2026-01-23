@@ -29,12 +29,12 @@ import type {
   HyperbolicCompletionModelId,
   HyperbolicCompletionSettings,
 } from "../types/hyperbolic-completion-settings";
-import { openrouterFailedResponseHandler } from "../schemas/error-response";
-import { createFinishReason, mapOpenRouterFinishReason } from "../utils/map-finish-reason";
-import { convertToOpenRouterCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
+import { hyperbolicFailedResponseHandler } from "../schemas/error-response";
+import { createFinishReason, mapHyperbolicFinishReason } from "../utils/map-finish-reason";
+import { convertToHyperbolicCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
 import { HyperbolicCompletionChunkSchema } from "./schemas";
 
-type OpenRouterCompletionConfig = {
+type HyperbolicCompletionConfig = {
   provider: string;
   compatibility: "strict" | "compatible";
   headers: () => Record<string, string | undefined>;
@@ -45,7 +45,7 @@ type OpenRouterCompletionConfig = {
 
 export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
   readonly specificationVersion = "v3" as const;
-  readonly provider = "openrouter";
+  readonly provider = "hyperbolic";
   readonly modelId: HyperbolicCompletionModelId;
   readonly supportsImageUrls = true;
   readonly supportedUrls: Record<string, RegExp[]> = {
@@ -56,12 +56,12 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
   readonly defaultObjectGenerationMode = undefined;
   readonly settings: HyperbolicCompletionSettings;
 
-  private readonly config: OpenRouterCompletionConfig;
+  private readonly config: HyperbolicCompletionConfig;
 
   constructor(
     modelId: HyperbolicCompletionModelId,
     settings: HyperbolicCompletionSettings,
-    config: OpenRouterCompletionConfig,
+    config: HyperbolicCompletionConfig,
   ) {
     this.modelId = modelId;
     this.settings = settings;
@@ -82,7 +82,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
     tools,
     toolChoice,
   }: LanguageModelV3CallOptions) {
-    const { prompt: completionPrompt } = convertToOpenRouterCompletionPrompt({
+    const { prompt: completionPrompt } = convertToHyperbolicCompletionPrompt({
       prompt,
       inputFormat: "prompt",
     });
@@ -146,11 +146,11 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
     options: LanguageModelV3CallOptions,
   ): Promise<Awaited<ReturnType<LanguageModelV3["doGenerate"]>>> {
     const providerOptions = options.providerOptions || {};
-    const openrouterOptions = providerOptions.openrouter || {};
+    const hyperbolicOptions = providerOptions.hyperbolic || {};
 
     const args = {
       ...this.getArgs(options),
-      ...openrouterOptions,
+      ...hyperbolicOptions,
     };
 
     const { value: response, responseHeaders } = await postJsonToApi({
@@ -160,7 +160,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
       }),
       headers: combineHeaders(this.config.headers(), options.headers),
       body: args,
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createJsonResponseHandler(HyperbolicCompletionChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
@@ -196,7 +196,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
           text: choice.text ?? "",
         },
       ],
-      finishReason: mapOpenRouterFinishReason(choice.finish_reason),
+      finishReason: mapHyperbolicFinishReason(choice.finish_reason),
       usage: {
         inputTokens: {
           total: response.usage?.prompt_tokens ?? 0,
@@ -221,11 +221,11 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
     options: LanguageModelV3CallOptions,
   ): Promise<Awaited<ReturnType<LanguageModelV3["doStream"]>>> {
     const providerOptions = options.providerOptions || {};
-    const openrouterOptions = providerOptions.openrouter || {};
+    const hyperbolicOptions = providerOptions.hyperbolic || {};
 
     const args = {
       ...this.getArgs(options),
-      ...openrouterOptions,
+      ...hyperbolicOptions,
     };
 
     const { value: response, responseHeaders } = await postJsonToApi({
@@ -242,7 +242,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
         stream_options:
           this.config.compatibility === "strict" ? { include_usage: true } : undefined,
       },
-      failedResponseHandler: openrouterFailedResponseHandler,
+      failedResponseHandler: hyperbolicFailedResponseHandler,
       successfulResponseHandler: createEventSourceResponseHandler(HyperbolicCompletionChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
@@ -326,7 +326,7 @@ export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
             const choice = value.choices[0];
 
             if (choice?.finish_reason != null) {
-              finishReason = mapOpenRouterFinishReason(choice.finish_reason);
+              finishReason = mapHyperbolicFinishReason(choice.finish_reason);
             }
 
             if (choice?.text != null) {

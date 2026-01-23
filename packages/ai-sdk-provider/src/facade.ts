@@ -28,7 +28,7 @@ The default prefix is `https://api.hyperbolic.xyz/v1`.
 
   /**
 API key that is being sent using the `Authorization` header.
-It defaults to the `OPENROUTER_API_KEY` environment variable.
+It defaults to the `HYPERBOLIC_API_KEY` environment variable.
  */
   readonly apiKey?: string;
 
@@ -59,7 +59,7 @@ Custom headers to include in the requests.
       headers: () => ({
         Authorization: `Bearer ${loadApiKey({
           apiKey: this.apiKey,
-          environmentVariableName: "OPENROUTER_API_KEY",
+          environmentVariableName: "HYPERBOLIC_API_KEY",
           description: "Hyperbolic",
         })}`,
         ...this.headers,

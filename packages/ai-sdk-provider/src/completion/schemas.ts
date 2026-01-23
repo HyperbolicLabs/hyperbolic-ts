@@ -4,7 +4,7 @@
 
 import { z } from "zod/v4";
 
-import { OpenRouterErrorResponseSchema } from "../schemas/error-response";
+import { HyperbolicErrorResponseSchema } from "../schemas/error-response";
 import { ReasoningDetailArraySchema } from "../schemas/reasoning-details";
 
 // limited version of the schema, focussed on what is needed for the implementation
@@ -64,5 +64,5 @@ export const HyperbolicCompletionChunkSchema = z.union([
         .nullish(),
     })
     .passthrough(),
-  OpenRouterErrorResponseSchema,
+  HyperbolicErrorResponseSchema,
 ]);

@@ -231,7 +231,7 @@ describe("doGenerate", () => {
       "custom-provider-header": "provider-header-value",
       "custom-request-header": "request-header-value",
     });
-    expect(requestHeaders["user-agent"]).toContain("ai-sdk/openrouter/0.0.0-test");
+    expect(requestHeaders["user-agent"]).toContain("ai-sdk/hyperbolic/0.0.0-test");
   });
 });
 
@@ -368,7 +368,7 @@ describe("doStream", () => {
       (element): element is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
         element.type === "finish",
     );
-    const openrouterUsage = (
+    const hyperbolicUsage = (
       finishChunk?.providerMetadata?.hyperbolic as {
         usage?: {
           cost?: number;
@@ -376,7 +376,7 @@ describe("doStream", () => {
         };
       }
     )?.usage;
-    expect(openrouterUsage?.costDetails).toStrictEqual({
+    expect(hyperbolicUsage?.costDetails).toStrictEqual({
       upstreamInferenceCost: 0.0036,
     });
   });
@@ -404,7 +404,7 @@ describe("doStream", () => {
       (element): element is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
         element.type === "finish",
     );
-    const openrouterUsage = (
+    const hyperbolicUsage = (
       finishChunk?.providerMetadata?.hyperbolic as {
         usage?: {
           cost?: number;
@@ -412,10 +412,10 @@ describe("doStream", () => {
         };
       }
     )?.usage;
-    expect(openrouterUsage?.costDetails).toStrictEqual({
+    expect(hyperbolicUsage?.costDetails).toStrictEqual({
       upstreamInferenceCost: 0.0036,
     });
-    expect(openrouterUsage?.cost).toBe(0.0025);
+    expect(hyperbolicUsage?.cost).toBe(0.0025);
   });
 
   it("should handle error stream parts", async () => {
@@ -423,8 +423,7 @@ describe("doStream", () => {
     server.urls["https://api.hyperbolic.xyz/v1/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
-        `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
-          `help center at help.openrouter.com if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
+        `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center`,
         "data: [DONE]\n\n",
       ],
     };
@@ -439,8 +438,7 @@ describe("doStream", () => {
         error: {
           message:
             "The server had an error processing your request. Sorry about that! " +
-            "You can retry your request, or contact us through our help center at " +
-            "help.openrouter.com if you keep seeing this error.",
+            "You can retry your request, or contact us through our help center.",
           type: "server_error",
           code: null,
           param: null,
@@ -552,7 +550,7 @@ describe("doStream", () => {
       "custom-provider-header": "provider-header-value",
       "custom-request-header": "request-header-value",
     });
-    expect(requestHeaders["user-agent"]).toContain("ai-sdk/openrouter/0.0.0-test");
+    expect(requestHeaders["user-agent"]).toContain("ai-sdk/hyperbolic/0.0.0-test");
   });
 
   it("should pass extra body", async () => {
