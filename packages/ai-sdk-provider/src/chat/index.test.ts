@@ -1,10 +1,14 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3Prompt, LanguageModelV3StreamPart } from "@ai-sdk/provider";
 import type { JSONSchema7 } from "json-schema";
 import { vi } from "vitest";
 
 import type { ImageResponse } from "../schemas/image";
 import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
-import { createOpenRouter } from "../provider";
+import { createHyperbolic } from "../provider";
 import { ReasoningDetailType } from "../schemas/reasoning-details";
 import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 
@@ -116,7 +120,7 @@ const TEST_IMAGE_URL = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACA
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const TEST_IMAGE_BASE64 = TEST_IMAGE_URL.split(",")[1]!;
 
-const provider = createOpenRouter({
+const provider = createHyperbolic({
   apiKey: "test-api-key",
   compatibility: "strict",
 });
@@ -352,7 +356,7 @@ describe("doGenerate", () => {
         type: "reasoning",
         text: "Let me analyze this request...",
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: "reasoning.text",
@@ -366,7 +370,7 @@ describe("doGenerate", () => {
         type: "reasoning",
         text: "The user wants a greeting response.",
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: "reasoning.summary",
@@ -403,7 +407,7 @@ describe("doGenerate", () => {
         type: "reasoning",
         text: "[REDACTED]",
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: "reasoning.encrypted",
@@ -445,7 +449,7 @@ describe("doGenerate", () => {
         type: "reasoning",
         text: "Processing from reasoning_details...",
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: "reasoning.text",
@@ -459,7 +463,7 @@ describe("doGenerate", () => {
         type: "reasoning",
         text: "Summary from reasoning_details",
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: "reasoning.summary",
@@ -639,7 +643,7 @@ describe("doGenerate", () => {
   it("should pass headers", async () => {
     prepareJsonResponse({ content: "" });
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       headers: {
         "Custom-Provider-Header": "provider-header-value",
@@ -910,7 +914,7 @@ describe("doStream", () => {
         finishReason: { unified: "stop", raw: "stop" },
 
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {
               completionTokens: 227,
               promptTokens: 17,
@@ -959,7 +963,7 @@ describe("doStream", () => {
         chunk.type === "finish",
     );
     const openrouterUsage = (
-      finishChunk?.providerMetadata?.openrouter as {
+      finishChunk?.providerMetadata?.hyperbolic as {
         usage?: {
           cost?: number;
           costDetails?: { upstreamInferenceCost: number };
@@ -995,7 +999,7 @@ describe("doStream", () => {
         chunk.type === "finish",
     );
     const openrouterUsage = (
-      finishChunk?.providerMetadata?.openrouter as {
+      finishChunk?.providerMetadata?.hyperbolic as {
         usage?: {
           cost?: number;
           costDetails?: { upstreamInferenceCost: number };
@@ -1087,7 +1091,7 @@ describe("doStream", () => {
 
     // First delta should have reasoning_details from first chunk
     expect(reasoningDeltaElements[0]?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Text,
@@ -1099,7 +1103,7 @@ describe("doStream", () => {
 
     // Second and third deltas should have reasoning_details from second chunk
     expect(reasoningDeltaElements[1]?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Summary,
@@ -1114,7 +1118,7 @@ describe("doStream", () => {
     });
 
     expect(reasoningDeltaElements[2]?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Summary,
@@ -1176,7 +1180,7 @@ describe("doStream", () => {
 
     // Verify each delta has the correct reasoning_details in providerMetadata
     expect(reasoningDeltaElements[0]?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Text,
@@ -1187,7 +1191,7 @@ describe("doStream", () => {
     });
 
     expect(reasoningDeltaElements[1]?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Summary,
@@ -1198,7 +1202,7 @@ describe("doStream", () => {
     });
 
     expect(reasoningDeltaElements[2]?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Encrypted,
@@ -1212,7 +1216,7 @@ describe("doStream", () => {
     const reasoningStart = elements.find(isReasoningStartPart);
 
     expect(reasoningStart?.providerMetadata).toEqual({
-      openrouter: {
+      hyperbolic: {
         reasoning_details: [
           {
             type: ReasoningDetailType.Text,
@@ -1469,7 +1473,7 @@ describe("doStream", () => {
         toolName: "test-tool",
         input: '{"value":"Sparkle Day"}',
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [],
           },
         },
@@ -1494,7 +1498,7 @@ describe("doStream", () => {
         type: "finish",
         finishReason: { unified: "tool-calls", raw: "tool_calls" },
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {
               completionTokens: 17,
               promptTokens: 53,
@@ -1584,7 +1588,7 @@ describe("doStream", () => {
         toolName: "test-tool",
         input: '{"value":"Sparkle Day"}',
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [],
           },
         },
@@ -1609,7 +1613,7 @@ describe("doStream", () => {
         type: "finish",
         finishReason: { unified: "tool-calls", raw: "tool_calls" },
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {
               completionTokens: 17,
               promptTokens: 53,
@@ -1742,7 +1746,7 @@ describe("doStream", () => {
         type: "finish",
         finishReason: { unified: "stop", raw: "stop" },
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {
               completionTokens: 17,
               promptTokens: 53,
@@ -1799,7 +1803,7 @@ describe("doStream", () => {
       {
         finishReason: { unified: "error", raw: undefined },
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {},
           },
         },
@@ -1841,7 +1845,7 @@ describe("doStream", () => {
 
       type: "finish",
       providerMetadata: {
-        openrouter: {
+        hyperbolic: {
           usage: {},
         },
       },
@@ -1880,7 +1884,7 @@ describe("doStream", () => {
   it("should pass headers", async () => {
     prepareStreamResponse({ content: [] });
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       headers: {
         "Custom-Provider-Header": "provider-header-value",
@@ -1909,7 +1913,7 @@ describe("doStream", () => {
   it("should pass extra body", async () => {
     prepareStreamResponse({ content: [] });
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       extraBody: {
         custom_field: "custom_value",
@@ -2118,7 +2122,7 @@ describe("doStream", () => {
     expect(finishChunk).toBeDefined();
 
     // Verify file annotations are included in providerMetadata
-    const openrouterMetadata = finishChunk?.providerMetadata?.openrouter as {
+    const openrouterMetadata = finishChunk?.providerMetadata?.hyperbolic as {
       annotations?: Array<{
         type: "file";
         file: {
@@ -2185,7 +2189,7 @@ describe("doStream", () => {
         chunk.type === "finish",
     );
 
-    const openrouterMetadata = finishChunk?.providerMetadata?.openrouter as {
+    const openrouterMetadata = finishChunk?.providerMetadata?.hyperbolic as {
       annotations?: Array<{
         type: "file";
         file: {

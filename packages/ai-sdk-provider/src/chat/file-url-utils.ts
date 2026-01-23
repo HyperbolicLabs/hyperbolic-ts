@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3FilePart } from "@ai-sdk/provider";
 import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 
@@ -75,18 +79,18 @@ export const MIME_TO_FORMAT: Record<string, OpenRouterAudioFormat> = {
 };
 
 /**
- * Converts an audio file part to OpenRouter's input_audio data format.
+ * Converts an audio file part to Hyperbolic's input_audio data format.
  *
  * This function extracts base64-encoded audio data from a file part and
- * normalizes the format to one of the supported OpenRouter audio formats.
+ * normalizes the format to one of the supported Hyperbolic audio formats.
  *
  * @param part - The file part containing audio data. Must have a mediaType
  *   starting with "audio/" and contain either base64 data or a data URL.
  *
  * @returns An object with `data` (base64-encoded audio) and `format`
- *   suitable for use in OpenRouter's `input_audio` field.
+ *   suitable for use in Hyperbolic's `input_audio` field.
  *
- * @throws {Error} When audio is provided as an HTTP/HTTPS URL. OpenRouter requires
+ * @throws {Error} When audio is provided as an HTTP/HTTPS URL. Hyperbolic requires
  *   audio to be base64-encoded inline. The error message includes instructions for
  *   downloading and encoding the audio locally.
  *
@@ -107,7 +111,7 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
     defaultMediaType: "audio/mpeg",
   });
 
-  // OpenRouter's input_audio doesn't support URLs directly
+  // Hyperbolic's input_audio doesn't support URLs directly
   if (
     isUrl({
       url: fileData,
@@ -116,7 +120,7 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
   ) {
     throw new Error(
       `Audio files cannot be provided as URLs.\n\n` +
-        `OpenRouter requires audio to be base64-encoded. Please:\n` +
+        `Hyperbolic requires audio to be base64-encoded. Please:\n` +
         `1. Download the audio file locally\n` +
         `2. Read it as a Buffer or Uint8Array\n` +
         `3. Pass it as the data parameter\n\n` +
@@ -132,14 +136,14 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
   const mediaType = part.mediaType || "audio/mpeg";
   const rawFormat = mediaType.replace("audio/", "");
 
-  // Normalize format names for OpenRouter using MIME type mapping
+  // Normalize format names for Hyperbolic using MIME type mapping
   const format = MIME_TO_FORMAT[rawFormat];
 
   if (format === undefined) {
     const supportedList = OPENROUTER_AUDIO_FORMATS.join(", ");
     throw new Error(
       `Unsupported audio format: "${mediaType}"\n\n` +
-        `OpenRouter supports the following audio formats: ${supportedList}\n\n` +
+        `Hyperbolic supports the following audio formats: ${supportedList}\n\n` +
         `Learn more: https://openrouter.ai/docs/features/multimodal/audio`,
     );
   }

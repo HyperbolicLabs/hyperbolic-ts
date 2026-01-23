@@ -1,16 +1,20 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { describe, expect, it, vi } from "vitest";
 
-import type { OpenRouterChatCompletionsInput } from "../types/hyperbolic-chat-completions-input";
-import type { OpenRouterChatSettings } from "../types/hyperbolic-chat-settings";
-import { createOpenRouter } from "../provider";
+import type { HyperbolicChatCompletionsInput } from "../types/hyperbolic-chat-completions-input";
+import type { HyperbolicChatSettings } from "../types/hyperbolic-chat-settings";
+import { createHyperbolic } from "../provider";
 
 describe("Payload Comparison - Large PDF", () => {
   it("should send payload matching fetch baseline for large PDFs", async () => {
     interface CapturedRequestBody {
       model: string;
-      messages: OpenRouterChatCompletionsInput;
-      plugins?: OpenRouterChatSettings["plugins"];
+      messages: HyperbolicChatCompletionsInput;
+      plugins?: HyperbolicChatSettings["plugins"];
       usage?: { include: boolean };
     }
 
@@ -50,7 +54,7 @@ describe("Payload Comparison - Large PDF", () => {
       );
     }) as typeof fetch;
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-key",
       fetch: mockFetch,
     });
@@ -117,7 +121,7 @@ describe("Payload Comparison - Large PDF", () => {
     expect(filePart).toBeDefined();
 
     // CRITICAL ASSERTION: The file part should have a nested 'file' object with 'file_data'
-    // This is what the fetch example sends and what OpenRouter expects
+    // This is what the fetch example sends and what Hyperbolic expects
     expect(filePart).toMatchObject({
       type: "file",
       file: {

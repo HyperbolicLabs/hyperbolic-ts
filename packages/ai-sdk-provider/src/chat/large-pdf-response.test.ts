@@ -1,20 +1,24 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { describe, expect, it } from "vitest";
 
-import { createOpenRouter } from "../provider";
+import { createHyperbolic } from "../provider";
 import { createTestServer } from "../test-utils/test-server";
 
 const TEST_PROMPT: LanguageModelV3Prompt = [
   { role: "user", content: [{ type: "text", text: "Hello" }] },
 ];
 
-const provider = createOpenRouter({
-  baseURL: "https://test.openrouter.ai/api/v1",
+const provider = createHyperbolic({
+  baseURL: "https://api.hyperbolic.xyz/v1",
   apiKey: "test-api-key",
 });
 
 const server = createTestServer({
-  "https://test.openrouter.ai/api/v1/chat/completions": {},
+  "https://api.hyperbolic.xyz/v1/chat/completions": {},
 });
 
 describe("Large PDF Response Handling", () => {
@@ -23,7 +27,7 @@ describe("Large PDF Response Handling", () => {
       // This is the actual response OpenRouter returns for large PDF failures
       // HTTP 200 status but contains error object instead of choices
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
+      server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
         type: "json-value",
         body: {
           error: {
@@ -46,7 +50,7 @@ describe("Large PDF Response Handling", () => {
     it("should parse successful large PDF responses with file annotations", async () => {
       // Successful response with file annotations from FileParserPlugin
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
+      server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
         type: "json-value",
         body: {
           id: "gen-123",

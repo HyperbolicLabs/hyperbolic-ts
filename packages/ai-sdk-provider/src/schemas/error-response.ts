@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { ChatErrorError } from "@openrouter/sdk/models";
 import { createJsonErrorResponseHandler } from "@ai-sdk/provider-utils";
 import { z } from "zod/v4";

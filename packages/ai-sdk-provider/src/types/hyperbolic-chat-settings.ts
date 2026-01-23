@@ -1,11 +1,15 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type * as models from "@openrouter/sdk/models";
 
 import type { OpenRouterSharedSettings } from "..";
 
 // https://api.hyperbolic.xyz/v1/models
-export type OpenRouterChatModelId = string;
+export type HyperbolicChatModelId = string;
 
-export type OpenRouterChatSettings = {
+export type HyperbolicChatSettings = {
   /**
 Modify the likelihood of specified tokens appearing in the completion.
 
@@ -41,7 +45,7 @@ Whether to enable parallel function calling during tool use. Default to true.
   parallelToolCalls?: boolean;
 
   /**
-A unique identifier representing your end-user, which can help OpenRouter to
+A unique identifier representing your end-user, which can help Hyperbolic to
 monitor and detect abuse. Learn more.
 */
   user?: string;

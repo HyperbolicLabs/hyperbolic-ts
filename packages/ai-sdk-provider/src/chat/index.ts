@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type {
   LanguageModelV3,
   LanguageModelV3CallOptions,
@@ -26,12 +30,12 @@ import {
 import type { FileAnnotation } from "../schemas/provider-metadata";
 import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
 import type {
-  OpenRouterChatModelId,
-  OpenRouterChatSettings,
+  HyperbolicChatModelId,
+  HyperbolicChatSettings,
 } from "../types/hyperbolic-chat-settings";
-import type { OpenRouterUsageAccounting } from "../types/index";
+import type { HyperbolicUsageAccounting } from "../types/index";
 import { openrouterFailedResponseHandler } from "../schemas/error-response";
-import { OpenRouterProviderMetadataSchema } from "../schemas/provider-metadata";
+import { HyperbolicProviderMetadataSchema } from "../schemas/provider-metadata";
 import { ReasoningDetailType } from "../schemas/reasoning-details";
 import { createFinishReason, mapOpenRouterFinishReason } from "../utils/map-finish-reason";
 import { convertToOpenRouterChatMessages } from "./convert-to-hyperbolic-chat-messages";
@@ -42,7 +46,7 @@ import {
   OpenRouterStreamChatCompletionChunkSchema,
 } from "./schemas";
 
-type OpenRouterChatConfig = {
+type HyperbolicChatConfig = {
   provider: string;
   compatibility: "strict" | "compatible";
   headers: () => Record<string, string | undefined>;
@@ -51,26 +55,26 @@ type OpenRouterChatConfig = {
   extraBody?: Record<string, unknown>;
 };
 
-export class OpenRouterChatLanguageModel implements LanguageModelV3 {
+export class HyperbolicChatLanguageModel implements LanguageModelV3 {
   readonly specificationVersion = "v3" as const;
-  readonly provider = "openrouter";
+  readonly provider = "hyperbolic";
   readonly defaultObjectGenerationMode = "tool" as const;
 
-  readonly modelId: OpenRouterChatModelId;
+  readonly modelId: HyperbolicChatModelId;
   readonly supportsImageUrls = true;
   readonly supportedUrls: Record<string, RegExp[]> = {
     "image/*": [/^data:image\/[a-zA-Z]+;base64,/, /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i],
     // 'text/*': [/^data:text\//, /^https?:\/\/.+$/],
     "application/*": [/^data:application\//, /^https?:\/\/.+$/],
   };
-  readonly settings: OpenRouterChatSettings;
+  readonly settings: HyperbolicChatSettings;
 
-  private readonly config: OpenRouterChatConfig;
+  private readonly config: HyperbolicChatConfig;
 
   constructor(
-    modelId: OpenRouterChatModelId,
-    settings: OpenRouterChatSettings,
-    config: OpenRouterChatConfig,
+    modelId: HyperbolicChatModelId,
+    settings: HyperbolicChatSettings,
+    config: HyperbolicChatConfig,
   ) {
     this.modelId = modelId;
     this.settings = settings;
@@ -143,7 +147,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
       // messages:
       messages: convertToOpenRouterChatMessages(prompt),
 
-      // OpenRouter specific settings:
+      // Hyperbolic specific settings:
       include_reasoning: this.settings.includeReasoning,
       reasoning: this.settings.reasoning,
       usage: this.settings.usage,
@@ -190,10 +194,10 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
     usage: LanguageModelV3Usage;
     warnings: Array<SharedV3Warning>;
     providerMetadata?: {
-      openrouter: {
+      hyperbolic: {
         provider: string;
         reasoning_details?: ReasoningDetailUnion[];
-        usage: OpenRouterUsageAccounting;
+        usage: HyperbolicUsageAccounting;
       };
     };
     request?: { body?: unknown };
@@ -297,7 +301,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                       type: "reasoning" as const,
                       text: detail.text,
                       providerMetadata: {
-                        openrouter: {
+                        hyperbolic: {
                           reasoning_details: [detail],
                         },
                       },
@@ -311,7 +315,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                       type: "reasoning" as const,
                       text: detail.summary,
                       providerMetadata: {
-                        openrouter: {
+                        hyperbolic: {
                           reasoning_details: [detail],
                         },
                       },
@@ -326,7 +330,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                       type: "reasoning" as const,
                       text: "[REDACTED]",
                       providerMetadata: {
-                        openrouter: {
+                        hyperbolic: {
                           reasoning_details: [detail],
                         },
                       },
@@ -370,7 +374,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
           toolName: toolCall.function.name,
           input: toolCall.function.arguments,
           providerMetadata: {
-            openrouter: {
+            hyperbolic: {
               reasoning_details: reasoningDetails,
             },
           },
@@ -398,7 +402,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
             url: annotation.url_citation.url,
             title: annotation.url_citation.title,
             providerMetadata: {
-              openrouter: {
+              hyperbolic: {
                 content: annotation.url_citation.content || "",
               },
             },
@@ -441,7 +445,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
       usage: usageInfo,
       warnings: [],
       providerMetadata: {
-        openrouter: OpenRouterProviderMetadataSchema.parse({
+        hyperbolic: HyperbolicProviderMetadataSchema.parse({
           provider: response.provider ?? "",
           reasoning_details: choice.message.reasoning_details ?? [],
           annotations: fileAnnotations && fileAnnotations.length > 0 ? fileAnnotations : undefined,
@@ -555,7 +559,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
     };
 
     // Track provider-specific usage information
-    const openrouterUsage: Partial<OpenRouterUsageAccounting> = {};
+    const openrouterUsage: Partial<HyperbolicUsageAccounting> = {};
 
     // Track reasoning details to preserve for multi-turn conversations
     const accumulatedReasoningDetails: ReasoningDetailUnion[] = [];
@@ -616,7 +620,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
               usage.inputTokens.total = value.usage.prompt_tokens;
               usage.outputTokens.total = value.usage.completion_tokens;
 
-              // Collect OpenRouter specific usage information
+              // Collect Hyperbolic specific usage information
               openrouterUsage.promptTokens = value.usage.prompt_tokens;
 
               if (value.usage.prompt_tokens_details) {
@@ -708,7 +712,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
               // Emit reasoning_details in providerMetadata for each delta chunk
               // so users can accumulate them on their end before sending back
               const reasoningMetadata: SharedV3ProviderMetadata = {
-                openrouter: {
+                hyperbolic: {
                   reasoning_details: delta.reasoning_details,
                 },
               };
@@ -779,7 +783,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                     url: annotation.url_citation.url,
                     title: annotation.url_citation.title,
                     providerMetadata: {
-                      openrouter: {
+                      hyperbolic: {
                         content: annotation.url_citation.content || "",
                       },
                     },
@@ -799,7 +803,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
               for (const toolCallDelta of delta.tool_calls) {
                 const index = toolCallDelta.index ?? toolCalls.length - 1;
 
-                // Tool call start. OpenRouter returns all information except the arguments in the first chunk.
+                // Tool call start. Hyperbolic returns all information except the arguments in the first chunk.
                 if (toolCalls[index] == null) {
                   if (toolCallDelta.type !== "function") {
                     throw new InvalidResponseDataError({
@@ -875,7 +879,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                       toolName: toolCall.function.name,
                       input: toolCall.function.arguments,
                       providerMetadata: {
-                        openrouter: {
+                        hyperbolic: {
                           reasoning_details: accumulatedReasoningDetails,
                         },
                       },
@@ -933,7 +937,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                     toolName: toolCall.function.name,
                     input: toolCall.function.arguments,
                     providerMetadata: {
-                      openrouter: {
+                      hyperbolic: {
                         reasoning_details: accumulatedReasoningDetails,
                       },
                     },
@@ -980,7 +984,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
                       ? toolCall.function.arguments
                       : "{}",
                     providerMetadata: {
-                      openrouter: {
+                      hyperbolic: {
                         reasoning_details: accumulatedReasoningDetails,
                       },
                     },
@@ -1005,7 +1009,7 @@ export class OpenRouterChatLanguageModel implements LanguageModelV3 {
             }
 
             const openrouterMetadata: {
-              usage: Partial<OpenRouterUsageAccounting>;
+              usage: Partial<HyperbolicUsageAccounting>;
               provider?: string;
               reasoning_details?: ReasoningDetailUnion[];
               annotations?: FileAnnotation[];

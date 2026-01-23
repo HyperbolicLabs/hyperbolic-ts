@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type {
   LanguageModelV3,
   LanguageModelV3CallOptions,
@@ -20,15 +24,15 @@ import {
   postJsonToApi,
 } from "@ai-sdk/provider-utils";
 
-import type { OpenRouterUsageAccounting } from "../types";
+import type { HyperbolicUsageAccounting } from "../types";
 import type {
-  OpenRouterCompletionModelId,
-  OpenRouterCompletionSettings,
+  HyperbolicCompletionModelId,
+  HyperbolicCompletionSettings,
 } from "../types/hyperbolic-completion-settings";
 import { openrouterFailedResponseHandler } from "../schemas/error-response";
 import { createFinishReason, mapOpenRouterFinishReason } from "../utils/map-finish-reason";
 import { convertToOpenRouterCompletionPrompt } from "./convert-to-hyperbolic-completion-prompt";
-import { OpenRouterCompletionChunkSchema } from "./schemas";
+import { HyperbolicCompletionChunkSchema } from "./schemas";
 
 type OpenRouterCompletionConfig = {
   provider: string;
@@ -39,10 +43,10 @@ type OpenRouterCompletionConfig = {
   extraBody?: Record<string, unknown>;
 };
 
-export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
+export class HyperbolicCompletionLanguageModel implements LanguageModelV3 {
   readonly specificationVersion = "v3" as const;
   readonly provider = "openrouter";
-  readonly modelId: OpenRouterCompletionModelId;
+  readonly modelId: HyperbolicCompletionModelId;
   readonly supportsImageUrls = true;
   readonly supportedUrls: Record<string, RegExp[]> = {
     "image/*": [/^data:image\/[a-zA-Z]+;base64,/, /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i],
@@ -50,13 +54,13 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
     "application/*": [/^data:application\//, /^https?:\/\/.+$/],
   };
   readonly defaultObjectGenerationMode = undefined;
-  readonly settings: OpenRouterCompletionSettings;
+  readonly settings: HyperbolicCompletionSettings;
 
   private readonly config: OpenRouterCompletionConfig;
 
   constructor(
-    modelId: OpenRouterCompletionModelId,
-    settings: OpenRouterCompletionSettings,
+    modelId: HyperbolicCompletionModelId,
+    settings: HyperbolicCompletionSettings,
     config: OpenRouterCompletionConfig,
   ) {
     this.modelId = modelId;
@@ -128,7 +132,7 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
       // prompt:
       prompt: completionPrompt,
 
-      // OpenRouter specific settings:
+      // Hyperbolic specific settings:
       include_reasoning: this.settings.includeReasoning,
       reasoning: this.settings.reasoning,
 
@@ -157,7 +161,7 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
       headers: combineHeaders(this.config.headers(), options.headers),
       body: args,
       failedResponseHandler: openrouterFailedResponseHandler,
-      successfulResponseHandler: createJsonResponseHandler(OpenRouterCompletionChunkSchema),
+      successfulResponseHandler: createJsonResponseHandler(HyperbolicCompletionChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
     });
@@ -181,7 +185,7 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
 
     if (!choice) {
       throw new NoContentGeneratedError({
-        message: "No choice in OpenRouter completion response",
+        message: "No choice in Hyperbolic completion response",
       });
     }
 
@@ -239,7 +243,7 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
           this.config.compatibility === "strict" ? { include_usage: true } : undefined,
       },
       failedResponseHandler: openrouterFailedResponseHandler,
-      successfulResponseHandler: createEventSourceResponseHandler(OpenRouterCompletionChunkSchema),
+      successfulResponseHandler: createEventSourceResponseHandler(HyperbolicCompletionChunkSchema),
       abortSignal: options.abortSignal,
       fetch: this.config.fetch,
     });
@@ -259,11 +263,11 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
       },
     };
 
-    const openrouterUsage: Partial<OpenRouterUsageAccounting> = {};
+    const hyperbolicUsage: Partial<HyperbolicUsageAccounting> = {};
     return {
       stream: response.pipeThrough(
         new TransformStream<
-          ParseResult<z.infer<typeof OpenRouterCompletionChunkSchema>>,
+          ParseResult<z.infer<typeof HyperbolicCompletionChunkSchema>>,
           LanguageModelV3StreamPart
         >({
           transform(chunk, controller) {
@@ -287,33 +291,33 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
               usage.inputTokens.total = value.usage.prompt_tokens;
               usage.outputTokens.total = value.usage.completion_tokens;
 
-              // Collect OpenRouter specific usage information
-              openrouterUsage.promptTokens = value.usage.prompt_tokens;
+              // Collect Hyperbolic specific usage information
+              hyperbolicUsage.promptTokens = value.usage.prompt_tokens;
 
               if (value.usage.prompt_tokens_details) {
                 const cachedInputTokens = value.usage.prompt_tokens_details.cached_tokens ?? 0;
 
                 usage.inputTokens.cacheRead = cachedInputTokens;
-                openrouterUsage.promptTokensDetails = {
+                hyperbolicUsage.promptTokensDetails = {
                   cachedTokens: cachedInputTokens,
                 };
               }
 
-              openrouterUsage.completionTokens = value.usage.completion_tokens;
+              hyperbolicUsage.completionTokens = value.usage.completion_tokens;
               if (value.usage.completion_tokens_details) {
                 const reasoningTokens = value.usage.completion_tokens_details.reasoning_tokens ?? 0;
 
                 usage.outputTokens.reasoning = reasoningTokens;
-                openrouterUsage.completionTokensDetails = {
+                hyperbolicUsage.completionTokensDetails = {
                   reasoningTokens,
                 };
               }
 
-              openrouterUsage.cost = value.usage.cost;
-              openrouterUsage.totalTokens = value.usage.total_tokens;
+              hyperbolicUsage.cost = value.usage.cost;
+              hyperbolicUsage.totalTokens = value.usage.total_tokens;
               const upstreamInferenceCost = value.usage.cost_details?.upstream_inference_cost;
               if (upstreamInferenceCost != null) {
-                openrouterUsage.costDetails = {
+                hyperbolicUsage.costDetails = {
                   upstreamInferenceCost,
                 };
               }
@@ -340,8 +344,8 @@ export class OpenRouterCompletionLanguageModel implements LanguageModelV3 {
               finishReason,
               usage,
               providerMetadata: {
-                openrouter: {
-                  usage: openrouterUsage,
+                hyperbolic: {
+                  usage: hyperbolicUsage,
                 },
               },
             });

@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { z } from "zod/v4";
 
 import { ReasoningDetailUnionSchema } from "./reasoning-details";
@@ -30,9 +34,9 @@ export const FileAnnotationSchema = z
 export type FileAnnotation = z.infer<typeof FileAnnotationSchema>;
 
 /**
- * Schema for OpenRouter provider metadata attached to responses
+ * Schema for Hyperbolic provider metadata attached to responses
  */
-export const OpenRouterProviderMetadataSchema = z
+export const HyperbolicProviderMetadataSchema = z
   .object({
     provider: z.string(),
     reasoning_details: z.array(ReasoningDetailUnionSchema).optional(),
@@ -66,14 +70,14 @@ export const OpenRouterProviderMetadataSchema = z
   })
   .catchall(z.any());
 
-export type OpenRouterProviderMetadata = z.infer<typeof OpenRouterProviderMetadataSchema>;
+export type OpenRouterProviderMetadata = z.infer<typeof HyperbolicProviderMetadataSchema>;
 
 /**
  * Schema for parsing provider options that may contain reasoning_details and annotations
  */
-export const OpenRouterProviderOptionsSchema = z
+export const HyperbolicProviderOptionsSchema = z
   .object({
-    openrouter: z
+    hyperbolic: z
       .object({
         reasoning_details: z.array(ReasoningDetailUnionSchema).optional(),
         annotations: z.array(FileAnnotationSchema).optional(),

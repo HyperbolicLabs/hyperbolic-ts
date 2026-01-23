@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3ToolChoice } from "@ai-sdk/provider";
 import { InvalidArgumentError } from "@ai-sdk/provider";
 import { z } from "zod/v4";

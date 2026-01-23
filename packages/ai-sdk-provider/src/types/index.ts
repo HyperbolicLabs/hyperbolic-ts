@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3, LanguageModelV3Prompt } from "@ai-sdk/provider";
 
 export type { LanguageModelV3, LanguageModelV3Prompt };
@@ -24,7 +28,7 @@ export type OpenRouterProviderOptions = {
 
   /**
    * A unique identifier representing your end-user, which can
-   * help OpenRouter to monitor and detect abuse.
+   * help Hyperbolic to monitor and detect abuse.
    */
   user?: string;
 };
@@ -53,7 +57,7 @@ export type OpenRouterSharedSettings = OpenRouterProviderOptions & {
  * Usage accounting response
  * @see https://openrouter.ai/docs/use-cases/usage-accounting
  */
-export type OpenRouterUsageAccounting = {
+export type HyperbolicUsageAccounting = {
   promptTokens: number;
   promptTokensDetails?: {
     cachedTokens: number;

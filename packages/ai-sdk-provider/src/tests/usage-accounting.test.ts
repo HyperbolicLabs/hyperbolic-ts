@@ -1,12 +1,16 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { describe, expect, it } from "vitest";
 
-import type { OpenRouterChatSettings } from "../types/hyperbolic-chat-settings";
-import { OpenRouterChatLanguageModel } from "../chat";
+import type { HyperbolicChatSettings } from "../types/hyperbolic-chat-settings";
+import { HyperbolicChatLanguageModel } from "../chat";
 import { createTestServer } from "../test-utils/test-server";
 
-describe("OpenRouter Usage Accounting", () => {
+describe("Hyperbolic Usage Accounting", () => {
   const server = createTestServer({
-    "https://api.openrouter.ai/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: { type: "json-value", body: {} },
     },
   });
@@ -45,7 +49,7 @@ describe("OpenRouter Usage Accounting", () => {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "json-value",
       body: response,
     };
@@ -55,13 +59,13 @@ describe("OpenRouter Usage Accounting", () => {
     prepareJsonResponse();
 
     // Create model with usage accounting enabled
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -90,13 +94,13 @@ describe("OpenRouter Usage Accounting", () => {
     prepareJsonResponse();
 
     // Create model with usage accounting enabled
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -117,9 +121,9 @@ describe("OpenRouter Usage Accounting", () => {
     expect(result.providerMetadata).toBeDefined();
     const providerData = result.providerMetadata;
 
-    // Check for OpenRouter usage data
-    expect(providerData?.openrouter).toBeDefined();
-    const openrouterData = providerData?.openrouter as Record<string, unknown>;
+    // Check for Hyperbolic usage data
+    expect(providerData?.hyperbolic).toBeDefined();
+    const openrouterData = providerData?.hyperbolic as Record<string, unknown>;
     expect(openrouterData.usage).toBeDefined();
 
     const usage = openrouterData.usage;
@@ -144,13 +148,13 @@ describe("OpenRouter Usage Accounting", () => {
     prepareJsonResponse();
 
     // Create model with usage accounting disabled
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       // No usage property
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -167,8 +171,8 @@ describe("OpenRouter Usage Accounting", () => {
       maxOutputTokens: 100,
     });
 
-    // Verify that OpenRouter metadata is not included
-    expect(result.providerMetadata?.openrouter?.usage).toStrictEqual({
+    // Verify that Hyperbolic metadata is not included
+    expect(result.providerMetadata?.hyperbolic?.usage).toStrictEqual({
       promptTokens: 10,
       completionTokens: 20,
       totalTokens: 30,
@@ -210,18 +214,18 @@ describe("OpenRouter Usage Accounting", () => {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "json-value",
       body: response,
     };
 
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -237,7 +241,7 @@ describe("OpenRouter Usage Accounting", () => {
       maxOutputTokens: 100,
     });
 
-    const usage = (result.providerMetadata?.openrouter as Record<string, unknown>)?.usage;
+    const usage = (result.providerMetadata?.hyperbolic as Record<string, unknown>)?.usage;
 
     // Should include basic token counts
     expect(usage).toMatchObject({
@@ -281,18 +285,18 @@ describe("OpenRouter Usage Accounting", () => {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "json-value",
       body: response,
     };
 
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -308,7 +312,7 @@ describe("OpenRouter Usage Accounting", () => {
       maxOutputTokens: 100,
     });
 
-    const usage = (result.providerMetadata?.openrouter as Record<string, unknown>)?.usage;
+    const usage = (result.providerMetadata?.hyperbolic as Record<string, unknown>)?.usage;
 
     // Should include promptTokensDetails since cached_tokens is present
     expect(usage).toHaveProperty("promptTokensDetails");

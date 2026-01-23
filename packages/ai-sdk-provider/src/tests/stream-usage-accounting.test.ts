@@ -1,12 +1,16 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { describe, expect, it } from "vitest";
 
-import type { OpenRouterChatSettings } from "../types/hyperbolic-chat-settings";
-import { OpenRouterChatLanguageModel } from "../chat";
+import type { HyperbolicChatSettings } from "../types/hyperbolic-chat-settings";
+import { HyperbolicChatLanguageModel } from "../chat";
 import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 
-describe("OpenRouter Streaming Usage Accounting", () => {
+describe("Hyperbolic Streaming Usage Accounting", () => {
   const server = createTestServer({
-    "https://api.openrouter.ai/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: { type: "stream-chunks", chunks: [] },
     },
   });
@@ -37,7 +41,7 @@ describe("OpenRouter Streaming Usage Accounting", () => {
     chunks.push("data: [DONE]\n\n");
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks,
     };
@@ -47,13 +51,13 @@ describe("OpenRouter Streaming Usage Accounting", () => {
     prepareStreamResponse();
 
     // Create model with usage accounting enabled
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -84,13 +88,13 @@ describe("OpenRouter Streaming Usage Accounting", () => {
     prepareStreamResponse(true);
 
     // Create model with usage accounting enabled
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -116,7 +120,7 @@ describe("OpenRouter Streaming Usage Accounting", () => {
 
     // Verify metadata is included
     expect(finishChunk?.providerMetadata).toBeDefined();
-    const openrouterData = finishChunk?.providerMetadata?.openrouter;
+    const openrouterData = finishChunk?.providerMetadata?.hyperbolic;
     expect(openrouterData).toBeDefined();
 
     const usage = openrouterData?.usage;
@@ -135,13 +139,13 @@ describe("OpenRouter Streaming Usage Accounting", () => {
     prepareStreamResponse(false);
 
     // Create model with usage accounting disabled
-    const settings: OpenRouterChatSettings = {
+    const settings: HyperbolicChatSettings = {
       // No usage property
     };
 
-    const model = new OpenRouterChatLanguageModel("test-model", settings, {
-      provider: "openrouter.chat",
-      url: () => "https://api.openrouter.ai/chat/completions",
+    const model = new HyperbolicChatLanguageModel("test-model", settings, {
+      provider: "hyperbolic.chat",
+      url: () => "https://api.hyperbolic.xyz/v1/chat/completions",
       headers: () => ({}),
       compatibility: "strict",
       fetch: global.fetch,
@@ -166,7 +170,7 @@ describe("OpenRouter Streaming Usage Accounting", () => {
     expect(finishChunk).toBeDefined();
 
     // Verify that provider metadata is not included
-    expect(finishChunk?.providerMetadata?.openrouter).toStrictEqual({
+    expect(finishChunk?.providerMetadata?.hyperbolic).toStrictEqual({
       usage: {},
     });
   });

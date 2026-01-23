@@ -1,8 +1,12 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { OpenRouterSharedSettings } from ".";
 
-export type OpenRouterCompletionModelId = string;
+export type HyperbolicCompletionModelId = string;
 
-export type OpenRouterCompletionSettings = {
+export type HyperbolicCompletionSettings = {
   /**
 Modify the likelihood of specified tokens appearing in the completion.
 

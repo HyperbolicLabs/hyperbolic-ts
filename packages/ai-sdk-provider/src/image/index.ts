@@ -1,7 +1,3 @@
-// Modified by Hyperbolic Labs, Inc. on 2025-03-25
-// Original work Copyright 2025 OpenRouter Inc.
-// Licensed under the Apache License, Version 2.0
-
 import type { ImageModelV3, SharedV3Warning } from "@ai-sdk/provider";
 import { combineHeaders, createJsonResponseHandler, postJsonToApi } from "@ai-sdk/provider-utils";
 import { z } from "zod";

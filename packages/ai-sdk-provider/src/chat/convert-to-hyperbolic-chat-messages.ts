@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type {
   LanguageModelV3FilePart,
   LanguageModelV3Prompt,
@@ -9,32 +13,32 @@ import type {
 import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
 import type {
   ChatCompletionContentPart,
-  OpenRouterChatCompletionsInput,
+  HyperbolicChatCompletionsInput,
 } from "../types/hyperbolic-chat-completions-input";
-import { OpenRouterProviderOptionsSchema } from "../schemas/provider-metadata";
+import { HyperbolicProviderOptionsSchema } from "../schemas/provider-metadata";
 import { getFileUrl, getInputAudioData } from "./file-url-utils";
 import { isUrl } from "./is-url";
 
-// Type for OpenRouter Cache Control following Anthropic's pattern
-export type OpenRouterCacheControl = { type: "ephemeral" };
+// Type for Hyperbolic Cache Control following Anthropic's pattern
+export type HyperbolicCacheControl = { type: "ephemeral" };
 
 function getCacheControl(
   providerMetadata: SharedV3ProviderMetadata | undefined,
-): OpenRouterCacheControl | undefined {
+): HyperbolicCacheControl | undefined {
   const anthropic = providerMetadata?.anthropic;
-  const openrouter = providerMetadata?.openrouter;
+  const hyperbolic = providerMetadata?.hyperbolic;
 
   // Allow both cacheControl and cache_control:
-  return (openrouter?.cacheControl ??
-    openrouter?.cache_control ??
+  return (hyperbolic?.cacheControl ??
+    hyperbolic?.cache_control ??
     anthropic?.cacheControl ??
-    anthropic?.cache_control) as OpenRouterCacheControl | undefined;
+    anthropic?.cache_control) as HyperbolicCacheControl | undefined;
 }
 
 export function convertToOpenRouterChatMessages(
   prompt: LanguageModelV3Prompt,
-): OpenRouterChatCompletionsInput {
-  const messages: OpenRouterChatCompletionsInput = [];
+): HyperbolicChatCompletionsInput {
+  const messages: HyperbolicChatCompletionsInput = [];
   for (const { role, content, providerOptions } of prompt) {
     switch (role) {
       case "system": {
@@ -106,7 +110,7 @@ export function convertToOpenRouterChatMessages(
                 }
 
                 const fileName = String(
-                  part.providerOptions?.openrouter?.filename ?? part.filename ?? "",
+                  part.providerOptions?.hyperbolic?.filename ?? part.filename ?? "",
                 );
 
                 const fileData = getFileUrl({
@@ -177,7 +181,7 @@ export function convertToOpenRouterChatMessages(
             }
             case "tool-call": {
               const partReasoningDetails = (part.providerOptions as Record<string, unknown>)
-                ?.openrouter as Record<string, unknown> | undefined;
+                ?.hyperbolic as Record<string, unknown> | undefined;
               if (
                 partReasoningDetails?.reasoning_details &&
                 Array.isArray(partReasoningDetails.reasoning_details)
@@ -198,15 +202,15 @@ export function convertToOpenRouterChatMessages(
             }
             case "reasoning": {
               reasoning += part.text;
-              const parsedPartProviderOptions = OpenRouterProviderOptionsSchema.safeParse(
+              const parsedPartProviderOptions = HyperbolicProviderOptionsSchema.safeParse(
                 part.providerOptions,
               );
               if (
                 parsedPartProviderOptions.success &&
-                parsedPartProviderOptions.data?.openrouter?.reasoning_details
+                parsedPartProviderOptions.data?.hyperbolic?.reasoning_details
               ) {
                 accumulatedReasoningDetails.push(
-                  ...parsedPartProviderOptions.data.openrouter.reasoning_details,
+                  ...parsedPartProviderOptions.data.hyperbolic.reasoning_details,
                 );
               }
               break;
@@ -221,12 +225,12 @@ export function convertToOpenRouterChatMessages(
         }
 
         // Check message-level providerOptions for preserved reasoning_details and annotations
-        const parsedProviderOptions = OpenRouterProviderOptionsSchema.safeParse(providerOptions);
+        const parsedProviderOptions = HyperbolicProviderOptionsSchema.safeParse(providerOptions);
         const messageReasoningDetails = parsedProviderOptions.success
-          ? parsedProviderOptions.data?.openrouter?.reasoning_details
+          ? parsedProviderOptions.data?.hyperbolic?.reasoning_details
           : undefined;
         const messageAnnotations = parsedProviderOptions.success
-          ? parsedProviderOptions.data?.openrouter?.annotations
+          ? parsedProviderOptions.data?.hyperbolic?.annotations
           : undefined;
 
         // Use message-level reasoning_details if available, otherwise use accumulated from parts

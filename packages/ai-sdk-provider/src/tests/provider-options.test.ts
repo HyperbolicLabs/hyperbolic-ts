@@ -1,8 +1,12 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { ModelMessage } from "ai";
 import { streamText } from "ai";
 import { describe, expect, it, vi } from "vitest";
 
-import { createOpenRouter } from "../provider";
+import { createHyperbolic } from "../provider";
 import { createTestServer } from "../test-utils/test-server";
 
 // Add type assertions for the mocked classes
@@ -25,7 +29,7 @@ describe("providerOptions", () => {
   });
 
   it("should set providerOptions openrouter to extra body", async () => {
-    const openrouter = createOpenRouter({
+    const openrouter = createHyperbolic({
       apiKey: "test",
     });
     const model = openrouter("anthropic/claude-3.7-sonnet");

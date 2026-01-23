@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 /**
  * Simple test server utility to replace the removed @ai-sdk/provider-utils/test createTestServer
  * This provides HTTP request interception for testing purposes.

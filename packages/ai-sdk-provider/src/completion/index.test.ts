@@ -1,7 +1,11 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { LanguageModelV3Prompt, LanguageModelV3StreamPart } from "@ai-sdk/provider";
 import { vi } from "vitest";
 
-import { createOpenRouter } from "../provider";
+import { createHyperbolic } from "../provider";
 import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 
 vi.mock("../version", () => ({
@@ -37,7 +41,7 @@ const TEST_LOGPROBS = {
   ] as Record<string, number>[],
 };
 
-const provider = createOpenRouter({
+const provider = createHyperbolic({
   apiKey: "test-api-key",
   compatibility: "strict",
 });
@@ -135,7 +139,7 @@ describe("doGenerate", () => {
   it("should extract logprobs", async () => {
     prepareJsonResponse({ logprobs: TEST_LOGPROBS });
 
-    const provider = createOpenRouter({ apiKey: "test-api-key" });
+    const provider = createHyperbolic({ apiKey: "test-api-key" });
 
     await provider.completion("openai/gpt-3.5-turbo", { logprobs: 1 }).doGenerate({
       prompt: TEST_PROMPT,
@@ -204,7 +208,7 @@ describe("doGenerate", () => {
   it("should pass headers", async () => {
     prepareJsonResponse({ content: "" });
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       headers: {
         "Custom-Provider-Header": "provider-header-value",
@@ -316,7 +320,7 @@ describe("doStream", () => {
         type: "finish",
         finishReason: { unified: "stop", raw: "stop" },
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {
               promptTokens: 10,
               completionTokens: 362,
@@ -365,7 +369,7 @@ describe("doStream", () => {
         element.type === "finish",
     );
     const openrouterUsage = (
-      finishChunk?.providerMetadata?.openrouter as {
+      finishChunk?.providerMetadata?.hyperbolic as {
         usage?: {
           cost?: number;
           costDetails?: { upstreamInferenceCost: number };
@@ -401,7 +405,7 @@ describe("doStream", () => {
         element.type === "finish",
     );
     const openrouterUsage = (
-      finishChunk?.providerMetadata?.openrouter as {
+      finishChunk?.providerMetadata?.hyperbolic as {
         usage?: {
           cost?: number;
           costDetails?: { upstreamInferenceCost: number };
@@ -445,7 +449,7 @@ describe("doStream", () => {
       {
         finishReason: { unified: "error", raw: undefined },
         providerMetadata: {
-          openrouter: {
+          hyperbolic: {
             usage: {},
           },
         },
@@ -485,7 +489,7 @@ describe("doStream", () => {
     expect(elements[1]).toStrictEqual({
       finishReason: { unified: "error", raw: undefined },
       providerMetadata: {
-        openrouter: {
+        hyperbolic: {
           usage: {},
         },
       },
@@ -525,7 +529,7 @@ describe("doStream", () => {
   it("should pass headers", async () => {
     prepareStreamResponse({ content: [] });
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       headers: {
         "Custom-Provider-Header": "provider-header-value",
@@ -554,7 +558,7 @@ describe("doStream", () => {
   it("should pass extra body", async () => {
     prepareStreamResponse({ content: [] });
 
-    const provider = createOpenRouter({
+    const provider = createHyperbolic({
       apiKey: "test-api-key",
       extraBody: {
         custom_field: "custom_value",

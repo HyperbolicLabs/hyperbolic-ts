@@ -1,21 +1,25 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
-import type { OpenRouterProviderSettings } from "./provider";
+import type { HyperbolicProviderSettings } from "./provider";
 import type {
-  OpenRouterChatModelId,
-  OpenRouterChatSettings,
+  HyperbolicChatModelId,
+  HyperbolicChatSettings,
 } from "./types/hyperbolic-chat-settings";
 import type {
-  OpenRouterCompletionModelId,
-  OpenRouterCompletionSettings,
+  HyperbolicCompletionModelId,
+  HyperbolicCompletionSettings,
 } from "./types/hyperbolic-completion-settings";
-import { OpenRouterChatLanguageModel } from "./chat";
-import { OpenRouterCompletionLanguageModel } from "./completion";
+import { HyperbolicChatLanguageModel } from "./chat";
+import { HyperbolicCompletionLanguageModel } from "./completion";
 
 /**
-@deprecated Use `createOpenRouter` instead.
+@deprecated Use `createHyperbolic` instead.
  */
-export class OpenRouter {
+export class Hyperbolic {
   /**
 Use a different URL prefix for API calls, e.g. to use proxy servers.
 The default prefix is `https://api.hyperbolic.xyz/v1`.
@@ -39,9 +43,9 @@ Custom headers to include in the requests.
   readonly api_keys?: Record<string, string>;
 
   /**
-   * Creates a new OpenRouter provider instance.
+   * Creates a new Hyperbolic provider instance.
    */
-  constructor(options: OpenRouterProviderSettings = {}) {
+  constructor(options: HyperbolicProviderSettings = {}) {
     this.baseURL =
       withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://api.hyperbolic.xyz/v1";
     this.apiKey = options.apiKey;
@@ -56,7 +60,7 @@ Custom headers to include in the requests.
         Authorization: `Bearer ${loadApiKey({
           apiKey: this.apiKey,
           environmentVariableName: "OPENROUTER_API_KEY",
-          description: "OpenRouter",
+          description: "Hyperbolic",
         })}`,
         ...this.headers,
         ...(this.api_keys &&
@@ -67,18 +71,18 @@ Custom headers to include in the requests.
     };
   }
 
-  chat(modelId: OpenRouterChatModelId, settings: OpenRouterChatSettings = {}) {
-    return new OpenRouterChatLanguageModel(modelId, settings, {
-      provider: "openrouter.chat",
+  chat(modelId: HyperbolicChatModelId, settings: HyperbolicChatSettings = {}) {
+    return new HyperbolicChatLanguageModel(modelId, settings, {
+      provider: "hyperbolic.chat",
       ...this.baseConfig,
       compatibility: "strict",
       url: ({ path }) => `${this.baseURL}${path}`,
     });
   }
 
-  completion(modelId: OpenRouterCompletionModelId, settings: OpenRouterCompletionSettings = {}) {
-    return new OpenRouterCompletionLanguageModel(modelId, settings, {
-      provider: "openrouter.completion",
+  completion(modelId: HyperbolicCompletionModelId, settings: HyperbolicCompletionSettings = {}) {
+    return new HyperbolicCompletionLanguageModel(modelId, settings, {
+      provider: "hyperbolic.completion",
       ...this.baseConfig,
       compatibility: "strict",
       url: ({ path }) => `${this.baseURL}${path}`,

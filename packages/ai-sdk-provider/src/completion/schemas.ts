@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { z } from "zod/v4";
 
 import { OpenRouterErrorResponseSchema } from "../schemas/error-response";
@@ -5,7 +9,7 @@ import { ReasoningDetailArraySchema } from "../schemas/reasoning-details";
 
 // limited version of the schema, focussed on what is needed for the implementation
 // this approach limits breakages when the API changes and increases efficiency
-export const OpenRouterCompletionChunkSchema = z.union([
+export const HyperbolicCompletionChunkSchema = z.union([
   z
     .object({
       id: z.string().optional(),

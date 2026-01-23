@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import { ReasoningDetailType } from "../schemas/reasoning-details";
 import { convertToOpenRouterChatMessages } from "./convert-to-hyperbolic-chat-messages";
 import { MIME_TO_FORMAT } from "./file-url-utils";
@@ -425,7 +429,7 @@ describe("cache control", () => {
             data: "ZmlsZSBjb250ZW50",
             mediaType: "text/plain",
             providerOptions: {
-              openrouter: {
+              hyperbolic: {
                 filename: "file.txt",
               },
             },
@@ -486,7 +490,7 @@ describe("cache control", () => {
             data: "ZmlsZSBjb250ZW50",
             mediaType: "text/plain",
             providerOptions: {
-              openrouter: {
+              hyperbolic: {
                 filename: "file.txt",
               },
             },
@@ -739,7 +743,7 @@ describe("reasoning_details accumulation", () => {
             type: "reasoning",
             text: "First reasoning chunk",
             providerOptions: {
-              openrouter: {
+              hyperbolic: {
                 reasoning_details: [
                   {
                     type: ReasoningDetailType.Text,
@@ -753,7 +757,7 @@ describe("reasoning_details accumulation", () => {
             type: "reasoning",
             text: "Second reasoning chunk",
             providerOptions: {
-              openrouter: {
+              hyperbolic: {
                 reasoning_details: [
                   {
                     type: ReasoningDetailType.Text,
@@ -769,7 +773,7 @@ describe("reasoning_details accumulation", () => {
           },
         ],
         providerOptions: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: ReasoningDetailType.Text,
@@ -820,7 +824,7 @@ describe("reasoning_details accumulation", () => {
           },
         ],
         providerOptions: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: ReasoningDetailType.Text,
@@ -894,7 +898,7 @@ describe("reasoning_details accumulation", () => {
             type: "reasoning",
             text: "First chunk",
             providerOptions: {
-              openrouter: {
+              hyperbolic: {
                 reasoning_details: [
                   {
                     type: ReasoningDetailType.Text,
@@ -915,7 +919,7 @@ describe("reasoning_details accumulation", () => {
           },
         ],
         providerOptions: {
-          openrouter: {
+          hyperbolic: {
             reasoning_details: [
               {
                 type: ReasoningDetailType.Text,

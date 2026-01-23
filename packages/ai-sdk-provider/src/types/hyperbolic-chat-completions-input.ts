@@ -1,10 +1,14 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { FileAnnotation } from "../schemas/provider-metadata";
 import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
 
-// Type for OpenRouter Cache Control following Anthropic's pattern
-export type OpenRouterCacheControl = { type: "ephemeral" };
+// Type for Hyperbolic Cache Control following Anthropic's pattern
+export type HyperbolicCacheControl = { type: "ephemeral" };
 
-export type OpenRouterChatCompletionsInput = Array<ChatCompletionMessageParam>;
+export type HyperbolicChatCompletionsInput = Array<ChatCompletionMessageParam>;
 
 export type ChatCompletionMessageParam =
   | ChatCompletionSystemMessageParam
@@ -15,13 +19,13 @@ export type ChatCompletionMessageParam =
 export interface ChatCompletionSystemMessageParam {
   role: "system";
   content: string;
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 export interface ChatCompletionUserMessageParam {
   role: "user";
   content: string | Array<ChatCompletionContentPart>;
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 export type ChatCompletionContentPart =
@@ -37,7 +41,7 @@ export interface ChatCompletionContentPartFile {
     file_data?: string;
     file_id?: string;
   };
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 export interface ChatCompletionContentPartImage {
@@ -45,14 +49,14 @@ export interface ChatCompletionContentPartImage {
   image_url: {
     url: string;
   };
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 export interface ChatCompletionContentPartText {
   type: "text";
   text: string;
   reasoning?: string | null;
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 /** https://openrouter.ai/docs/guides/overview/multimodal/audio */
@@ -76,7 +80,7 @@ export interface ChatCompletionContentPartInputAudio {
     data: string;
     format: OpenRouterAudioFormat;
   };
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 export interface ChatCompletionAssistantMessageParam {
@@ -86,7 +90,7 @@ export interface ChatCompletionAssistantMessageParam {
   reasoning_details?: ReasoningDetailUnion[];
   annotations?: FileAnnotation[];
   tool_calls?: Array<ChatCompletionMessageToolCall>;
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }
 
 export interface ChatCompletionMessageToolCall {
@@ -102,5 +106,5 @@ export interface ChatCompletionToolMessageParam {
   role: "tool";
   content: string;
   tool_call_id: string;
-  cache_control?: OpenRouterCacheControl;
+  cache_control?: HyperbolicCacheControl;
 }

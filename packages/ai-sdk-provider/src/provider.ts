@@ -1,3 +1,7 @@
+// Modified by Hyperbolic Labs, Inc. on 2026-01-23
+// Original work Copyright 2025 OpenRouter Inc.
+// Licensed under the Apache License, Version 2.0
+
 import type { ProviderV3 } from "@ai-sdk/provider";
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
@@ -6,59 +10,59 @@ import type {
   HyperbolicImageSettings,
 } from "./image/hyperbolic-image-settings";
 import type {
-  OpenRouterChatModelId,
-  OpenRouterChatSettings,
+  HyperbolicChatModelId,
+  HyperbolicChatSettings,
 } from "./types/hyperbolic-chat-settings";
 import type {
-  OpenRouterCompletionModelId,
-  OpenRouterCompletionSettings,
+  HyperbolicCompletionModelId,
+  HyperbolicCompletionSettings,
 } from "./types/hyperbolic-completion-settings";
-import { OpenRouterChatLanguageModel } from "./chat";
-import { OpenRouterCompletionLanguageModel } from "./completion";
+import { HyperbolicChatLanguageModel } from "./chat";
+import { HyperbolicCompletionLanguageModel } from "./completion";
 import { HyperbolicImageModel } from "./image";
 import { withUserAgentSuffix } from "./utils/with-user-agent-suffix";
 import { VERSION } from "./version";
 
-export type { OpenRouterChatSettings, OpenRouterCompletionSettings };
+export type { HyperbolicChatSettings, HyperbolicCompletionSettings };
 
-export interface OpenRouterProvider extends ProviderV3 {
+export interface HyperbolicProvider extends ProviderV3 {
   (
-    modelId: OpenRouterChatModelId,
-    settings?: OpenRouterCompletionSettings,
-  ): OpenRouterCompletionLanguageModel;
-  (modelId: OpenRouterChatModelId, settings?: OpenRouterChatSettings): OpenRouterChatLanguageModel;
+    modelId: HyperbolicChatModelId,
+    settings?: HyperbolicCompletionSettings,
+  ): HyperbolicCompletionLanguageModel;
+  (modelId: HyperbolicChatModelId, settings?: HyperbolicChatSettings): HyperbolicChatLanguageModel;
 
   languageModel(
-    modelId: OpenRouterChatModelId,
-    settings?: OpenRouterCompletionSettings,
-  ): OpenRouterCompletionLanguageModel;
+    modelId: HyperbolicChatModelId,
+    settings?: HyperbolicCompletionSettings,
+  ): HyperbolicCompletionLanguageModel;
   languageModel(
-    modelId: OpenRouterChatModelId,
-    settings?: OpenRouterChatSettings,
-  ): OpenRouterChatLanguageModel;
+    modelId: HyperbolicChatModelId,
+    settings?: HyperbolicChatSettings,
+  ): HyperbolicChatLanguageModel;
 
   /**
-Creates an OpenRouter chat model for text generation.
+Creates an Hyperbolic chat model for text generation.
    */
   chat(
-    modelId: OpenRouterChatModelId,
-    settings?: OpenRouterChatSettings,
-  ): OpenRouterChatLanguageModel;
+    modelId: HyperbolicChatModelId,
+    settings?: HyperbolicChatSettings,
+  ): HyperbolicChatLanguageModel;
 
   /**
-Creates an OpenRouter completion model for text generation.
+Creates an Hyperbolic completion model for text generation.
    */
   completion(
-    modelId: OpenRouterCompletionModelId,
-    settings?: OpenRouterCompletionSettings,
-  ): OpenRouterCompletionLanguageModel;
+    modelId: HyperbolicCompletionModelId,
+    settings?: HyperbolicCompletionSettings,
+  ): HyperbolicCompletionLanguageModel;
 
   image(modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings): HyperbolicImageModel;
 }
 
-export interface OpenRouterProviderSettings {
+export interface HyperbolicProviderSettings {
   /**
-Base URL for the OpenRouter API calls.
+Base URL for the Hyperbolic API calls.
      */
   baseURL?: string;
 
@@ -78,7 +82,7 @@ Custom headers to include in the requests.
   headers?: Record<string, string>;
 
   /**
-OpenRouter compatibility mode. Should be set to `strict` when using the OpenRouter API,
+Hyperbolic compatibility mode. Should be set to `strict` when using the Hyperbolic API,
 and `compatible` when using 3rd party providers. In `compatible` mode, newer
 information such as streamOptions are not being sent. Defaults to 'compatible'.
    */
@@ -91,7 +95,7 @@ or to provide a custom fetch implementation for e.g. testing.
   fetch?: typeof fetch;
 
   /**
-A JSON object to send as the request body to access OpenRouter features & upstream provider features.
+A JSON object to send as the request body to access Hyperbolic features & upstream provider features.
   */
   extraBody?: Record<string, unknown>;
 
@@ -103,9 +107,9 @@ A JSON object to send as the request body to access OpenRouter features & upstre
 }
 
 /**
-Create an OpenRouter provider instance.
+Create an Hyperbolic provider instance.
  */
-export function createOpenRouter(options: OpenRouterProviderSettings = {}): OpenRouterProvider {
+export function createHyperbolic(options: HyperbolicProviderSettings = {}): HyperbolicProvider {
   const baseURL =
     withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://api.hyperbolic.xyz/v1";
 
@@ -118,7 +122,7 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
         Authorization: `Bearer ${loadApiKey({
           apiKey: options.apiKey,
           environmentVariableName: "HYPERBOLIC_API_KEY",
-          description: "OpenRouter",
+          description: "Hyperbolic",
         })}`,
         ...options.headers,
         ...(options.api_keys &&
@@ -126,12 +130,12 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
             "X-Provider-API-Keys": JSON.stringify(options.api_keys),
           }),
       },
-      `ai-sdk/openrouter/${VERSION}`,
+      `ai-sdk/hyperbolic/${VERSION}`,
     );
 
-  const createChatModel = (modelId: OpenRouterChatModelId, settings: OpenRouterChatSettings = {}) =>
-    new OpenRouterChatLanguageModel(modelId, settings, {
-      provider: "openrouter.chat",
+  const createChatModel = (modelId: HyperbolicChatModelId, settings: HyperbolicChatSettings = {}) =>
+    new HyperbolicChatLanguageModel(modelId, settings, {
+      provider: "hyperbolic.chat",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       compatibility,
@@ -140,11 +144,11 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
     });
 
   const createCompletionModel = (
-    modelId: OpenRouterCompletionModelId,
-    settings: OpenRouterCompletionSettings = {},
+    modelId: HyperbolicCompletionModelId,
+    settings: HyperbolicCompletionSettings = {},
   ) =>
-    new OpenRouterCompletionLanguageModel(modelId, settings, {
-      provider: "openrouter.completion",
+    new HyperbolicCompletionLanguageModel(modelId, settings, {
+      provider: "hyperbolic.completion",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       compatibility,
@@ -166,19 +170,19 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
     });
 
   const createLanguageModel = (
-    modelId: OpenRouterChatModelId | OpenRouterCompletionModelId,
-    settings?: OpenRouterChatSettings | OpenRouterCompletionSettings,
+    modelId: HyperbolicChatModelId | HyperbolicCompletionModelId,
+    settings?: HyperbolicChatSettings | HyperbolicCompletionSettings,
   ) => {
     if (new.target) {
-      throw new Error("The OpenRouter model function cannot be called with the new keyword.");
+      throw new Error("The Hyperbolic model function cannot be called with the new keyword.");
     }
 
-    return createChatModel(modelId, settings as OpenRouterChatSettings);
+    return createChatModel(modelId, settings as HyperbolicChatSettings);
   };
 
   const provider = (
-    modelId: OpenRouterChatModelId | OpenRouterCompletionModelId,
-    settings?: OpenRouterChatSettings | OpenRouterCompletionSettings,
+    modelId: HyperbolicChatModelId | HyperbolicCompletionModelId,
+    settings?: HyperbolicChatSettings | HyperbolicCompletionSettings,
   ) => createLanguageModel(modelId, settings);
 
   provider.languageModel = createLanguageModel;
@@ -186,12 +190,12 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
   provider.completion = createCompletionModel;
   provider.image = createImageModel;
 
-  return provider as OpenRouterProvider;
+  return provider as HyperbolicProvider;
 }
 
 /**
-Default OpenRouter provider instance. It uses 'strict' compatibility mode.
+Default Hyperbolic provider instance. It uses 'strict' compatibility mode.
  */
-export const openrouter = createOpenRouter({
-  compatibility: "strict", // strict for OpenRouter API
+export const hyperbolic = createHyperbolic({
+  compatibility: "strict", // strict for Hyperbolic API
 });
