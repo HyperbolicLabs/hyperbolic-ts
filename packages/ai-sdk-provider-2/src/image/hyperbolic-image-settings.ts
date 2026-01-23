@@ -4,7 +4,7 @@
 
 import type { GenerateImageResult } from "ai";
 
-import type { HyperbolicSharedSettings } from "./types";
+import type { OpenRouterSharedSettings as HyperbolicSharedSettings } from "../types";
 
 export type HyperbolicImageModelId = string;
 

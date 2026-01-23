@@ -2,6 +2,10 @@ import type { ProviderV3 } from "@ai-sdk/provider";
 import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
 
 import type {
+  HyperbolicImageModelId,
+  HyperbolicImageSettings,
+} from "./image/hyperbolic-image-settings";
+import type {
   OpenRouterChatModelId,
   OpenRouterChatSettings,
 } from "./types/openrouter-chat-settings";
@@ -16,6 +20,7 @@ import type {
 import { OpenRouterChatLanguageModel } from "./chat";
 import { OpenRouterCompletionLanguageModel } from "./completion";
 import { OpenRouterEmbeddingModel } from "./embedding";
+import { HyperbolicImageModel } from "./image";
 import { withUserAgentSuffix } from "./utils/with-user-agent-suffix";
 import { VERSION } from "./version";
 
@@ -69,6 +74,8 @@ Creates an OpenRouter text embedding model. (AI SDK v4 - deprecated, use textEmb
     modelId: OpenRouterEmbeddingModelId,
     settings?: OpenRouterEmbeddingSettings,
   ): OpenRouterEmbeddingModel;
+
+  image(modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings): HyperbolicImageModel;
 }
 
 export interface OpenRouterProviderSettings {
@@ -167,6 +174,19 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
       extraBody: options.extraBody,
     });
 
+  const createImageModel = (
+    modelId: HyperbolicImageModelId,
+    settings: HyperbolicImageSettings = {},
+  ) =>
+    new HyperbolicImageModel(modelId, settings, {
+      provider: "hyperbolic.image",
+      url: ({ path }) => `${baseURL}${path}`,
+      headers: getHeaders,
+      compatibility,
+      fetch: options.fetch,
+      extraBody: options.extraBody,
+    });
+
   const createEmbeddingModel = (
     modelId: OpenRouterEmbeddingModelId,
     settings: OpenRouterEmbeddingSettings = {},
@@ -187,10 +207,6 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
       throw new Error("The OpenRouter model function cannot be called with the new keyword.");
     }
 
-    if (modelId === "openai/gpt-3.5-turbo-instruct") {
-      return createCompletionModel(modelId, settings as OpenRouterCompletionSettings);
-    }
-
     return createChatModel(modelId, settings as OpenRouterChatSettings);
   };
 
@@ -204,6 +220,7 @@ export function createOpenRouter(options: OpenRouterProviderSettings = {}): Open
   provider.completion = createCompletionModel;
   provider.textEmbeddingModel = createEmbeddingModel;
   provider.embedding = createEmbeddingModel; // deprecated alias for v4 compatibility
+  provider.image = createImageModel;
 
   return provider as OpenRouterProvider;
 }
