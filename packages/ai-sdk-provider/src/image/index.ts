@@ -8,7 +8,7 @@ import type {
   HyperbolicImageProviderResponseMetadata,
   HyperbolicImageSettings,
 } from "./hyperbolic-image-settings";
-import { hyperbolicFailedResponseHandler } from "../utils/hyperbolic-error";
+import { hyperbolicFailedResponseHandler } from "../schemas/error-response";
 
 type HyperbolicImageModelConfig = {
   provider: string;
