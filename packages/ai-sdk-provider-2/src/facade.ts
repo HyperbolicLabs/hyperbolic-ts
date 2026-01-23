@@ -18,7 +18,7 @@ import { OpenRouterCompletionLanguageModel } from "./completion";
 export class OpenRouter {
   /**
 Use a different URL prefix for API calls, e.g. to use proxy servers.
-The default prefix is `https://openrouter.ai/api/v1`.
+The default prefix is `https://api.hyperbolic.xyz/v1`.
    */
   readonly baseURL: string;
 
@@ -43,7 +43,7 @@ Custom headers to include in the requests.
    */
   constructor(options: OpenRouterProviderSettings = {}) {
     this.baseURL =
-      withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://openrouter.ai/api/v1";
+      withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://api.hyperbolic.xyz/v1";
     this.apiKey = options.apiKey;
     this.headers = options.headers;
     this.api_keys = options.api_keys;

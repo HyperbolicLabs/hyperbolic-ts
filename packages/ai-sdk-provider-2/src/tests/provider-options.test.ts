@@ -12,7 +12,7 @@ const TEST_MESSAGES: ModelMessage[] = [
 
 describe("providerOptions", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: {
         type: "stream-chunks",
         chunks: [],

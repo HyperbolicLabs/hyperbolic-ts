@@ -152,7 +152,7 @@ function isTextDeltaPart(part: LanguageModelV3StreamPart): part is Extract<
 
 describe("doGenerate", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: { type: "json-value", body: {} },
     },
   });
@@ -197,7 +197,7 @@ describe("doGenerate", () => {
     finish_reason?: string;
   } = {}) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "json-value",
       body: {
         id: "chatcmpl-95ZTZkhr0mHNKqerQfiwkuox3PHAd",
@@ -768,7 +768,7 @@ describe("doGenerate", () => {
 
 describe("doStream", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: { type: "json-value", body: {} },
     },
   });
@@ -811,7 +811,7 @@ describe("doStream", () => {
     finish_reason?: string;
   }) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1702657020,"model":"gpt-3.5-turbo-0613",` +
@@ -1012,7 +1012,7 @@ describe("doStream", () => {
     // This test verifies that when the API returns both 'reasoning' and 'reasoning_details' fields,
     // we prioritize reasoning_details and ignore the reasoning field to avoid duplicates.
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         // First chunk: both reasoning and reasoning_details with different content
@@ -1136,7 +1136,7 @@ describe("doStream", () => {
     // This test verifies that reasoning_details are included in providerMetadata
     // for all reasoning-delta chunks, enabling users to accumulate them for multi-turn conversations
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         // First chunk: reasoning_details with Text type
@@ -1227,7 +1227,7 @@ describe("doStream", () => {
     // This test reproduces the issue where reasoning appears first but then gets "pushed down"
     // by content that comes later in the stream
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         // First chunk: Start with reasoning
@@ -1305,7 +1305,7 @@ describe("doStream", () => {
 
   it("should stream tool deltas", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
@@ -1522,7 +1522,7 @@ describe("doStream", () => {
 
   it("should stream tool call that is sent in one chunk", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
@@ -1637,7 +1637,7 @@ describe("doStream", () => {
 
   it("should override finishReason to tool-calls in streaming when tool calls and encrypted reasoning are present", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         // First chunk: reasoning_details with encrypted data
@@ -1699,7 +1699,7 @@ describe("doStream", () => {
 
   it("should stream images", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
@@ -1770,7 +1770,7 @@ describe("doStream", () => {
 
   it("should handle error stream parts", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
@@ -1823,7 +1823,7 @@ describe("doStream", () => {
 
   it("should handle unparsable stream parts", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: ["data: {unparsable}\n\n", "data: [DONE]\n\n"],
     };
@@ -2081,7 +2081,7 @@ describe("doStream", () => {
     // This test verifies that file annotations from FileParserPlugin are accumulated
     // during streaming and included in the finish event's providerMetadata
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         // First chunk with role and content
@@ -2147,7 +2147,7 @@ describe("doStream", () => {
   it("should accumulate multiple file annotations from stream", async () => {
     // This test verifies that multiple file annotations are accumulated correctly
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         // First chunk with content
@@ -2205,14 +2205,14 @@ describe("doStream", () => {
 
 describe("debug settings", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/chat/completions": {
+    "https://api.hyperbolic.xyz/v1/chat/completions": {
       response: { type: "json-value", body: {} },
     },
   });
 
   function prepareJsonResponse({ content = "" }: { content?: string } = {}) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/chat/completions"]!.response = {
       type: "json-value",
       body: {
         id: "chatcmpl-test",

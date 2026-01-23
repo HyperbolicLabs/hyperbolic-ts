@@ -46,7 +46,7 @@ const model = provider.completion("openai/gpt-3.5-turbo-instruct");
 
 describe("doGenerate", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/completions": {
+    "https://api.hyperbolic.xyz/v1/completions": {
       response: { type: "json-value", body: {} },
     },
   });
@@ -75,7 +75,7 @@ describe("doGenerate", () => {
     finish_reason?: string;
   }) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/completions"]!.response = {
       type: "json-value",
       body: {
         id: "cmpl-96cAM1v77r4jXa4qb2NSmRREV5oWB",
@@ -233,7 +233,7 @@ describe("doGenerate", () => {
 
 describe("doStream", () => {
   const server = createTestServer({
-    "https://openrouter.ai/api/v1/completions": {
+    "https://api.hyperbolic.xyz/v1/completions": {
       response: { type: "stream-chunks", chunks: [] },
     },
   });
@@ -272,7 +272,7 @@ describe("doStream", () => {
     finish_reason?: string;
   }) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         ...content.map((text) => {
@@ -416,7 +416,7 @@ describe("doStream", () => {
 
   it("should handle error stream parts", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/completions"]!.response = {
       type: "stream-chunks",
       chunks: [
         `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
@@ -469,7 +469,7 @@ describe("doStream", () => {
 
   it("should handle unparsable stream parts", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+    server.urls["https://api.hyperbolic.xyz/v1/completions"]!.response = {
       type: "stream-chunks",
       chunks: ["data: {unparsable}\n\n", "data: [DONE]\n\n"],
     };
