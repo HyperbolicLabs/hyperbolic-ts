@@ -1,7 +1,8 @@
-import { z } from 'zod/v4';
-import { OpenRouterErrorResponseSchema } from '../schemas/error-response';
-import { ImageResponseArraySchema } from '../schemas/image';
-import { ReasoningDetailArraySchema } from '../schemas/reasoning-details';
+import { z } from "zod/v4";
+
+import { OpenRouterErrorResponseSchema } from "../schemas/error-response";
+import { ImageResponseArraySchema } from "../schemas/image";
+import { ReasoningDetailArraySchema } from "../schemas/reasoning-details";
 
 const OpenRouterChatCompletionBaseResponseSchema = z
   .object({
@@ -47,7 +48,7 @@ export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
         .object({
           message: z
             .object({
-              role: z.literal('assistant'),
+              role: z.literal("assistant"),
               content: z.string().nullable().optional(),
               reasoning: z.string().nullable().optional(),
               reasoning_details: ReasoningDetailArraySchema.nullish(),
@@ -58,7 +59,7 @@ export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
                   z
                     .object({
                       id: z.string().optional().nullable(),
-                      type: z.literal('function'),
+                      type: z.literal("function"),
                       function: z
                         .object({
                           name: z.string(),
@@ -76,7 +77,7 @@ export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
                     // URL citation from web search
                     z
                       .object({
-                        type: z.literal('url_citation'),
+                        type: z.literal("url_citation"),
                         url_citation: z
                           .object({
                             end_index: z.number(),
@@ -91,7 +92,7 @@ export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
                     // File annotation from FileParserPlugin (old format)
                     z
                       .object({
-                        type: z.literal('file_annotation'),
+                        type: z.literal("file_annotation"),
                         file_annotation: z
                           .object({
                             file_id: z.string(),
@@ -103,7 +104,7 @@ export const OpenRouterNonStreamChatCompletionResponseSchema = z.union([
                     // File annotation from FileParserPlugin (new format)
                     z
                       .object({
-                        type: z.literal('file'),
+                        type: z.literal("file"),
                         file: z
                           .object({
                             hash: z.string(),
@@ -171,7 +172,7 @@ export const OpenRouterStreamChatCompletionChunkSchema = z.union([
         .object({
           delta: z
             .object({
-              role: z.enum(['assistant']).optional(),
+              role: z.enum(["assistant"]).optional(),
               content: z.string().nullish(),
               reasoning: z.string().nullish().optional(),
               reasoning_details: ReasoningDetailArraySchema.nullish(),
@@ -182,7 +183,7 @@ export const OpenRouterStreamChatCompletionChunkSchema = z.union([
                     .object({
                       index: z.number().nullish(),
                       id: z.string().nullish(),
-                      type: z.literal('function').optional(),
+                      type: z.literal("function").optional(),
                       function: z
                         .object({
                           name: z.string().nullish(),
@@ -200,7 +201,7 @@ export const OpenRouterStreamChatCompletionChunkSchema = z.union([
                     // URL citation from web search
                     z
                       .object({
-                        type: z.literal('url_citation'),
+                        type: z.literal("url_citation"),
                         url_citation: z
                           .object({
                             end_index: z.number(),
@@ -215,7 +216,7 @@ export const OpenRouterStreamChatCompletionChunkSchema = z.union([
                     // File annotation from FileParserPlugin (old format)
                     z
                       .object({
-                        type: z.literal('file_annotation'),
+                        type: z.literal("file_annotation"),
                         file_annotation: z
                           .object({
                             file_id: z.string(),
@@ -227,7 +228,7 @@ export const OpenRouterStreamChatCompletionChunkSchema = z.union([
                     // File annotation from FileParserPlugin (new format)
                     z
                       .object({
-                        type: z.literal('file'),
+                        type: z.literal("file"),
                         file: z
                           .object({
                             hash: z.string(),

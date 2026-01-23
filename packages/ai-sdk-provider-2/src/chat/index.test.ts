@@ -1,115 +1,109 @@
-import type {
-  LanguageModelV3Prompt,
-  LanguageModelV3StreamPart,
-} from '@ai-sdk/provider';
-import type { JSONSchema7 } from 'json-schema';
-import type { ImageResponse } from '../schemas/image';
-import type { ReasoningDetailUnion } from '../schemas/reasoning-details';
+import type { LanguageModelV3Prompt, LanguageModelV3StreamPart } from "@ai-sdk/provider";
+import type { JSONSchema7 } from "json-schema";
+import { vi } from "vitest";
 
-import { vi } from 'vitest';
-import { createOpenRouter } from '../provider';
-import { ReasoningDetailType } from '../schemas/reasoning-details';
-import {
-  convertReadableStreamToArray,
-  createTestServer,
-} from '../test-utils/test-server';
+import type { ImageResponse } from "../schemas/image";
+import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
+import { createOpenRouter } from "../provider";
+import { ReasoningDetailType } from "../schemas/reasoning-details";
+import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 
-vi.mock('@/src/version', () => ({
-  VERSION: '0.0.0-test',
+vi.mock("../version", () => ({
+  VERSION: "0.0.0-test",
 }));
 
 const TEST_PROMPT: LanguageModelV3Prompt = [
-  { role: 'user', content: [{ type: 'text', text: 'Hello' }] },
+  { role: "user", content: [{ type: "text", text: "Hello" }] },
 ];
 
 const TEST_LOGPROBS = {
   content: [
     {
-      token: 'Hello',
+      token: "Hello",
       logprob: -0.0009994634,
       top_logprobs: [
         {
-          token: 'Hello',
+          token: "Hello",
           logprob: -0.0009994634,
         },
       ],
     },
     {
-      token: '!',
+      token: "!",
       logprob: -0.13410144,
       top_logprobs: [
         {
-          token: '!',
+          token: "!",
           logprob: -0.13410144,
         },
       ],
     },
     {
-      token: ' How',
+      token: " How",
       logprob: -0.0009250381,
       top_logprobs: [
         {
-          token: ' How',
+          token: " How",
           logprob: -0.0009250381,
         },
       ],
     },
     {
-      token: ' can',
+      token: " can",
       logprob: -0.047709424,
       top_logprobs: [
         {
-          token: ' can',
+          token: " can",
           logprob: -0.047709424,
         },
       ],
     },
     {
-      token: ' I',
+      token: " I",
       logprob: -0.000009014684,
       top_logprobs: [
         {
-          token: ' I',
+          token: " I",
           logprob: -0.000009014684,
         },
       ],
     },
     {
-      token: ' assist',
+      token: " assist",
       logprob: -0.009125131,
       top_logprobs: [
         {
-          token: ' assist',
+          token: " assist",
           logprob: -0.009125131,
         },
       ],
     },
     {
-      token: ' you',
+      token: " you",
       logprob: -0.0000066306106,
       top_logprobs: [
         {
-          token: ' you',
+          token: " you",
           logprob: -0.0000066306106,
         },
       ],
     },
     {
-      token: ' today',
+      token: " today",
       logprob: -0.00011093382,
       top_logprobs: [
         {
-          token: ' today',
+          token: " today",
           logprob: -0.00011093382,
         },
       ],
     },
     {
-      token: '?',
+      token: "?",
       logprob: -0.00004596782,
       top_logprobs: [
         {
-          token: '?',
+          token: "?",
           logprob: -0.00004596782,
         },
       ],
@@ -119,51 +113,52 @@ const TEST_LOGPROBS = {
 
 const TEST_IMAGE_URL = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAIAAADwf7zUAAAAiXpUWHRSYXcgcHJvZmlsZSB0eXBlIGlwdGMAAAiZTYwxDgIxDAT7vOKekDjrtV1T0VHwgbtcIiEhgfh/QaDgmGlWW0w6X66n5fl6jNu9p+ULkapDENgzpj+Kl5aFfa6KnYWgSjZjGOiSYRxTY/v8KIijI==`;
 
-const TEST_IMAGE_BASE64 = TEST_IMAGE_URL.split(',')[1]!;
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const TEST_IMAGE_BASE64 = TEST_IMAGE_URL.split(",")[1]!;
 
 const provider = createOpenRouter({
-  apiKey: 'test-api-key',
-  compatibility: 'strict',
+  apiKey: "test-api-key",
+  compatibility: "strict",
 });
 
-const model = provider.chat('anthropic/claude-3.5-sonnet');
+const model = provider.chat("anthropic/claude-3.5-sonnet");
 
 function isReasoningDeltaPart(part: LanguageModelV3StreamPart): part is Extract<
   LanguageModelV3StreamPart,
   {
-    type: 'reasoning-delta';
+    type: "reasoning-delta";
   }
 > {
-  return part.type === 'reasoning-delta';
+  return part.type === "reasoning-delta";
 }
 
 function isReasoningStartPart(part: LanguageModelV3StreamPart): part is Extract<
   LanguageModelV3StreamPart,
   {
-    type: 'reasoning-start';
+    type: "reasoning-start";
   }
 > {
-  return part.type === 'reasoning-start';
+  return part.type === "reasoning-start";
 }
 
 function isTextDeltaPart(part: LanguageModelV3StreamPart): part is Extract<
   LanguageModelV3StreamPart,
   {
-    type: 'text-delta';
+    type: "text-delta";
   }
 > {
-  return part.type === 'text-delta';
+  return part.type === "text-delta";
 }
 
-describe('doGenerate', () => {
+describe("doGenerate", () => {
   const server = createTestServer({
-    'https://openrouter.ai/api/v1/chat/completions': {
-      response: { type: 'json-value', body: {} },
+    "https://openrouter.ai/api/v1/chat/completions": {
+      response: { type: "json-value", body: {} },
     },
   });
 
   function prepareJsonResponse({
-    content = '',
+    content = "",
     reasoning,
     reasoning_details,
     images,
@@ -174,7 +169,7 @@ describe('doGenerate', () => {
       completion_tokens: 30,
     },
     logprobs = null,
-    finish_reason = 'stop',
+    finish_reason = "stop",
   }: {
     content?: string;
     reasoning?: string;
@@ -182,7 +177,7 @@ describe('doGenerate', () => {
     images?: Array<ImageResponse>;
     tool_calls?: Array<{
       id: string;
-      type: 'function';
+      type: "function";
       function: { name: string; arguments: string };
     }>;
     usage?: {
@@ -201,18 +196,19 @@ describe('doGenerate', () => {
     } | null;
     finish_reason?: string;
   } = {}) {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'json-value',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "json-value",
       body: {
-        id: 'chatcmpl-95ZTZkhr0mHNKqerQfiwkuox3PHAd',
-        object: 'chat.completion',
+        id: "chatcmpl-95ZTZkhr0mHNKqerQfiwkuox3PHAd",
+        object: "chat.completion",
         created: 1711115037,
-        model: 'gpt-3.5-turbo-0125',
+        model: "gpt-3.5-turbo-0125",
         choices: [
           {
             index: 0,
             message: {
-              role: 'assistant',
+              role: "assistant",
               content,
               reasoning,
               reasoning_details,
@@ -224,27 +220,27 @@ describe('doGenerate', () => {
           },
         ],
         usage,
-        system_fingerprint: 'fp_3bc1b5746c',
+        system_fingerprint: "fp_3bc1b5746c",
       },
     };
   }
 
-  it('should extract text response', async () => {
-    prepareJsonResponse({ content: 'Hello, World!' });
+  it("should extract text response", async () => {
+    prepareJsonResponse({ content: "Hello, World!" });
 
     const result = await model.doGenerate({
       prompt: TEST_PROMPT,
     });
 
     expect(result.content[0]).toStrictEqual({
-      type: 'text',
-      text: 'Hello, World!',
+      type: "text",
+      text: "Hello, World!",
     });
   });
 
-  it('should extract usage', async () => {
+  it("should extract usage", async () => {
     prepareJsonResponse({
-      content: '',
+      content: "",
       usage: { prompt_tokens: 20, total_tokens: 25, completion_tokens: 5 },
     });
 
@@ -267,20 +263,20 @@ describe('doGenerate', () => {
     });
   });
 
-  it('should extract logprobs', async () => {
+  it("should extract logprobs", async () => {
     prepareJsonResponse({
       logprobs: TEST_LOGPROBS,
     });
 
-    await provider.chat('openai/gpt-3.5-turbo', { logprobs: 1 }).doGenerate({
+    await provider.chat("openai/gpt-3.5-turbo", { logprobs: 1 }).doGenerate({
       prompt: TEST_PROMPT,
     });
   });
 
-  it('should extract finish reason', async () => {
+  it("should extract finish reason", async () => {
     prepareJsonResponse({
-      content: '',
-      finish_reason: 'stop',
+      content: "",
+      finish_reason: "stop",
     });
 
     const response = await model.doGenerate({
@@ -288,15 +284,15 @@ describe('doGenerate', () => {
     });
 
     expect(response.finishReason).toStrictEqual({
-      unified: 'stop',
-      raw: 'stop',
+      unified: "stop",
+      raw: "stop",
     });
   });
 
-  it('should support unknown finish reason', async () => {
+  it("should support unknown finish reason", async () => {
     prepareJsonResponse({
-      content: '',
-      finish_reason: 'eos',
+      content: "",
+      finish_reason: "eos",
     });
 
     const response = await model.doGenerate({
@@ -304,16 +300,16 @@ describe('doGenerate', () => {
     });
 
     expect(response.finishReason).toStrictEqual({
-      unified: 'other',
-      raw: 'eos',
+      unified: "other",
+      raw: "eos",
     });
   });
 
-  it('should extract reasoning content from reasoning field', async () => {
+  it("should extract reasoning content from reasoning field", async () => {
     prepareJsonResponse({
-      content: 'Hello!',
+      content: "Hello!",
       reasoning:
-        'I need to think about this... The user said hello, so I should respond with a greeting.',
+        "I need to think about this... The user said hello, so I should respond with a greeting.",
     });
 
     const result = await model.doGenerate({
@@ -322,27 +318,27 @@ describe('doGenerate', () => {
 
     expect(result.content).toStrictEqual([
       {
-        type: 'reasoning',
-        text: 'I need to think about this... The user said hello, so I should respond with a greeting.',
+        type: "reasoning",
+        text: "I need to think about this... The user said hello, so I should respond with a greeting.",
       },
       {
-        type: 'text',
-        text: 'Hello!',
+        type: "text",
+        text: "Hello!",
       },
     ]);
   });
 
-  it('should extract reasoning content from reasoning_details', async () => {
+  it("should extract reasoning content from reasoning_details", async () => {
     prepareJsonResponse({
-      content: 'Hello!',
+      content: "Hello!",
       reasoning_details: [
         {
           type: ReasoningDetailType.Text,
-          text: 'Let me analyze this request...',
+          text: "Let me analyze this request...",
         },
         {
           type: ReasoningDetailType.Summary,
-          summary: 'The user wants a greeting response.',
+          summary: "The user wants a greeting response.",
         },
       ],
     });
@@ -353,47 +349,47 @@ describe('doGenerate', () => {
 
     expect(result.content).toStrictEqual([
       {
-        type: 'reasoning',
-        text: 'Let me analyze this request...',
+        type: "reasoning",
+        text: "Let me analyze this request...",
         providerMetadata: {
           openrouter: {
             reasoning_details: [
               {
-                type: 'reasoning.text',
-                text: 'Let me analyze this request...',
+                type: "reasoning.text",
+                text: "Let me analyze this request...",
               },
             ],
           },
         },
       },
       {
-        type: 'reasoning',
-        text: 'The user wants a greeting response.',
+        type: "reasoning",
+        text: "The user wants a greeting response.",
         providerMetadata: {
           openrouter: {
             reasoning_details: [
               {
-                type: 'reasoning.summary',
-                summary: 'The user wants a greeting response.',
+                type: "reasoning.summary",
+                summary: "The user wants a greeting response.",
               },
             ],
           },
         },
       },
       {
-        type: 'text',
-        text: 'Hello!',
+        type: "text",
+        text: "Hello!",
       },
     ]);
   });
 
-  it('should handle encrypted reasoning details', async () => {
+  it("should handle encrypted reasoning details", async () => {
     prepareJsonResponse({
-      content: 'Hello!',
+      content: "Hello!",
       reasoning_details: [
         {
           type: ReasoningDetailType.Encrypted,
-          data: 'encrypted_reasoning_data_here',
+          data: "encrypted_reasoning_data_here",
         },
       ],
     });
@@ -404,38 +400,38 @@ describe('doGenerate', () => {
 
     expect(result.content).toStrictEqual([
       {
-        type: 'reasoning',
-        text: '[REDACTED]',
+        type: "reasoning",
+        text: "[REDACTED]",
         providerMetadata: {
           openrouter: {
             reasoning_details: [
               {
-                type: 'reasoning.encrypted',
-                data: 'encrypted_reasoning_data_here',
+                type: "reasoning.encrypted",
+                data: "encrypted_reasoning_data_here",
               },
             ],
           },
         },
       },
       {
-        type: 'text',
-        text: 'Hello!',
+        type: "text",
+        text: "Hello!",
       },
     ]);
   });
 
-  it('should prioritize reasoning_details over reasoning when both are present', async () => {
+  it("should prioritize reasoning_details over reasoning when both are present", async () => {
     prepareJsonResponse({
-      content: 'Hello!',
-      reasoning: 'This should be ignored when reasoning_details is present',
+      content: "Hello!",
+      reasoning: "This should be ignored when reasoning_details is present",
       reasoning_details: [
         {
           type: ReasoningDetailType.Text,
-          text: 'Processing from reasoning_details...',
+          text: "Processing from reasoning_details...",
         },
         {
           type: ReasoningDetailType.Summary,
-          summary: 'Summary from reasoning_details',
+          summary: "Summary from reasoning_details",
         },
       ],
     });
@@ -446,55 +442,55 @@ describe('doGenerate', () => {
 
     expect(result.content).toStrictEqual([
       {
-        type: 'reasoning',
-        text: 'Processing from reasoning_details...',
+        type: "reasoning",
+        text: "Processing from reasoning_details...",
         providerMetadata: {
           openrouter: {
             reasoning_details: [
               {
-                type: 'reasoning.text',
-                text: 'Processing from reasoning_details...',
+                type: "reasoning.text",
+                text: "Processing from reasoning_details...",
               },
             ],
           },
         },
       },
       {
-        type: 'reasoning',
-        text: 'Summary from reasoning_details',
+        type: "reasoning",
+        text: "Summary from reasoning_details",
         providerMetadata: {
           openrouter: {
             reasoning_details: [
               {
-                type: 'reasoning.summary',
-                summary: 'Summary from reasoning_details',
+                type: "reasoning.summary",
+                summary: "Summary from reasoning_details",
               },
             ],
           },
         },
       },
       {
-        type: 'text',
-        text: 'Hello!',
+        type: "text",
+        text: "Hello!",
       },
     ]);
 
     // Verify that the reasoning field content is not included
     expect(result.content).not.toContainEqual({
-      type: 'reasoning',
-      text: 'This should be ignored when reasoning_details is present',
+      type: "reasoning",
+      text: "This should be ignored when reasoning_details is present",
     });
   });
 
-  it('should override finishReason to tool-calls when tool calls and encrypted reasoning are present', async () => {
+  it("should override finishReason to tool-calls when tool calls and encrypted reasoning are present", async () => {
     prepareJsonResponse({
-      content: '',
+      content: "",
       tool_calls: [
         {
-          id: 'call_123',
-          type: 'function',
+          id: "call_123",
+          type: "function",
           function: {
-            name: 'get_weather',
+            name: "get_weather",
             arguments: '{"location":"San Francisco"}',
           },
         },
@@ -502,11 +498,11 @@ describe('doGenerate', () => {
       reasoning_details: [
         {
           type: ReasoningDetailType.Encrypted,
-          data: 'encrypted_reasoning_data_here',
+          data: "encrypted_reasoning_data_here",
         },
       ],
       // Gemini 3 returns 'stop' instead of 'tool_calls' when using thoughtSignature
-      finish_reason: 'stop',
+      finish_reason: "stop",
     });
 
     const result = await model.doGenerate({
@@ -515,236 +511,241 @@ describe('doGenerate', () => {
 
     // Should override to 'tool-calls' when encrypted reasoning + tool calls + stop
     expect(result.finishReason).toStrictEqual({
-      unified: 'tool-calls',
-      raw: 'stop',
+      unified: "tool-calls",
+      raw: "stop",
     });
 
     // Should still have the tool call in content
     expect(result.content).toContainEqual(
       expect.objectContaining({
-        type: 'tool-call',
-        toolCallId: 'call_123',
-        toolName: 'get_weather',
+        type: "tool-call",
+        toolCallId: "call_123",
+        toolName: "get_weather",
       }),
     );
   });
 
-  it('should pass the model and the messages', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should pass the model and the messages", async () => {
+    prepareJsonResponse({ content: "" });
 
     await model.doGenerate({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
     });
   });
 
-  it('should pass the models array when provided', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should pass the models array when provided", async () => {
+    prepareJsonResponse({ content: "" });
 
-    const customModel = provider.chat('anthropic/claude-3.5-sonnet', {
-      models: ['anthropic/claude-2', 'gryphe/mythomax-l2-13b'],
+    const customModel = provider.chat("anthropic/claude-3.5-sonnet", {
+      models: ["anthropic/claude-2", "gryphe/mythomax-l2-13b"],
     });
 
     await customModel.doGenerate({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'anthropic/claude-3.5-sonnet',
-      models: ['anthropic/claude-2', 'gryphe/mythomax-l2-13b'],
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      models: ["anthropic/claude-2", "gryphe/mythomax-l2-13b"],
+      messages: [{ role: "user", content: "Hello" }],
     });
   });
 
-  it('should pass settings', async () => {
+  it("should pass settings", async () => {
     prepareJsonResponse();
 
     await provider
-      .chat('openai/gpt-3.5-turbo', {
+      .chat("openai/gpt-3.5-turbo", {
         logitBias: { 50256: -100 },
         logprobs: 2,
         parallelToolCalls: false,
-        user: 'test-user-id',
+        user: "test-user-id",
       })
       .doGenerate({
         prompt: TEST_PROMPT,
       });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'openai/gpt-3.5-turbo',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "openai/gpt-3.5-turbo",
+      messages: [{ role: "user", content: "Hello" }],
       logprobs: true,
       top_logprobs: 2,
       logit_bias: { 50256: -100 },
       parallel_tool_calls: false,
-      user: 'test-user-id',
+      user: "test-user-id",
     });
   });
 
-  it('should pass tools and toolChoice', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should pass tools and toolChoice", async () => {
+    prepareJsonResponse({ content: "" });
 
     await model.doGenerate({
       prompt: TEST_PROMPT,
       tools: [
         {
-          type: 'function',
-          name: 'test-tool',
-          description: 'Test tool',
+          type: "function",
+          name: "test-tool",
+          description: "Test tool",
           inputSchema: {
-            type: 'object',
-            properties: { value: { type: 'string' } },
-            required: ['value'],
+            type: "object",
+            properties: { value: { type: "string" } },
+            required: ["value"],
             additionalProperties: false,
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: "http://json-schema.org/draft-07/schema#",
           },
         },
       ],
       toolChoice: {
-        type: 'tool',
-        toolName: 'test-tool',
+        type: "tool",
+        toolName: "test-tool",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       tools: [
         {
-          type: 'function',
+          type: "function",
           function: {
-            name: 'test-tool',
-            description: 'Test tool',
+            name: "test-tool",
+            description: "Test tool",
             parameters: {
-              type: 'object',
-              properties: { value: { type: 'string' } },
-              required: ['value'],
+              type: "object",
+              properties: { value: { type: "string" } },
+              required: ["value"],
               additionalProperties: false,
-              $schema: 'http://json-schema.org/draft-07/schema#',
+              $schema: "http://json-schema.org/draft-07/schema#",
             },
           },
         },
       ],
       tool_choice: {
-        type: 'function',
-        function: { name: 'test-tool' },
+        type: "function",
+        function: { name: "test-tool" },
       },
     });
   });
 
-  it('should pass headers', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should pass headers", async () => {
+    prepareJsonResponse({ content: "" });
 
     const provider = createOpenRouter({
-      apiKey: 'test-api-key',
+      apiKey: "test-api-key",
       headers: {
-        'Custom-Provider-Header': 'provider-header-value',
+        "Custom-Provider-Header": "provider-header-value",
       },
     });
 
-    await provider.chat('openai/gpt-3.5-turbo').doGenerate({
+    await provider.chat("openai/gpt-3.5-turbo").doGenerate({
       prompt: TEST_PROMPT,
       headers: {
-        'Custom-Request-Header': 'request-header-value',
+        "Custom-Request-Header": "request-header-value",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestHeaders = server.calls[0]!.requestHeaders;
 
     expect(requestHeaders).toMatchObject({
-      authorization: 'Bearer test-api-key',
-      'content-type': 'application/json',
-      'custom-provider-header': 'provider-header-value',
-      'custom-request-header': 'request-header-value',
+      authorization: "Bearer test-api-key",
+      "content-type": "application/json",
+      "custom-provider-header": "provider-header-value",
+      "custom-request-header": "request-header-value",
     });
-    expect(requestHeaders['user-agent']).toContain(
-      'ai-sdk/openrouter/0.0.0-test',
-    );
+    expect(requestHeaders["user-agent"]).toContain("ai-sdk/openrouter/0.0.0-test");
   });
 
-  it('should pass responseFormat for JSON schema structured outputs', async () => {
+  it("should pass responseFormat for JSON schema structured outputs", async () => {
     prepareJsonResponse({ content: '{"name": "John", "age": 30}' });
 
     const testSchema: JSONSchema7 = {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string' },
-        age: { type: 'number' },
+        name: { type: "string" },
+        age: { type: "number" },
       },
-      required: ['name', 'age'],
+      required: ["name", "age"],
       additionalProperties: false,
     };
 
     await model.doGenerate({
       prompt: TEST_PROMPT,
       responseFormat: {
-        type: 'json',
+        type: "json",
         schema: testSchema,
-        name: 'PersonResponse',
-        description: 'A person object',
+        name: "PersonResponse",
+        description: "A person object",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       response_format: {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
           schema: testSchema,
           strict: true,
-          name: 'PersonResponse',
-          description: 'A person object',
+          name: "PersonResponse",
+          description: "A person object",
         },
       },
     });
   });
 
-  it('should use default name when name is not provided in responseFormat', async () => {
+  it("should use default name when name is not provided in responseFormat", async () => {
     prepareJsonResponse({ content: '{"name": "John", "age": 30}' });
 
     const testSchema: JSONSchema7 = {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string' },
-        age: { type: 'number' },
+        name: { type: "string" },
+        age: { type: "number" },
       },
-      required: ['name', 'age'],
+      required: ["name", "age"],
       additionalProperties: false,
     };
 
     await model.doGenerate({
       prompt: TEST_PROMPT,
       responseFormat: {
-        type: 'json',
+        type: "json",
         schema: testSchema,
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       response_format: {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
           schema: testSchema,
           strict: true,
-          name: 'response',
+          name: "response",
         },
       },
     });
   });
 
-  it('should pass images', async () => {
+  it("should pass images", async () => {
     prepareJsonResponse({
-      content: '',
+      content: "",
       images: [
         {
-          type: 'image_url',
+          type: "image_url",
           image_url: { url: TEST_IMAGE_URL },
         },
       ],
@@ -757,18 +758,18 @@ describe('doGenerate', () => {
 
     expect(result.content).toStrictEqual([
       {
-        type: 'file',
-        mediaType: 'image/png',
+        type: "file",
+        mediaType: "image/png",
         data: TEST_IMAGE_BASE64,
       },
     ]);
   });
 });
 
-describe('doStream', () => {
+describe("doStream", () => {
   const server = createTestServer({
-    'https://openrouter.ai/api/v1/chat/completions': {
-      response: { type: 'json-value', body: {} },
+    "https://openrouter.ai/api/v1/chat/completions": {
+      response: { type: "json-value", body: {} },
     },
   });
 
@@ -780,7 +781,7 @@ describe('doStream', () => {
       completion_tokens: 227,
     },
     logprobs = null,
-    finish_reason = 'stop',
+    finish_reason = "stop",
   }: {
     content: string[];
     usage?: {
@@ -809,8 +810,9 @@ describe('doStream', () => {
     } | null;
     finish_reason?: string;
   }) {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1702657020,"model":"gpt-3.5-turbo-0613",` +
           `"system_fingerprint":null,"choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}\n\n`,
@@ -823,15 +825,15 @@ describe('doStream', () => {
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1702657020,"model":"gpt-3.5-turbo-0613","system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":${JSON.stringify(
           usage,
         )}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
   }
 
-  it('should stream text deltas', async () => {
+  it("should stream text deltas", async () => {
     prepareStreamResponse({
-      content: ['Hello', ', ', 'World!'],
-      finish_reason: 'stop',
+      content: ["Hello", ", ", "World!"],
+      finish_reason: "stop",
       usage: {
         prompt_tokens: 17,
         total_tokens: 244,
@@ -848,64 +850,64 @@ describe('doStream', () => {
     const elements = await convertReadableStreamToArray(stream);
     expect(elements).toStrictEqual([
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0613',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0613",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0613',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0613",
       },
-      { type: 'text-start', id: expect.any(String) },
-      { type: 'text-delta', delta: 'Hello', id: expect.any(String) },
+      { type: "text-start", id: expect.any(String) },
+      { type: "text-delta", delta: "Hello", id: expect.any(String) },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
-      },
-      {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0613',
-      },
-      { type: 'text-delta', delta: ', ', id: expect.any(String) },
-      {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0613',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0613",
       },
-      { type: 'text-delta', delta: 'World!', id: expect.any(String) },
+      { type: "text-delta", delta: ", ", id: expect.any(String) },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
-      },
-      {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0613',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0613",
+      },
+      { type: "text-delta", delta: "World!", id: expect.any(String) },
+      {
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0613',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0613",
       },
       {
-        type: 'text-end',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
+      },
+      {
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0613",
+      },
+      {
+        type: "text-end",
         id: expect.any(String),
       },
       {
-        type: 'finish',
-        finishReason: { unified: 'stop', raw: 'stop' },
+        type: "finish",
+        finishReason: { unified: "stop", raw: "stop" },
 
         providerMetadata: {
           openrouter: {
@@ -934,9 +936,9 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should include upstream inference cost in finish metadata when provided', async () => {
+  it("should include upstream inference cost in finish metadata when provided", async () => {
     prepareStreamResponse({
-      content: ['Hello'],
+      content: ["Hello"],
       usage: {
         prompt_tokens: 17,
         total_tokens: 244,
@@ -951,14 +953,10 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
-    const elements = (await convertReadableStreamToArray(
-      stream,
-    )) as LanguageModelV3StreamPart[];
+    const elements = (await convertReadableStreamToArray(stream)) as LanguageModelV3StreamPart[];
     const finishChunk = elements.find(
-      (
-        chunk,
-      ): chunk is Extract<LanguageModelV3StreamPart, { type: 'finish' }> =>
-        chunk.type === 'finish',
+      (chunk): chunk is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
+        chunk.type === "finish",
     );
     const openrouterUsage = (
       finishChunk?.providerMetadata?.openrouter as {
@@ -973,9 +971,9 @@ describe('doStream', () => {
     });
   });
 
-  it('should handle both normal cost and upstream inference cost in finish metadata when both are provided', async () => {
+  it("should handle both normal cost and upstream inference cost in finish metadata when both are provided", async () => {
     prepareStreamResponse({
-      content: ['Hello'],
+      content: ["Hello"],
       usage: {
         prompt_tokens: 17,
         total_tokens: 244,
@@ -991,14 +989,10 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
-    const elements = (await convertReadableStreamToArray(
-      stream,
-    )) as LanguageModelV3StreamPart[];
+    const elements = (await convertReadableStreamToArray(stream)) as LanguageModelV3StreamPart[];
     const finishChunk = elements.find(
-      (
-        chunk,
-      ): chunk is Extract<LanguageModelV3StreamPart, { type: 'finish' }> =>
-        chunk.type === 'finish',
+      (chunk): chunk is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
+        chunk.type === "finish",
     );
     const openrouterUsage = (
       finishChunk?.providerMetadata?.openrouter as {
@@ -1014,11 +1008,12 @@ describe('doStream', () => {
     expect(openrouterUsage?.cost).toBe(0.0042);
   });
 
-  it('should prioritize reasoning_details over reasoning when both are present in streaming', async () => {
+  it("should prioritize reasoning_details over reasoning when both are present in streaming", async () => {
     // This test verifies that when the API returns both 'reasoning' and 'reasoning_details' fields,
     // we prioritize reasoning_details and ignore the reasoning field to avoid duplicates.
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         // First chunk: both reasoning and reasoning_details with different content
         `data: {"id":"chatcmpl-reasoning","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
@@ -1047,7 +1042,7 @@ describe('doStream', () => {
           `"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-reasoning","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":17,"completion_tokens":30,"total_tokens":47}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -1060,9 +1055,9 @@ describe('doStream', () => {
     // Filter for reasoning-related elements
     const reasoningElements = elements.filter(
       (el) =>
-        el.type === 'reasoning-start' ||
-        el.type === 'reasoning-delta' ||
-        el.type === 'reasoning-end',
+        el.type === "reasoning-start" ||
+        el.type === "reasoning-delta" ||
+        el.type === "reasoning-end",
     );
 
     // Debug output to see what we're getting
@@ -1074,20 +1069,18 @@ describe('doStream', () => {
     expect(reasoningElements).toHaveLength(6);
 
     // Verify the content comes from reasoning_details, not reasoning field
-    const reasoningDeltas = reasoningElements
-      .filter(isReasoningDeltaPart)
-      .map((el) => el.delta);
+    const reasoningDeltas = reasoningElements.filter(isReasoningDeltaPart).map((el) => el.delta);
 
     expect(reasoningDeltas).toEqual([
-      'Let me think about this...', // from reasoning_details text
-      'User wants a greeting', // from reasoning_details summary
-      '[REDACTED]', // from reasoning_details encrypted
-      'This reasoning is used', // from reasoning field (no reasoning_details)
+      "Let me think about this...", // from reasoning_details text
+      "User wants a greeting", // from reasoning_details summary
+      "[REDACTED]", // from reasoning_details encrypted
+      "This reasoning is used", // from reasoning field (no reasoning_details)
     ]);
 
     // Verify that "This should be ignored..." and "Also ignored" are NOT in the output
-    expect(reasoningDeltas).not.toContain('This should be ignored...');
-    expect(reasoningDeltas).not.toContain('Also ignored');
+    expect(reasoningDeltas).not.toContain("This should be ignored...");
+    expect(reasoningDeltas).not.toContain("Also ignored");
 
     // Verify that reasoning-delta chunks include providerMetadata with reasoning_details
     const reasoningDeltaElements = elements.filter(isReasoningDeltaPart);
@@ -1098,7 +1091,7 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Text,
-            text: 'Let me think about this...',
+            text: "Let me think about this...",
           },
         ],
       },
@@ -1110,11 +1103,11 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Summary,
-            summary: 'User wants a greeting',
+            summary: "User wants a greeting",
           },
           {
             type: ReasoningDetailType.Encrypted,
-            data: 'secret',
+            data: "secret",
           },
         ],
       },
@@ -1125,11 +1118,11 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Summary,
-            summary: 'User wants a greeting',
+            summary: "User wants a greeting",
           },
           {
             type: ReasoningDetailType.Encrypted,
-            data: 'secret',
+            data: "secret",
           },
         ],
       },
@@ -1139,11 +1132,12 @@ describe('doStream', () => {
     expect(reasoningDeltaElements[3]?.providerMetadata).toBeUndefined();
   });
 
-  it('should emit reasoning_details in providerMetadata for all reasoning delta chunks', async () => {
+  it("should emit reasoning_details in providerMetadata for all reasoning delta chunks", async () => {
     // This test verifies that reasoning_details are included in providerMetadata
     // for all reasoning-delta chunks, enabling users to accumulate them for multi-turn conversations
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         // First chunk: reasoning_details with Text type
         `data: {"id":"chatcmpl-metadata-test","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
@@ -1166,7 +1160,7 @@ describe('doStream', () => {
           `"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-metadata-test","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":17,"completion_tokens":30,"total_tokens":47}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -1186,7 +1180,7 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Text,
-            text: 'First reasoning chunk',
+            text: "First reasoning chunk",
           },
         ],
       },
@@ -1197,7 +1191,7 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Summary,
-            summary: 'Summary reasoning',
+            summary: "Summary reasoning",
           },
         ],
       },
@@ -1208,7 +1202,7 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Encrypted,
-            data: 'encrypted_data',
+            data: "encrypted_data",
           },
         ],
       },
@@ -1222,18 +1216,19 @@ describe('doStream', () => {
         reasoning_details: [
           {
             type: ReasoningDetailType.Text,
-            text: 'First reasoning chunk',
+            text: "First reasoning chunk",
           },
         ],
       },
     });
   });
 
-  it('should maintain correct reasoning order when content comes after reasoning (issue #7824)', async () => {
+  it("should maintain correct reasoning order when content comes after reasoning (issue #7824)", async () => {
     // This test reproduces the issue where reasoning appears first but then gets "pushed down"
     // by content that comes later in the stream
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         // First chunk: Start with reasoning
         `data: {"id":"chatcmpl-order-test","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
@@ -1264,7 +1259,7 @@ describe('doStream', () => {
           `"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-order-test","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":17,"completion_tokens":30,"total_tokens":47}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -1285,34 +1280,33 @@ describe('doStream', () => {
     const streamOrder = elements.map((el) => el.type);
 
     // Find the positions of key events
-    const reasoningStartIndex = streamOrder.indexOf('reasoning-start');
-    const reasoningEndIndex = streamOrder.indexOf('reasoning-end');
-    const textStartIndex = streamOrder.indexOf('text-start');
+    const reasoningStartIndex = streamOrder.indexOf("reasoning-start");
+    const reasoningEndIndex = streamOrder.indexOf("reasoning-end");
+    const textStartIndex = streamOrder.indexOf("text-start");
 
     // Reasoning should come before text and end before text starts
     expect(reasoningStartIndex).toBeLessThan(textStartIndex);
     expect(reasoningEndIndex).toBeLessThan(textStartIndex);
 
     // Verify reasoning content
-    const reasoningDeltas = elements
-      .filter(isReasoningDeltaPart)
-      .map((el) => el.delta);
+    const reasoningDeltas = elements.filter(isReasoningDeltaPart).map((el) => el.delta);
 
     expect(reasoningDeltas).toEqual([
-      'I need to think about this step by step...',
-      ' First, I should analyze the request.',
-      ' Then I should provide a helpful response.',
+      "I need to think about this step by step...",
+      " First, I should analyze the request.",
+      " Then I should provide a helpful response.",
     ]);
 
     // Verify text content
     const textDeltas = elements.filter(isTextDeltaPart).map((el) => el.delta);
 
-    expect(textDeltas).toEqual(['Hello! ', 'How can I help you today?']);
+    expect(textDeltas).toEqual(["Hello! ", "How can I help you today?"]);
   });
 
-  it('should stream tool deltas', async () => {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+  it("should stream tool deltas", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[{"index":0,"delta":{"role":"assistant","content":null,` +
@@ -1343,21 +1337,21 @@ describe('doStream', () => {
           `"system_fingerprint":"fp_3bc1b5746c","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"tool_calls"}]}\n\n`,
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":53,"completion_tokens":17,"total_tokens":70}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
     const { stream } = await model.doStream({
       tools: [
         {
-          type: 'function',
-          name: 'test-tool',
+          type: "function",
+          name: "test-tool",
           inputSchema: {
-            type: 'object',
-            properties: { value: { type: 'string' } },
-            required: ['value'],
+            type: "object",
+            properties: { value: { type: "string" } },
+            required: ["value"],
             additionalProperties: false,
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: "http://json-schema.org/draft-07/schema#",
           },
         },
       ],
@@ -1366,113 +1360,113 @@ describe('doStream', () => {
 
     expect(await convertReadableStreamToArray(stream)).toStrictEqual([
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        toolName: 'test-tool',
-        type: 'tool-input-start',
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        toolName: "test-tool",
+        type: "tool-input-start",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
         delta: '{"',
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        delta: 'value',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        delta: "value",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
         delta: '":"',
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        delta: 'Spark',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        delta: "Spark",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        delta: 'le',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        delta: "le",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        delta: ' Day',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        delta: " Day",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
         delta: '"}',
       },
       {
-        type: 'tool-call',
-        toolCallId: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        toolName: 'test-tool',
+        type: "tool-call",
+        toolCallId: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        toolName: "test-tool",
         input: '{"value":"Sparkle Day"}',
         providerMetadata: {
           openrouter: {
@@ -1481,24 +1475,24 @@ describe('doStream', () => {
         },
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'finish',
-        finishReason: { unified: 'tool-calls', raw: 'tool_calls' },
+        type: "finish",
+        finishReason: { unified: "tool-calls", raw: "tool_calls" },
         providerMetadata: {
           openrouter: {
             usage: {
@@ -1526,9 +1520,10 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should stream tool call that is sent in one chunk', async () => {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+  it("should stream tool call that is sent in one chunk", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[{"index":0,"delta":{"role":"assistant","content":null,` +
@@ -1538,21 +1533,21 @@ describe('doStream', () => {
           `"system_fingerprint":"fp_3bc1b5746c","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"tool_calls"}]}\n\n`,
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":53,"completion_tokens":17,"total_tokens":70}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
     const { stream } = await model.doStream({
       tools: [
         {
-          type: 'function',
-          name: 'test-tool',
+          type: "function",
+          name: "test-tool",
           inputSchema: {
-            type: 'object',
-            properties: { value: { type: 'string' } },
-            required: ['value'],
+            type: "object",
+            properties: { value: { type: "string" } },
+            required: ["value"],
             additionalProperties: false,
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: "http://json-schema.org/draft-07/schema#",
           },
         },
       ],
@@ -1562,31 +1557,31 @@ describe('doStream', () => {
     const elements = await convertReadableStreamToArray(stream);
     expect(elements).toStrictEqual([
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'tool-input-start',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        toolName: 'test-tool',
+        type: "tool-input-start",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        toolName: "test-tool",
       },
       {
-        type: 'tool-input-delta',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
+        type: "tool-input-delta",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
         delta: '{"value":"Sparkle Day"}',
       },
       {
-        type: 'tool-input-end',
-        id: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
+        type: "tool-input-end",
+        id: "call_O17Uplv4lJvD6DVdIvFFeRMw",
       },
       {
-        type: 'tool-call',
-        toolCallId: 'call_O17Uplv4lJvD6DVdIvFFeRMw',
-        toolName: 'test-tool',
+        type: "tool-call",
+        toolCallId: "call_O17Uplv4lJvD6DVdIvFFeRMw",
+        toolName: "test-tool",
         input: '{"value":"Sparkle Day"}',
         providerMetadata: {
           openrouter: {
@@ -1595,24 +1590,24 @@ describe('doStream', () => {
         },
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'finish',
-        finishReason: { unified: 'tool-calls', raw: 'tool_calls' },
+        type: "finish",
+        finishReason: { unified: "tool-calls", raw: "tool_calls" },
         providerMetadata: {
           openrouter: {
             usage: {
@@ -1640,9 +1635,10 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should override finishReason to tool-calls in streaming when tool calls and encrypted reasoning are present', async () => {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+  it("should override finishReason to tool-calls in streaming when tool calls and encrypted reasoning are present", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         // First chunk: reasoning_details with encrypted data
         `data: {"id":"chatcmpl-gemini3","object":"chat.completion.chunk","created":1711357598,"model":"google/gemini-3-pro",` +
@@ -1659,21 +1655,21 @@ describe('doStream', () => {
           `"system_fingerprint":"fp_gemini3","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-gemini3","object":"chat.completion.chunk","created":1711357598,"model":"google/gemini-3-pro",` +
           `"system_fingerprint":"fp_gemini3","choices":[],"usage":{"prompt_tokens":10,"completion_tokens":20,"total_tokens":30}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
     const { stream } = await model.doStream({
       tools: [
         {
-          type: 'function',
-          name: 'get_weather',
+          type: "function",
+          name: "get_weather",
           inputSchema: {
-            type: 'object',
-            properties: { location: { type: 'string' } },
-            required: ['location'],
+            type: "object",
+            properties: { location: { type: "string" } },
+            required: ["location"],
             additionalProperties: false,
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: "http://json-schema.org/draft-07/schema#",
           },
         },
       ],
@@ -1684,28 +1680,27 @@ describe('doStream', () => {
 
     // Find the finish event
     const finishEvent = elements.find(
-      (el): el is LanguageModelV3StreamPart & { type: 'finish' } =>
-        el.type === 'finish',
+      (el): el is LanguageModelV3StreamPart & { type: "finish" } => el.type === "finish",
     );
 
     // Should override to 'tool-calls' when encrypted reasoning + tool calls + stop
     expect(finishEvent?.finishReason).toStrictEqual({
-      unified: 'tool-calls',
-      raw: 'stop',
+      unified: "tool-calls",
+      raw: "stop",
     });
 
     // Should have the tool call
     const toolCallEvent = elements.find(
-      (el): el is LanguageModelV3StreamPart & { type: 'tool-call' } =>
-        el.type === 'tool-call',
+      (el): el is LanguageModelV3StreamPart & { type: "tool-call" } => el.type === "tool-call",
     );
-    expect(toolCallEvent?.toolName).toBe('get_weather');
-    expect(toolCallEvent?.toolCallId).toBe('call_gemini3_123');
+    expect(toolCallEvent?.toolName).toBe("get_weather");
+    expect(toolCallEvent?.toolCallId).toBe("call_gemini3_123");
   });
 
-  it('should stream images', async () => {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+  it("should stream images", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[{"index":0,"delta":{"role":"assistant","content":"",` +
@@ -1713,7 +1708,7 @@ describe('doStream', () => {
           `"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP","object":"chat.completion.chunk","created":1711357598,"model":"gpt-3.5-turbo-0125",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":53,"completion_tokens":17,"total_tokens":70}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -1723,29 +1718,29 @@ describe('doStream', () => {
 
     expect(await convertReadableStreamToArray(stream)).toStrictEqual([
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'file',
-        mediaType: 'image/png',
+        type: "file",
+        mediaType: "image/png",
         data: TEST_IMAGE_BASE64,
       },
       {
-        type: 'response-metadata',
-        id: 'chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP',
+        type: "response-metadata",
+        id: "chatcmpl-96aZqmeDpA9IPD6tACY8djkMsJCMP",
       },
       {
-        type: 'response-metadata',
-        modelId: 'gpt-3.5-turbo-0125',
+        type: "response-metadata",
+        modelId: "gpt-3.5-turbo-0125",
       },
       {
-        type: 'finish',
-        finishReason: { unified: 'stop', raw: 'stop' },
+        type: "finish",
+        finishReason: { unified: "stop", raw: "stop" },
         providerMetadata: {
           openrouter: {
             usage: {
@@ -1773,13 +1768,14 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should handle error stream parts', async () => {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+  it("should handle error stream parts", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
           `help center at help.openrouter.com if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -1789,25 +1785,25 @@ describe('doStream', () => {
 
     expect(await convertReadableStreamToArray(stream)).toStrictEqual([
       {
-        type: 'error',
+        type: "error",
         error: {
           message:
-            'The server had an error processing your request. Sorry about that! ' +
-            'You can retry your request, or contact us through our help center at ' +
-            'help.openrouter.com if you keep seeing this error.',
-          type: 'server_error',
+            "The server had an error processing your request. Sorry about that! " +
+            "You can retry your request, or contact us through our help center at " +
+            "help.openrouter.com if you keep seeing this error.",
+          type: "server_error",
           code: null,
           param: null,
         },
       },
       {
-        finishReason: { unified: 'error', raw: undefined },
+        finishReason: { unified: "error", raw: undefined },
         providerMetadata: {
           openrouter: {
             usage: {},
           },
         },
-        type: 'finish',
+        type: "finish",
         usage: {
           inputTokens: {
             total: undefined,
@@ -1825,10 +1821,11 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should handle unparsable stream parts', async () => {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
-      chunks: ['data: {unparsable}\n\n', 'data: [DONE]\n\n'],
+  it("should handle unparsable stream parts", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
+      chunks: ["data: {unparsable}\n\n", "data: [DONE]\n\n"],
     };
 
     const { stream } = await model.doStream({
@@ -1838,11 +1835,11 @@ describe('doStream', () => {
     const elements = await convertReadableStreamToArray(stream);
 
     expect(elements.length).toBe(2);
-    expect(elements[0]?.type).toBe('error');
+    expect(elements[0]?.type).toBe("error");
     expect(elements[1]).toStrictEqual({
-      finishReason: { unified: 'error', raw: undefined },
+      finishReason: { unified: "error", raw: undefined },
 
-      type: 'finish',
+      type: "finish",
       providerMetadata: {
         openrouter: {
           usage: {},
@@ -1864,201 +1861,201 @@ describe('doStream', () => {
     });
   });
 
-  it('should pass the messages and the model', async () => {
+  it("should pass the messages and the model", async () => {
     prepareStreamResponse({ content: [] });
 
     await model.doStream({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
       stream: true,
       stream_options: { include_usage: true },
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
     });
   });
 
-  it('should pass headers', async () => {
+  it("should pass headers", async () => {
     prepareStreamResponse({ content: [] });
 
     const provider = createOpenRouter({
-      apiKey: 'test-api-key',
+      apiKey: "test-api-key",
       headers: {
-        'Custom-Provider-Header': 'provider-header-value',
+        "Custom-Provider-Header": "provider-header-value",
       },
     });
 
-    await provider.chat('openai/gpt-3.5-turbo').doStream({
+    await provider.chat("openai/gpt-3.5-turbo").doStream({
       prompt: TEST_PROMPT,
       headers: {
-        'Custom-Request-Header': 'request-header-value',
+        "Custom-Request-Header": "request-header-value",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestHeaders = server.calls[0]!.requestHeaders;
 
     expect(requestHeaders).toMatchObject({
-      authorization: 'Bearer test-api-key',
-      'content-type': 'application/json',
-      'custom-provider-header': 'provider-header-value',
-      'custom-request-header': 'request-header-value',
+      authorization: "Bearer test-api-key",
+      "content-type": "application/json",
+      "custom-provider-header": "provider-header-value",
+      "custom-request-header": "request-header-value",
     });
-    expect(requestHeaders['user-agent']).toContain(
-      'ai-sdk/openrouter/0.0.0-test',
-    );
+    expect(requestHeaders["user-agent"]).toContain("ai-sdk/openrouter/0.0.0-test");
   });
 
-  it('should pass extra body', async () => {
+  it("should pass extra body", async () => {
     prepareStreamResponse({ content: [] });
 
     const provider = createOpenRouter({
-      apiKey: 'test-api-key',
+      apiKey: "test-api-key",
       extraBody: {
-        custom_field: 'custom_value',
+        custom_field: "custom_value",
         providers: {
           anthropic: {
-            custom_field: 'custom_value',
+            custom_field: "custom_value",
           },
         },
       },
     });
 
-    await provider.chat('anthropic/claude-3.5-sonnet').doStream({
+    await provider.chat("anthropic/claude-3.5-sonnet").doStream({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestBody = await server.calls[0]!.requestBodyJson;
 
-    expect(requestBody).toHaveProperty('custom_field', 'custom_value');
-    expect(requestBody).toHaveProperty(
-      'providers.anthropic.custom_field',
-      'custom_value',
-    );
+    expect(requestBody).toHaveProperty("custom_field", "custom_value");
+    expect(requestBody).toHaveProperty("providers.anthropic.custom_field", "custom_value");
   });
 
-  it('should pass responseFormat for JSON schema structured outputs', async () => {
+  it("should pass responseFormat for JSON schema structured outputs", async () => {
     prepareStreamResponse({ content: ['{"name": "John", "age": 30}'] });
 
     const testSchema: JSONSchema7 = {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string' },
-        age: { type: 'number' },
+        name: { type: "string" },
+        age: { type: "number" },
       },
-      required: ['name', 'age'],
+      required: ["name", "age"],
       additionalProperties: false,
     };
 
     await model.doStream({
       prompt: TEST_PROMPT,
       responseFormat: {
-        type: 'json',
+        type: "json",
         schema: testSchema,
-        name: 'PersonResponse',
-        description: 'A person object',
+        name: "PersonResponse",
+        description: "A person object",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
       stream: true,
       stream_options: { include_usage: true },
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       response_format: {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
           schema: testSchema,
           strict: true,
-          name: 'PersonResponse',
-          description: 'A person object',
+          name: "PersonResponse",
+          description: "A person object",
         },
       },
     });
   });
 
-  it('should pass responseFormat AND tools together', async () => {
+  it("should pass responseFormat AND tools together", async () => {
     prepareStreamResponse({ content: ['{"name": "John", "age": 30}'] });
 
     const testSchema: JSONSchema7 = {
-      type: 'object',
+      type: "object",
       properties: {
-        name: { type: 'string' },
-        age: { type: 'number' },
+        name: { type: "string" },
+        age: { type: "number" },
       },
-      required: ['name', 'age'],
+      required: ["name", "age"],
       additionalProperties: false,
     };
 
     await model.doStream({
       prompt: TEST_PROMPT,
       responseFormat: {
-        type: 'json',
+        type: "json",
         schema: testSchema,
-        name: 'PersonResponse',
-        description: 'A person object',
+        name: "PersonResponse",
+        description: "A person object",
       },
       tools: [
         {
-          type: 'function',
-          name: 'test-tool',
-          description: 'Test tool',
+          type: "function",
+          name: "test-tool",
+          description: "Test tool",
           inputSchema: {
-            type: 'object',
-            properties: { value: { type: 'string' } },
-            required: ['value'],
+            type: "object",
+            properties: { value: { type: "string" } },
+            required: ["value"],
             additionalProperties: false,
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: "http://json-schema.org/draft-07/schema#",
           },
         },
       ],
       toolChoice: {
-        type: 'tool',
-        toolName: 'test-tool',
+        type: "tool",
+        toolName: "test-tool",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
       stream: true,
       stream_options: { include_usage: true },
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       response_format: {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
           schema: testSchema,
           strict: true,
-          name: 'PersonResponse',
-          description: 'A person object',
+          name: "PersonResponse",
+          description: "A person object",
         },
       },
       tools: [
         {
-          type: 'function',
+          type: "function",
           function: {
-            name: 'test-tool',
-            description: 'Test tool',
+            name: "test-tool",
+            description: "Test tool",
             parameters: {
-              type: 'object',
-              properties: { value: { type: 'string' } },
-              required: ['value'],
+              type: "object",
+              properties: { value: { type: "string" } },
+              required: ["value"],
               additionalProperties: false,
-              $schema: 'http://json-schema.org/draft-07/schema#',
+              $schema: "http://json-schema.org/draft-07/schema#",
             },
           },
         },
       ],
       tool_choice: {
-        type: 'function',
-        function: { name: 'test-tool' },
+        type: "function",
+        function: { name: "test-tool" },
       },
     });
   });
 
-  it('should pass debug settings', async () => {
-    prepareStreamResponse({ content: ['Hello'] });
+  it("should pass debug settings", async () => {
+    prepareStreamResponse({ content: ["Hello"] });
 
-    const debugModel = provider.chat('anthropic/claude-3.5-sonnet', {
+    const debugModel = provider.chat("anthropic/claude-3.5-sonnet", {
       debug: {
         echo_upstream_body: true,
       },
@@ -2068,22 +2065,24 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
       stream: true,
       stream_options: { include_usage: true },
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       debug: {
         echo_upstream_body: true,
       },
     });
   });
 
-  it('should include file annotations in finish metadata when streamed', async () => {
+  it("should include file annotations in finish metadata when streamed", async () => {
     // This test verifies that file annotations from FileParserPlugin are accumulated
     // during streaming and included in the finish event's providerMetadata
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         // First chunk with role and content
         `data: {"id":"chatcmpl-file-annotations","object":"chat.completion.chunk","created":1711357598,"model":"gpt-4o-mini",` +
@@ -2100,7 +2099,7 @@ describe('doStream', () => {
           `"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-file-annotations","object":"chat.completion.chunk","created":1711357598,"model":"gpt-4o-mini",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":100,"completion_tokens":20,"total_tokens":120}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -2108,16 +2107,12 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
-    const elements = (await convertReadableStreamToArray(
-      stream,
-    )) as LanguageModelV3StreamPart[];
+    const elements = (await convertReadableStreamToArray(stream)) as LanguageModelV3StreamPart[];
 
     // Find the finish chunk
     const finishChunk = elements.find(
-      (
-        chunk,
-      ): chunk is Extract<LanguageModelV3StreamPart, { type: 'finish' }> =>
-        chunk.type === 'finish',
+      (chunk): chunk is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
+        chunk.type === "finish",
     );
 
     expect(finishChunk).toBeDefined();
@@ -2125,7 +2120,7 @@ describe('doStream', () => {
     // Verify file annotations are included in providerMetadata
     const openrouterMetadata = finishChunk?.providerMetadata?.openrouter as {
       annotations?: Array<{
-        type: 'file';
+        type: "file";
         file: {
           hash: string;
           name: string;
@@ -2136,23 +2131,24 @@ describe('doStream', () => {
 
     expect(openrouterMetadata?.annotations).toStrictEqual([
       {
-        type: 'file',
+        type: "file",
         file: {
-          hash: 'abc123def456',
-          name: 'bitcoin.pdf',
+          hash: "abc123def456",
+          name: "bitcoin.pdf",
           content: [
-            { type: 'text', text: 'Page 1 content' },
-            { type: 'text', text: 'Page 2 content' },
+            { type: "text", text: "Page 1 content" },
+            { type: "text", text: "Page 2 content" },
           ],
         },
       },
     ]);
   });
 
-  it('should accumulate multiple file annotations from stream', async () => {
+  it("should accumulate multiple file annotations from stream", async () => {
     // This test verifies that multiple file annotations are accumulated correctly
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         // First chunk with content
         `data: {"id":"chatcmpl-multi-files","object":"chat.completion.chunk","created":1711357598,"model":"gpt-4o-mini",` +
@@ -2174,7 +2170,7 @@ describe('doStream', () => {
           `"logprobs":null,"finish_reason":"stop"}]}\n\n`,
         `data: {"id":"chatcmpl-multi-files","object":"chat.completion.chunk","created":1711357598,"model":"gpt-4o-mini",` +
           `"system_fingerprint":"fp_3bc1b5746c","choices":[],"usage":{"prompt_tokens":100,"completion_tokens":20,"total_tokens":120}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -2182,20 +2178,16 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
-    const elements = (await convertReadableStreamToArray(
-      stream,
-    )) as LanguageModelV3StreamPart[];
+    const elements = (await convertReadableStreamToArray(stream)) as LanguageModelV3StreamPart[];
 
     const finishChunk = elements.find(
-      (
-        chunk,
-      ): chunk is Extract<LanguageModelV3StreamPart, { type: 'finish' }> =>
-        chunk.type === 'finish',
+      (chunk): chunk is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
+        chunk.type === "finish",
     );
 
     const openrouterMetadata = finishChunk?.providerMetadata?.openrouter as {
       annotations?: Array<{
-        type: 'file';
+        type: "file";
         file: {
           hash: string;
           name: string;
@@ -2206,34 +2198,35 @@ describe('doStream', () => {
 
     // Both file annotations should be accumulated
     expect(openrouterMetadata?.annotations).toHaveLength(2);
-    expect(openrouterMetadata?.annotations?.[0]?.file.hash).toBe('hash1');
-    expect(openrouterMetadata?.annotations?.[1]?.file.hash).toBe('hash2');
+    expect(openrouterMetadata?.annotations?.[0]?.file.hash).toBe("hash1");
+    expect(openrouterMetadata?.annotations?.[1]?.file.hash).toBe("hash2");
   });
 });
 
-describe('debug settings', () => {
+describe("debug settings", () => {
   const server = createTestServer({
-    'https://openrouter.ai/api/v1/chat/completions': {
-      response: { type: 'json-value', body: {} },
+    "https://openrouter.ai/api/v1/chat/completions": {
+      response: { type: "json-value", body: {} },
     },
   });
 
-  function prepareJsonResponse({ content = '' }: { content?: string } = {}) {
-    server.urls['https://openrouter.ai/api/v1/chat/completions']!.response = {
-      type: 'json-value',
+  function prepareJsonResponse({ content = "" }: { content?: string } = {}) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/chat/completions"]!.response = {
+      type: "json-value",
       body: {
-        id: 'chatcmpl-test',
-        object: 'chat.completion',
+        id: "chatcmpl-test",
+        object: "chat.completion",
         created: 1711115037,
-        model: 'anthropic/claude-3.5-sonnet',
+        model: "anthropic/claude-3.5-sonnet",
         choices: [
           {
             index: 0,
             message: {
-              role: 'assistant',
+              role: "assistant",
               content,
             },
-            finish_reason: 'stop',
+            finish_reason: "stop",
           },
         ],
         usage: {
@@ -2245,10 +2238,10 @@ describe('debug settings', () => {
     };
   }
 
-  it('should pass debug settings in doGenerate', async () => {
-    prepareJsonResponse({ content: 'Hello!' });
+  it("should pass debug settings in doGenerate", async () => {
+    prepareJsonResponse({ content: "Hello!" });
 
-    const debugModel = provider.chat('anthropic/claude-3.5-sonnet', {
+    const debugModel = provider.chat("anthropic/claude-3.5-sonnet", {
       debug: {
         echo_upstream_body: true,
       },
@@ -2258,23 +2251,25 @@ describe('debug settings', () => {
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [{ role: 'user', content: 'Hello' }],
+      model: "anthropic/claude-3.5-sonnet",
+      messages: [{ role: "user", content: "Hello" }],
       debug: {
         echo_upstream_body: true,
       },
     });
   });
 
-  it('should not include debug when not set', async () => {
-    prepareJsonResponse({ content: 'Hello!' });
+  it("should not include debug when not set", async () => {
+    prepareJsonResponse({ content: "Hello!" });
 
     await model.doGenerate({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestBody = await server.calls[0]!.requestBodyJson;
-    expect(requestBody).not.toHaveProperty('debug');
+    expect(requestBody).not.toHaveProperty("debug");
   });
 });

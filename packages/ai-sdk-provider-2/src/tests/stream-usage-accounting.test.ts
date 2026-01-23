@@ -1,16 +1,13 @@
-import type { OpenRouterChatSettings } from '../types/openrouter-chat-settings';
+import { describe, expect, it } from "vitest";
 
-import { describe, expect, it } from 'vitest';
-import { OpenRouterChatLanguageModel } from '../chat';
-import {
-  convertReadableStreamToArray,
-  createTestServer,
-} from '../test-utils/test-server';
+import type { OpenRouterChatSettings } from "../types/openrouter-chat-settings";
+import { OpenRouterChatLanguageModel } from "../chat";
+import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 
-describe('OpenRouter Streaming Usage Accounting', () => {
+describe("OpenRouter Streaming Usage Accounting", () => {
   const server = createTestServer({
-    'https://api.openrouter.ai/chat/completions': {
-      response: { type: 'stream-chunks', chunks: [] },
+    "https://api.openrouter.ai/chat/completions": {
+      response: { type: "stream-chunks", chunks: [] },
     },
   });
 
@@ -37,15 +34,15 @@ describe('OpenRouter Streaming Usage Accounting', () => {
       );
     }
 
-    chunks.push('data: [DONE]\n\n');
+    chunks.push("data: [DONE]\n\n");
 
-    server.urls['https://api.openrouter.ai/chat/completions']!.response = {
-      type: 'stream-chunks',
+    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+      type: "stream-chunks",
       chunks,
     };
   }
 
-  it('should include stream_options.include_usage in request when enabled', async () => {
+  it("should include stream_options.include_usage in request when enabled", async () => {
     prepareStreamResponse();
 
     // Create model with usage accounting enabled
@@ -53,11 +50,11 @@ describe('OpenRouter Streaming Usage Accounting', () => {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
@@ -65,18 +62,15 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     await model.doStream({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
     });
 
     // Verify stream options
-    const requestBody = (await server.calls[0]!.requestBodyJson) as Record<
-      string,
-      unknown
-    >;
+    const requestBody = (await server.calls[0]!.requestBodyJson) as Record<string, unknown>;
     expect(requestBody).toBeDefined();
     expect(requestBody.stream).toBe(true);
     expect(requestBody.stream_options).toEqual({
@@ -84,7 +78,7 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     });
   });
 
-  it('should include provider-specific metadata in finish event when usage accounting is enabled', async () => {
+  it("should include provider-specific metadata in finish event when usage accounting is enabled", async () => {
     prepareStreamResponse(true);
 
     // Create model with usage accounting enabled
@@ -92,11 +86,11 @@ describe('OpenRouter Streaming Usage Accounting', () => {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
@@ -104,8 +98,8 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     const result = await model.doStream({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
@@ -115,7 +109,7 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     const chunks = await convertReadableStreamToArray(result.stream);
 
     // Find the finish chunk
-    const finishChunk = chunks.find((chunk) => chunk.type === 'finish');
+    const finishChunk = chunks.find((chunk) => chunk.type === "finish");
     expect(finishChunk).toBeDefined();
 
     // Verify metadata is included
@@ -135,7 +129,7 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     });
   });
 
-  it('should not include provider-specific metadata when usage accounting is disabled', async () => {
+  it("should not include provider-specific metadata when usage accounting is disabled", async () => {
     prepareStreamResponse(false);
 
     // Create model with usage accounting disabled
@@ -143,11 +137,11 @@ describe('OpenRouter Streaming Usage Accounting', () => {
       // No usage property
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
@@ -155,8 +149,8 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     const result = await model.doStream({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
@@ -166,7 +160,7 @@ describe('OpenRouter Streaming Usage Accounting', () => {
     const chunks = await convertReadableStreamToArray(result.stream);
 
     // Find the finish chunk
-    const finishChunk = chunks.find((chunk) => chunk.type === 'finish');
+    const finishChunk = chunks.find((chunk) => chunk.type === "finish");
     expect(finishChunk).toBeDefined();
 
     // Verify that provider metadata is not included

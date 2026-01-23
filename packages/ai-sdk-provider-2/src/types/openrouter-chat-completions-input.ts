@@ -1,8 +1,8 @@
-import type { FileAnnotation } from '@/src/schemas/provider-metadata';
-import type { ReasoningDetailUnion } from '@/src/schemas/reasoning-details';
+import type { FileAnnotation } from "../schemas/provider-metadata";
+import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
 
 // Type for OpenRouter Cache Control following Anthropic's pattern
-export type OpenRouterCacheControl = { type: 'ephemeral' };
+export type OpenRouterCacheControl = { type: "ephemeral" };
 
 export type OpenRouterChatCompletionsInput = Array<ChatCompletionMessageParam>;
 
@@ -13,13 +13,13 @@ export type ChatCompletionMessageParam =
   | ChatCompletionToolMessageParam;
 
 export interface ChatCompletionSystemMessageParam {
-  role: 'system';
+  role: "system";
   content: string;
   cache_control?: OpenRouterCacheControl;
 }
 
 export interface ChatCompletionUserMessageParam {
-  role: 'user';
+  role: "user";
   content: string | Array<ChatCompletionContentPart>;
   cache_control?: OpenRouterCacheControl;
 }
@@ -31,7 +31,7 @@ export type ChatCompletionContentPart =
   | ChatCompletionContentPartInputAudio;
 
 export interface ChatCompletionContentPartFile {
-  type: 'file';
+  type: "file";
   file: {
     filename?: string;
     file_data?: string;
@@ -41,7 +41,7 @@ export interface ChatCompletionContentPartFile {
 }
 
 export interface ChatCompletionContentPartImage {
-  type: 'image_url';
+  type: "image_url";
   image_url: {
     url: string;
   };
@@ -49,7 +49,7 @@ export interface ChatCompletionContentPartImage {
 }
 
 export interface ChatCompletionContentPartText {
-  type: 'text';
+  type: "text";
   text: string;
   reasoning?: string | null;
   cache_control?: OpenRouterCacheControl;
@@ -57,21 +57,21 @@ export interface ChatCompletionContentPartText {
 
 /** https://openrouter.ai/docs/guides/overview/multimodal/audio */
 export const OPENROUTER_AUDIO_FORMATS = [
-  'wav',
-  'mp3',
-  'aiff',
-  'aac',
-  'ogg',
-  'flac',
-  'm4a',
-  'pcm16',
-  'pcm24',
+  "wav",
+  "mp3",
+  "aiff",
+  "aac",
+  "ogg",
+  "flac",
+  "m4a",
+  "pcm16",
+  "pcm24",
 ] as const;
 
 export type OpenRouterAudioFormat = (typeof OPENROUTER_AUDIO_FORMATS)[number];
 
 export interface ChatCompletionContentPartInputAudio {
-  type: 'input_audio';
+  type: "input_audio";
   input_audio: {
     data: string;
     format: OpenRouterAudioFormat;
@@ -80,7 +80,7 @@ export interface ChatCompletionContentPartInputAudio {
 }
 
 export interface ChatCompletionAssistantMessageParam {
-  role: 'assistant';
+  role: "assistant";
   content?: string | null;
   reasoning?: string | null;
   reasoning_details?: ReasoningDetailUnion[];
@@ -90,7 +90,7 @@ export interface ChatCompletionAssistantMessageParam {
 }
 
 export interface ChatCompletionMessageToolCall {
-  type: 'function';
+  type: "function";
   id: string;
   function: {
     arguments: string;
@@ -99,7 +99,7 @@ export interface ChatCompletionMessageToolCall {
 }
 
 export interface ChatCompletionToolMessageParam {
-  role: 'tool';
+  role: "tool";
   content: string;
   tool_call_id: string;
   cache_control?: OpenRouterCacheControl;

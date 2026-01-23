@@ -1,4 +1,4 @@
-import type { OpenRouterSharedSettings } from '..';
+import type { OpenRouterSharedSettings } from "..";
 
 // https://openrouter.ai/api/v1/models
 export type OpenRouterEmbeddingModelId = string;
@@ -29,7 +29,7 @@ export type OpenRouterEmbeddingSettings = {
     /**
      * Control whether to use providers that may store data
      */
-    data_collection?: 'allow' | 'deny';
+    data_collection?: "allow" | "deny";
     /**
      * List of provider slugs to allow for this request
      */
@@ -41,7 +41,7 @@ export type OpenRouterEmbeddingSettings = {
     /**
      * Sort providers by price, throughput, or latency
      */
-    sort?: 'price' | 'throughput' | 'latency';
+    sort?: "price" | "throughput" | "latency";
     /**
      * Maximum pricing you want to pay for this request
      */

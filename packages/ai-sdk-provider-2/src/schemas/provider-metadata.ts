@@ -1,12 +1,13 @@
-import { z } from 'zod/v4';
-import { ReasoningDetailUnionSchema } from './reasoning-details';
+import { z } from "zod/v4";
+
+import { ReasoningDetailUnionSchema } from "./reasoning-details";
 
 /**
  * Schema for file annotations from FileParserPlugin
  */
 export const FileAnnotationSchema = z
   .object({
-    type: z.literal('file'),
+    type: z.literal("file"),
     file: z
       .object({
         hash: z.string(),
@@ -65,9 +66,7 @@ export const OpenRouterProviderMetadataSchema = z
   })
   .catchall(z.any());
 
-export type OpenRouterProviderMetadata = z.infer<
-  typeof OpenRouterProviderMetadataSchema
->;
+export type OpenRouterProviderMetadata = z.infer<typeof OpenRouterProviderMetadataSchema>;
 
 /**
  * Schema for parsing provider options that may contain reasoning_details and annotations

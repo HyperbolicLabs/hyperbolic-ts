@@ -1,21 +1,21 @@
-import type { OpenRouterProviderSettings } from './provider';
+import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
+
+import type { OpenRouterProviderSettings } from "./provider";
 import type {
   OpenRouterChatModelId,
   OpenRouterChatSettings,
-} from './types/openrouter-chat-settings';
+} from "./types/openrouter-chat-settings";
 import type {
   OpenRouterCompletionModelId,
   OpenRouterCompletionSettings,
-} from './types/openrouter-completion-settings';
+} from "./types/openrouter-completion-settings";
 import type {
   OpenRouterEmbeddingModelId,
   OpenRouterEmbeddingSettings,
-} from './types/openrouter-embedding-settings';
-
-import { loadApiKey, withoutTrailingSlash } from '@ai-sdk/provider-utils';
-import { OpenRouterChatLanguageModel } from './chat';
-import { OpenRouterCompletionLanguageModel } from './completion';
-import { OpenRouterEmbeddingModel } from './embedding';
+} from "./types/openrouter-embedding-settings";
+import { OpenRouterChatLanguageModel } from "./chat";
+import { OpenRouterCompletionLanguageModel } from "./completion";
+import { OpenRouterEmbeddingModel } from "./embedding";
 
 /**
 @deprecated Use `createOpenRouter` instead.
@@ -48,8 +48,7 @@ Custom headers to include in the requests.
    */
   constructor(options: OpenRouterProviderSettings = {}) {
     this.baseURL =
-      withoutTrailingSlash(options.baseURL ?? options.baseUrl) ??
-      'https://openrouter.ai/api/v1';
+      withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://openrouter.ai/api/v1";
     this.apiKey = options.apiKey;
     this.headers = options.headers;
     this.api_keys = options.api_keys;
@@ -61,13 +60,13 @@ Custom headers to include in the requests.
       headers: () => ({
         Authorization: `Bearer ${loadApiKey({
           apiKey: this.apiKey,
-          environmentVariableName: 'OPENROUTER_API_KEY',
-          description: 'OpenRouter',
+          environmentVariableName: "OPENROUTER_API_KEY",
+          description: "OpenRouter",
         })}`,
         ...this.headers,
         ...(this.api_keys &&
           Object.keys(this.api_keys).length > 0 && {
-            'X-Provider-API-Keys': JSON.stringify(this.api_keys),
+            "X-Provider-API-Keys": JSON.stringify(this.api_keys),
           }),
       }),
     };
@@ -75,21 +74,18 @@ Custom headers to include in the requests.
 
   chat(modelId: OpenRouterChatModelId, settings: OpenRouterChatSettings = {}) {
     return new OpenRouterChatLanguageModel(modelId, settings, {
-      provider: 'openrouter.chat',
+      provider: "openrouter.chat",
       ...this.baseConfig,
-      compatibility: 'strict',
+      compatibility: "strict",
       url: ({ path }) => `${this.baseURL}${path}`,
     });
   }
 
-  completion(
-    modelId: OpenRouterCompletionModelId,
-    settings: OpenRouterCompletionSettings = {},
-  ) {
+  completion(modelId: OpenRouterCompletionModelId, settings: OpenRouterCompletionSettings = {}) {
     return new OpenRouterCompletionLanguageModel(modelId, settings, {
-      provider: 'openrouter.completion',
+      provider: "openrouter.completion",
       ...this.baseConfig,
-      compatibility: 'strict',
+      compatibility: "strict",
       url: ({ path }) => `${this.baseURL}${path}`,
     });
   }
@@ -99,7 +95,7 @@ Custom headers to include in the requests.
     settings: OpenRouterEmbeddingSettings = {},
   ) {
     return new OpenRouterEmbeddingModel(modelId, settings, {
-      provider: 'openrouter.embedding',
+      provider: "openrouter.embedding",
       ...this.baseConfig,
       url: ({ path }) => `${this.baseURL}${path}`,
     });
@@ -108,10 +104,7 @@ Custom headers to include in the requests.
   /**
    * @deprecated Use textEmbeddingModel instead
    */
-  embedding(
-    modelId: OpenRouterEmbeddingModelId,
-    settings: OpenRouterEmbeddingSettings = {},
-  ) {
+  embedding(modelId: OpenRouterEmbeddingModelId, settings: OpenRouterEmbeddingSettings = {}) {
     return this.textEmbeddingModel(modelId, settings);
   }
 }

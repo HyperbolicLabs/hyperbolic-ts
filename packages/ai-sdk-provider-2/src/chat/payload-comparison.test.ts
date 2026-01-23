@@ -1,16 +1,16 @@
-import type { LanguageModelV3Prompt } from '@ai-sdk/provider';
-import type { OpenRouterChatCompletionsInput } from '../types/openrouter-chat-completions-input';
-import type { OpenRouterChatSettings } from '../types/openrouter-chat-settings';
+import type { LanguageModelV3Prompt } from "@ai-sdk/provider";
+import { describe, expect, it, vi } from "vitest";
 
-import { describe, expect, it, vi } from 'vitest';
-import { createOpenRouter } from '../provider';
+import type { OpenRouterChatCompletionsInput } from "../types/openrouter-chat-completions-input";
+import type { OpenRouterChatSettings } from "../types/openrouter-chat-settings";
+import { createOpenRouter } from "../provider";
 
-describe('Payload Comparison - Large PDF', () => {
-  it('should send payload matching fetch baseline for large PDFs', async () => {
+describe("Payload Comparison - Large PDF", () => {
+  it("should send payload matching fetch baseline for large PDFs", async () => {
     interface CapturedRequestBody {
       model: string;
       messages: OpenRouterChatCompletionsInput;
-      plugins?: OpenRouterChatSettings['plugins'];
+      plugins?: OpenRouterChatSettings["plugins"];
       usage?: { include: boolean };
     }
 
@@ -20,23 +20,21 @@ describe('Payload Comparison - Large PDF', () => {
     const mockFetch = vi.fn(async (_url: string, init?: RequestInit) => {
       // Capture the request body
       if (init?.body) {
-        capturedRequestBody = JSON.parse(
-          init.body as string,
-        ) as CapturedRequestBody;
+        capturedRequestBody = JSON.parse(init.body as string) as CapturedRequestBody;
       }
 
       // Return a minimal success response
       return new Response(
         JSON.stringify({
-          id: 'test-123',
-          model: 'anthropic/claude-3.5-sonnet',
+          id: "test-123",
+          model: "anthropic/claude-3.5-sonnet",
           choices: [
             {
               message: {
-                role: 'assistant',
-                content: 'Test response',
+                role: "assistant",
+                content: "Test response",
               },
-              finish_reason: 'stop',
+              finish_reason: "stop",
             },
           ],
           usage: {
@@ -47,39 +45,39 @@ describe('Payload Comparison - Large PDF', () => {
         }),
         {
           status: 200,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         },
       );
     }) as typeof fetch;
 
     const provider = createOpenRouter({
-      apiKey: 'test-key',
+      apiKey: "test-key",
       fetch: mockFetch,
     });
 
     // Simulate a large PDF (use a small base64 for testing, but structure matters)
-    const smallPdfBase64 = 'JVBERi0xLjQKJeLjz9MKM...(truncated)';
+    const smallPdfBase64 = "JVBERi0xLjQKJeLjz9MKM...(truncated)";
     const dataUrl = `data:application/pdf;base64,${smallPdfBase64}`;
 
     const prompt: LanguageModelV3Prompt = [
       {
-        role: 'user',
+        role: "user",
         content: [
           {
-            type: 'text',
-            text: 'Extract the verification code. Reply with ONLY the code.',
+            type: "text",
+            text: "Extract the verification code. Reply with ONLY the code.",
           },
           {
-            type: 'file',
+            type: "file",
             data: dataUrl,
-            mediaType: 'application/pdf',
+            mediaType: "application/pdf",
           },
         ],
       },
     ];
 
-    const model = provider('anthropic/claude-3.5-sonnet', {
-      plugins: [{ id: 'file-parser', pdf: { engine: 'mistral-ocr' } }],
+    const model = provider("anthropic/claude-3.5-sonnet", {
+      plugins: [{ id: "file-parser", pdf: { engine: "mistral-ocr" } }],
       usage: { include: true },
     });
 
@@ -105,32 +103,32 @@ describe('Payload Comparison - Large PDF', () => {
 
     const messages = capturedRequestBody!.messages;
     expect(messages).toHaveLength(1);
-    expect(messages[0]?.role).toBe('user');
+    expect(messages[0]?.role).toBe("user");
     expect(messages[0]?.content).toBeInstanceOf(Array);
 
     const content = messages[0]?.content;
     if (!Array.isArray(content)) {
-      throw new Error('Content should be an array');
+      throw new Error("Content should be an array");
     }
 
     // Find the file part
-    const filePart = content.find((part) => part.type === 'file');
+    const filePart = content.find((part) => part.type === "file");
     expect(filePart).toBeDefined();
 
     // CRITICAL ASSERTION: The file part should have a nested 'file' object with 'file_data'
     // This is what the fetch example sends and what OpenRouter expects
     expect(filePart).toMatchObject({
-      type: 'file',
+      type: "file",
       file: {
-        file_data: expect.stringContaining('data:application/pdf;base64,'),
+        file_data: expect.stringContaining("data:application/pdf;base64,"),
       },
     });
 
     // Find the text part
-    const textPart = content.find((part) => part.type === 'text');
+    const textPart = content.find((part) => part.type === "text");
     expect(textPart).toMatchObject({
-      type: 'text',
-      text: 'Extract the verification code. Reply with ONLY the code.',
+      type: "text",
+      text: "Extract the verification code. Reply with ONLY the code.",
     });
 
     // Check for plugins array
@@ -139,13 +137,13 @@ describe('Payload Comparison - Large PDF', () => {
 
     const { plugins } = capturedRequestBody!;
     if (!plugins) {
-      throw new Error('Plugins should be defined');
+      throw new Error("Plugins should be defined");
     }
 
-    const fileParserPlugin = plugins.find((p) => p.id === 'file-parser');
+    const fileParserPlugin = plugins.find((p) => p.id === "file-parser");
     expect(fileParserPlugin).toBeDefined();
     expect(fileParserPlugin).toMatchObject({
-      id: 'file-parser',
+      id: "file-parser",
       pdf: {
         engine: expect.stringMatching(/^(mistral-ocr|pdf-text|native)$/),
       },

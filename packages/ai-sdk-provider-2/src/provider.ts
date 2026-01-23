@@ -1,23 +1,23 @@
-import type { ProviderV3 } from '@ai-sdk/provider';
+import type { ProviderV3 } from "@ai-sdk/provider";
+import { loadApiKey, withoutTrailingSlash } from "@ai-sdk/provider-utils";
+
 import type {
   OpenRouterChatModelId,
   OpenRouterChatSettings,
-} from './types/openrouter-chat-settings';
+} from "./types/openrouter-chat-settings";
 import type {
   OpenRouterCompletionModelId,
   OpenRouterCompletionSettings,
-} from './types/openrouter-completion-settings';
+} from "./types/openrouter-completion-settings";
 import type {
   OpenRouterEmbeddingModelId,
   OpenRouterEmbeddingSettings,
-} from './types/openrouter-embedding-settings';
-
-import { loadApiKey, withoutTrailingSlash } from '@ai-sdk/provider-utils';
-import { OpenRouterChatLanguageModel } from './chat';
-import { OpenRouterCompletionLanguageModel } from './completion';
-import { OpenRouterEmbeddingModel } from './embedding';
-import { withUserAgentSuffix } from './utils/with-user-agent-suffix';
-import { VERSION } from './version';
+} from "./types/openrouter-embedding-settings";
+import { OpenRouterChatLanguageModel } from "./chat";
+import { OpenRouterCompletionLanguageModel } from "./completion";
+import { OpenRouterEmbeddingModel } from "./embedding";
+import { withUserAgentSuffix } from "./utils/with-user-agent-suffix";
+import { VERSION } from "./version";
 
 export type { OpenRouterChatSettings, OpenRouterCompletionSettings };
 
@@ -26,10 +26,7 @@ export interface OpenRouterProvider extends ProviderV3 {
     modelId: OpenRouterChatModelId,
     settings?: OpenRouterCompletionSettings,
   ): OpenRouterCompletionLanguageModel;
-  (
-    modelId: OpenRouterChatModelId,
-    settings?: OpenRouterChatSettings,
-  ): OpenRouterChatLanguageModel;
+  (modelId: OpenRouterChatModelId, settings?: OpenRouterChatSettings): OpenRouterChatLanguageModel;
 
   languageModel(
     modelId: OpenRouterChatModelId,
@@ -100,7 +97,7 @@ OpenRouter compatibility mode. Should be set to `strict` when using the OpenRout
 and `compatible` when using 3rd party providers. In `compatible` mode, newer
 information such as streamOptions are not being sent. Defaults to 'compatible'.
    */
-  compatibility?: 'strict' | 'compatible';
+  compatibility?: "strict" | "compatible";
 
   /**
 Custom fetch implementation. You can use it as a middleware to intercept requests,
@@ -123,39 +120,33 @@ A JSON object to send as the request body to access OpenRouter features & upstre
 /**
 Create an OpenRouter provider instance.
  */
-export function createOpenRouter(
-  options: OpenRouterProviderSettings = {},
-): OpenRouterProvider {
+export function createOpenRouter(options: OpenRouterProviderSettings = {}): OpenRouterProvider {
   const baseURL =
-    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ??
-    'https://openrouter.ai/api/v1';
+    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ?? "https://openrouter.ai/api/v1";
 
   // we default to compatible, because strict breaks providers like Groq:
-  const compatibility = options.compatibility ?? 'compatible';
+  const compatibility = options.compatibility ?? "compatible";
 
   const getHeaders = () =>
     withUserAgentSuffix(
       {
         Authorization: `Bearer ${loadApiKey({
           apiKey: options.apiKey,
-          environmentVariableName: 'OPENROUTER_API_KEY',
-          description: 'OpenRouter',
+          environmentVariableName: "OPENROUTER_API_KEY",
+          description: "OpenRouter",
         })}`,
         ...options.headers,
         ...(options.api_keys &&
           Object.keys(options.api_keys).length > 0 && {
-            'X-Provider-API-Keys': JSON.stringify(options.api_keys),
+            "X-Provider-API-Keys": JSON.stringify(options.api_keys),
           }),
       },
       `ai-sdk/openrouter/${VERSION}`,
     );
 
-  const createChatModel = (
-    modelId: OpenRouterChatModelId,
-    settings: OpenRouterChatSettings = {},
-  ) =>
+  const createChatModel = (modelId: OpenRouterChatModelId, settings: OpenRouterChatSettings = {}) =>
     new OpenRouterChatLanguageModel(modelId, settings, {
-      provider: 'openrouter.chat',
+      provider: "openrouter.chat",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       compatibility,
@@ -168,7 +159,7 @@ export function createOpenRouter(
     settings: OpenRouterCompletionSettings = {},
   ) =>
     new OpenRouterCompletionLanguageModel(modelId, settings, {
-      provider: 'openrouter.completion',
+      provider: "openrouter.completion",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       compatibility,
@@ -181,7 +172,7 @@ export function createOpenRouter(
     settings: OpenRouterEmbeddingSettings = {},
   ) =>
     new OpenRouterEmbeddingModel(modelId, settings, {
-      provider: 'openrouter.embedding',
+      provider: "openrouter.embedding",
       url: ({ path }) => `${baseURL}${path}`,
       headers: getHeaders,
       fetch: options.fetch,
@@ -193,16 +184,11 @@ export function createOpenRouter(
     settings?: OpenRouterChatSettings | OpenRouterCompletionSettings,
   ) => {
     if (new.target) {
-      throw new Error(
-        'The OpenRouter model function cannot be called with the new keyword.',
-      );
+      throw new Error("The OpenRouter model function cannot be called with the new keyword.");
     }
 
-    if (modelId === 'openai/gpt-3.5-turbo-instruct') {
-      return createCompletionModel(
-        modelId,
-        settings as OpenRouterCompletionSettings,
-      );
+    if (modelId === "openai/gpt-3.5-turbo-instruct") {
+      return createCompletionModel(modelId, settings as OpenRouterCompletionSettings);
     }
 
     return createChatModel(modelId, settings as OpenRouterChatSettings);
@@ -226,5 +212,5 @@ export function createOpenRouter(
 Default OpenRouter provider instance. It uses 'strict' compatibility mode.
  */
 export const openrouter = createOpenRouter({
-  compatibility: 'strict', // strict for OpenRouter API
+  compatibility: "strict", // strict for OpenRouter API
 });

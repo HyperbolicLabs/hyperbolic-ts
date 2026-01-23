@@ -4,19 +4,19 @@ import type {
   LanguageModelV3TextPart,
   LanguageModelV3ToolResultPart,
   SharedV3ProviderMetadata,
-} from '@ai-sdk/provider';
-import type { ReasoningDetailUnion } from '../schemas/reasoning-details';
+} from "@ai-sdk/provider";
+
+import type { ReasoningDetailUnion } from "../schemas/reasoning-details";
 import type {
   ChatCompletionContentPart,
   OpenRouterChatCompletionsInput,
-} from '../types/openrouter-chat-completions-input';
-
-import { OpenRouterProviderOptionsSchema } from '../schemas/provider-metadata';
-import { getFileUrl, getInputAudioData } from './file-url-utils';
-import { isUrl } from './is-url';
+} from "../types/openrouter-chat-completions-input";
+import { OpenRouterProviderOptionsSchema } from "../schemas/provider-metadata";
+import { getFileUrl, getInputAudioData } from "./file-url-utils";
+import { isUrl } from "./is-url";
 
 // Type for OpenRouter Cache Control following Anthropic's pattern
-export type OpenRouterCacheControl = { type: 'ephemeral' };
+export type OpenRouterCacheControl = { type: "ephemeral" };
 
 function getCacheControl(
   providerMetadata: SharedV3ProviderMetadata | undefined,
@@ -37,32 +37,30 @@ export function convertToOpenRouterChatMessages(
   const messages: OpenRouterChatCompletionsInput = [];
   for (const { role, content, providerOptions } of prompt) {
     switch (role) {
-      case 'system': {
+      case "system": {
         messages.push({
-          role: 'system',
+          role: "system",
           content,
           cache_control: getCacheControl(providerOptions),
         });
         break;
       }
 
-      case 'user': {
-        if (content.length === 1 && content[0]?.type === 'text') {
+      case "user": {
+        if (content.length === 1 && content[0]?.type === "text") {
           const cacheControl =
-            getCacheControl(providerOptions) ??
-            getCacheControl(content[0].providerOptions);
-          const contentWithCacheControl: string | ChatCompletionContentPart[] =
-            cacheControl
-              ? [
-                  {
-                    type: 'text',
-                    text: content[0].text,
-                    cache_control: cacheControl,
-                  },
-                ]
-              : content[0].text;
+            getCacheControl(providerOptions) ?? getCacheControl(content[0].providerOptions);
+          const contentWithCacheControl: string | ChatCompletionContentPart[] = cacheControl
+            ? [
+                {
+                  type: "text",
+                  text: content[0].text,
+                  cache_control: cacheControl,
+                },
+              ]
+            : content[0].text;
           messages.push({
-            role: 'user',
+            role: "user",
             content: contentWithCacheControl,
           });
           break;
@@ -72,25 +70,24 @@ export function convertToOpenRouterChatMessages(
         const messageCacheControl = getCacheControl(providerOptions);
         const contentParts: ChatCompletionContentPart[] = content.map(
           (part: LanguageModelV3TextPart | LanguageModelV3FilePart) => {
-            const cacheControl =
-              getCacheControl(part.providerOptions) ?? messageCacheControl;
+            const cacheControl = getCacheControl(part.providerOptions) ?? messageCacheControl;
 
             switch (part.type) {
-              case 'text':
+              case "text":
                 return {
-                  type: 'text' as const,
+                  type: "text" as const,
                   text: part.text,
                   // For text parts, only use part-specific cache control
                   cache_control: cacheControl,
                 };
-              case 'file': {
-                if (part.mediaType?.startsWith('image/')) {
+              case "file": {
+                if (part.mediaType?.startsWith("image/")) {
                   const url = getFileUrl({
                     part,
-                    defaultMediaType: 'image/jpeg',
+                    defaultMediaType: "image/jpeg",
                   });
                   return {
-                    type: 'image_url' as const,
+                    type: "image_url" as const,
                     image_url: {
                       url,
                     },
@@ -100,33 +97,31 @@ export function convertToOpenRouterChatMessages(
                 }
 
                 // Handle audio files for input_audio format
-                if (part.mediaType?.startsWith('audio/')) {
+                if (part.mediaType?.startsWith("audio/")) {
                   return {
-                    type: 'input_audio' as const,
+                    type: "input_audio" as const,
                     input_audio: getInputAudioData(part),
                     cache_control: cacheControl,
                   };
                 }
 
                 const fileName = String(
-                  part.providerOptions?.openrouter?.filename ??
-                    part.filename ??
-                    '',
+                  part.providerOptions?.openrouter?.filename ?? part.filename ?? "",
                 );
 
                 const fileData = getFileUrl({
                   part,
-                  defaultMediaType: 'application/pdf',
+                  defaultMediaType: "application/pdf",
                 });
 
                 if (
                   isUrl({
                     url: fileData,
-                    protocols: new Set(['http:', 'https:'] as const),
+                    protocols: new Set(["http:", "https:"] as const),
                   })
                 ) {
                   return {
-                    type: 'file' as const,
+                    type: "file" as const,
                     file: {
                       filename: fileName,
                       file_data: fileData,
@@ -135,7 +130,7 @@ export function convertToOpenRouterChatMessages(
                 }
 
                 return {
-                  type: 'file' as const,
+                  type: "file" as const,
                   file: {
                     filename: fileName,
                     file_data: fileData,
@@ -145,8 +140,8 @@ export function convertToOpenRouterChatMessages(
               }
               default: {
                 return {
-                  type: 'text' as const,
-                  text: '',
+                  type: "text" as const,
+                  text: "",
                   cache_control: cacheControl,
                 };
               }
@@ -156,34 +151,33 @@ export function convertToOpenRouterChatMessages(
 
         // For multi-part messages, don't add cache_control at the root level
         messages.push({
-          role: 'user',
+          role: "user",
           content: contentParts,
         });
 
         break;
       }
 
-      case 'assistant': {
-        let text = '';
-        let reasoning = '';
+      case "assistant": {
+        let text = "";
+        let reasoning = "";
         const toolCalls: Array<{
           id: string;
-          type: 'function';
+          type: "function";
           function: { name: string; arguments: string };
         }> = [];
         const accumulatedReasoningDetails: ReasoningDetailUnion[] = [];
 
         for (const part of content) {
           switch (part.type) {
-            case 'text': {
+            case "text": {
               text += part.text;
 
               break;
             }
-            case 'tool-call': {
-              const partReasoningDetails = (
-                part.providerOptions as Record<string, unknown>
-              )?.openrouter as Record<string, unknown> | undefined;
+            case "tool-call": {
+              const partReasoningDetails = (part.providerOptions as Record<string, unknown>)
+                ?.openrouter as Record<string, unknown> | undefined;
               if (
                 partReasoningDetails?.reasoning_details &&
                 Array.isArray(partReasoningDetails.reasoning_details)
@@ -194,7 +188,7 @@ export function convertToOpenRouterChatMessages(
               }
               toolCalls.push({
                 id: part.toolCallId,
-                type: 'function',
+                type: "function",
                 function: {
                   name: part.toolName,
                   arguments: JSON.stringify(part.input),
@@ -202,23 +196,23 @@ export function convertToOpenRouterChatMessages(
               });
               break;
             }
-            case 'reasoning': {
+            case "reasoning": {
               reasoning += part.text;
-              const parsedPartProviderOptions =
-                OpenRouterProviderOptionsSchema.safeParse(part.providerOptions);
+              const parsedPartProviderOptions = OpenRouterProviderOptionsSchema.safeParse(
+                part.providerOptions,
+              );
               if (
                 parsedPartProviderOptions.success &&
                 parsedPartProviderOptions.data?.openrouter?.reasoning_details
               ) {
                 accumulatedReasoningDetails.push(
-                  ...parsedPartProviderOptions.data.openrouter
-                    .reasoning_details,
+                  ...parsedPartProviderOptions.data.openrouter.reasoning_details,
                 );
               }
               break;
             }
 
-            case 'file':
+            case "file":
               break;
             default: {
               break;
@@ -227,8 +221,7 @@ export function convertToOpenRouterChatMessages(
         }
 
         // Check message-level providerOptions for preserved reasoning_details and annotations
-        const parsedProviderOptions =
-          OpenRouterProviderOptionsSchema.safeParse(providerOptions);
+        const parsedProviderOptions = OpenRouterProviderOptionsSchema.safeParse(providerOptions);
         const messageReasoningDetails = parsedProviderOptions.success
           ? parsedProviderOptions.data?.openrouter?.reasoning_details
           : undefined;
@@ -247,7 +240,7 @@ export function convertToOpenRouterChatMessages(
               : undefined;
 
         messages.push({
-          role: 'assistant',
+          role: "assistant",
           content: text,
           tool_calls: toolCalls.length > 0 ? toolCalls : undefined,
           reasoning: reasoning || undefined,
@@ -259,21 +252,20 @@ export function convertToOpenRouterChatMessages(
         break;
       }
 
-      case 'tool': {
+      case "tool": {
         for (const toolResponse of content) {
           // Skip tool approval responses - only process tool results
-          if (toolResponse.type === 'tool-approval-response') {
+          if (toolResponse.type === "tool-approval-response") {
             continue;
           }
           const content = getToolResultContent(toolResponse);
 
           messages.push({
-            role: 'tool',
+            role: "tool",
             tool_call_id: toolResponse.toolCallId,
             content,
             cache_control:
-              getCacheControl(providerOptions) ??
-              getCacheControl(toolResponse.providerOptions),
+              getCacheControl(providerOptions) ?? getCacheControl(toolResponse.providerOptions),
           });
         }
         break;
@@ -290,14 +282,14 @@ export function convertToOpenRouterChatMessages(
 
 function getToolResultContent(input: LanguageModelV3ToolResultPart): string {
   switch (input.output.type) {
-    case 'text':
-    case 'error-text':
+    case "text":
+    case "error-text":
       return input.output.value;
-    case 'json':
-    case 'error-json':
-    case 'content':
+    case "json":
+    case "error-json":
+    case "content":
       return JSON.stringify(input.output.value);
-    case 'execution-denied':
-      return input.output.reason ?? 'Tool execution denied';
+    case "execution-denied":
+      return input.output.reason ?? "Tool execution denied";
   }
 }

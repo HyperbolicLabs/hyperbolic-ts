@@ -1,20 +1,12 @@
-import type {
-  EmbeddingModelV3,
-  SharedV3Headers,
-  SharedV3ProviderMetadata,
-} from '@ai-sdk/provider';
+import type { EmbeddingModelV3, SharedV3Headers, SharedV3ProviderMetadata } from "@ai-sdk/provider";
+import { combineHeaders, createJsonResponseHandler, postJsonToApi } from "@ai-sdk/provider-utils";
+
 import type {
   OpenRouterEmbeddingModelId,
   OpenRouterEmbeddingSettings,
-} from '../types/openrouter-embedding-settings';
-
-import {
-  combineHeaders,
-  createJsonResponseHandler,
-  postJsonToApi,
-} from '@ai-sdk/provider-utils';
-import { openrouterFailedResponseHandler } from '../schemas/error-response';
-import { OpenRouterEmbeddingResponseSchema } from './schemas';
+} from "../types/openrouter-embedding-settings";
+import { openrouterFailedResponseHandler } from "../schemas/error-response";
+import { OpenRouterEmbeddingResponseSchema } from "./schemas";
 
 type OpenRouterEmbeddingConfig = {
   provider: string;
@@ -25,8 +17,8 @@ type OpenRouterEmbeddingConfig = {
 };
 
 export class OpenRouterEmbeddingModel implements EmbeddingModelV3 {
-  readonly specificationVersion = 'v3' as const;
-  readonly provider = 'openrouter';
+  readonly specificationVersion = "v3" as const;
+  readonly provider = "openrouter";
   readonly modelId: OpenRouterEmbeddingModelId;
   readonly settings: OpenRouterEmbeddingSettings;
   readonly maxEmbeddingsPerCall = undefined;
@@ -56,7 +48,7 @@ export class OpenRouterEmbeddingModel implements EmbeddingModelV3 {
       headers?: SharedV3Headers;
       body?: unknown;
     };
-    warnings: Array<import('@ai-sdk/provider').SharedV3Warning>;
+    warnings: Array<import("@ai-sdk/provider").SharedV3Warning>;
   }> {
     const { values, abortSignal, headers } = options;
 
@@ -71,24 +63,20 @@ export class OpenRouterEmbeddingModel implements EmbeddingModelV3 {
 
     const { value: responseValue, responseHeaders } = await postJsonToApi({
       url: this.config.url({
-        path: '/embeddings',
+        path: "/embeddings",
         modelId: this.modelId,
       }),
       headers: combineHeaders(this.config.headers(), headers),
       body: args,
       failedResponseHandler: openrouterFailedResponseHandler,
-      successfulResponseHandler: createJsonResponseHandler(
-        OpenRouterEmbeddingResponseSchema,
-      ),
+      successfulResponseHandler: createJsonResponseHandler(OpenRouterEmbeddingResponseSchema),
       abortSignal,
       fetch: this.config.fetch,
     });
 
     return {
       embeddings: responseValue.data.map((item) => item.embedding),
-      usage: responseValue.usage
-        ? { tokens: responseValue.usage.prompt_tokens }
-        : undefined,
+      usage: responseValue.usage ? { tokens: responseValue.usage.prompt_tokens } : undefined,
       providerMetadata: responseValue.usage?.cost
         ? {
             openrouter: {

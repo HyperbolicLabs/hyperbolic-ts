@@ -1,4 +1,4 @@
-import type { OpenRouterSharedSettings } from '.';
+import type { OpenRouterSharedSettings } from ".";
 
 export type OpenRouterCompletionModelId = string;
 

@@ -1,9 +1,9 @@
-import type { LanguageModelV3FilePart } from '@ai-sdk/provider';
-import type { OpenRouterAudioFormat } from '../types/openrouter-chat-completions-input';
+import type { LanguageModelV3FilePart } from "@ai-sdk/provider";
+import { convertUint8ArrayToBase64 } from "@ai-sdk/provider-utils";
 
-import { convertUint8ArrayToBase64 } from '@ai-sdk/provider-utils';
-import { OPENROUTER_AUDIO_FORMATS } from '../types/openrouter-chat-completions-input';
-import { isUrl } from './is-url';
+import type { OpenRouterAudioFormat } from "../types/openrouter-chat-completions-input";
+import { OPENROUTER_AUDIO_FORMATS } from "../types/openrouter-chat-completions-input";
+import { isUrl } from "./is-url";
 
 export function getFileUrl({
   part,
@@ -22,21 +22,18 @@ export function getFileUrl({
   if (
     isUrl({
       url: stringUrl,
-      protocols: new Set(['http:', 'https:'] as const),
+      protocols: new Set(["http:", "https:"] as const),
     })
   ) {
     return stringUrl;
   }
 
-  return stringUrl.startsWith('data:')
+  return stringUrl.startsWith("data:")
     ? stringUrl
     : `data:${part.mediaType ?? defaultMediaType};base64,${stringUrl}`;
 }
 
-export function getMediaType(
-  dataUrl: string,
-  defaultMediaType: string,
-): string {
+export function getMediaType(dataUrl: string, defaultMediaType: string): string {
   const match = dataUrl.match(/^data:([^;]+)/);
   return match ? (match[1] ?? defaultMediaType) : defaultMediaType;
 }
@@ -49,31 +46,31 @@ export function getBase64FromDataUrl(dataUrl: string): string {
 /** MIME type to format mapping for normalization */
 export const MIME_TO_FORMAT: Record<string, OpenRouterAudioFormat> = {
   // MP3 variants
-  mpeg: 'mp3',
-  mp3: 'mp3',
+  mpeg: "mp3",
+  mp3: "mp3",
   // WAV variants
-  'x-wav': 'wav',
-  wave: 'wav',
-  wav: 'wav',
+  "x-wav": "wav",
+  wave: "wav",
+  wav: "wav",
   // OGG variants
-  ogg: 'ogg',
-  vorbis: 'ogg',
+  ogg: "ogg",
+  vorbis: "ogg",
   // AAC variants
-  aac: 'aac',
-  'x-aac': 'aac',
+  aac: "aac",
+  "x-aac": "aac",
   // M4A variants
-  m4a: 'm4a',
-  'x-m4a': 'm4a',
-  mp4: 'm4a',
+  m4a: "m4a",
+  "x-m4a": "m4a",
+  mp4: "m4a",
   // AIFF variants
-  aiff: 'aiff',
-  'x-aiff': 'aiff',
+  aiff: "aiff",
+  "x-aiff": "aiff",
   // FLAC
-  flac: 'flac',
-  'x-flac': 'flac',
+  flac: "flac",
+  "x-flac": "flac",
   // PCM variants
-  pcm16: 'pcm16',
-  pcm24: 'pcm24',
+  pcm16: "pcm16",
+  pcm24: "pcm24",
 };
 
 /**
@@ -106,14 +103,14 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
 } {
   const fileData = getFileUrl({
     part,
-    defaultMediaType: 'audio/mpeg',
+    defaultMediaType: "audio/mpeg",
   });
 
   // OpenRouter's input_audio doesn't support URLs directly
   if (
     isUrl({
       url: fileData,
-      protocols: new Set(['http:', 'https:'] as const),
+      protocols: new Set(["http:", "https:"] as const),
     })
   ) {
     throw new Error(
@@ -131,14 +128,14 @@ export function getInputAudioData(part: LanguageModelV3FilePart): {
   const data = getBase64FromDataUrl(fileData);
 
   // Map media type to format
-  const mediaType = part.mediaType || 'audio/mpeg';
-  const rawFormat = mediaType.replace('audio/', '');
+  const mediaType = part.mediaType || "audio/mpeg";
+  const rawFormat = mediaType.replace("audio/", "");
 
   // Normalize format names for OpenRouter using MIME type mapping
   const format = MIME_TO_FORMAT[rawFormat];
 
   if (format === undefined) {
-    const supportedList = OPENROUTER_AUDIO_FORMATS.join(', ');
+    const supportedList = OPENROUTER_AUDIO_FORMATS.join(", ");
     throw new Error(
       `Unsupported audio format: "${mediaType}"\n\n` +
         `OpenRouter supports the following audio formats: ${supportedList}\n\n` +

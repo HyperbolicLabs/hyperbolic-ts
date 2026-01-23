@@ -1,73 +1,65 @@
-import type {
-  LanguageModelV3Prompt,
-  LanguageModelV3StreamPart,
-} from '@ai-sdk/provider';
+import type { LanguageModelV3Prompt, LanguageModelV3StreamPart } from "@ai-sdk/provider";
+import { vi } from "vitest";
 
-import { vi } from 'vitest';
-import { createOpenRouter } from '../provider';
-import {
-  convertReadableStreamToArray,
-  createTestServer,
-} from '../test-utils/test-server';
+import { createOpenRouter } from "../provider";
+import { convertReadableStreamToArray, createTestServer } from "../test-utils/test-server";
 
-vi.mock('@/src/version', () => ({
-  VERSION: '0.0.0-test',
+vi.mock("../version", () => ({
+  VERSION: "0.0.0-test",
 }));
 
 const TEST_PROMPT: LanguageModelV3Prompt = [
-  { role: 'user', content: [{ type: 'text', text: 'Hello' }] },
+  { role: "user", content: [{ type: "text", text: "Hello" }] },
 ];
 
 const TEST_LOGPROBS = {
-  tokens: [' ever', ' after', '.\n\n', 'The', ' end', '.'],
-  token_logprobs: [
-    -0.0664508, -0.014520033, -1.3820221, -0.7890417, -0.5323165, -0.10247037,
-  ],
+  tokens: [" ever", " after", ".\n\n", "The", " end", "."],
+  token_logprobs: [-0.0664508, -0.014520033, -1.3820221, -0.7890417, -0.5323165, -0.10247037],
   top_logprobs: [
     {
-      ' ever': -0.0664508,
+      " ever": -0.0664508,
     },
     {
-      ' after': -0.014520033,
+      " after": -0.014520033,
     },
     {
-      '.\n\n': -1.3820221,
+      ".\n\n": -1.3820221,
     },
     {
       The: -0.7890417,
     },
     {
-      ' end': -0.5323165,
+      " end": -0.5323165,
     },
     {
-      '.': -0.10247037,
+      ".": -0.10247037,
     },
   ] as Record<string, number>[],
 };
 
 const provider = createOpenRouter({
-  apiKey: 'test-api-key',
-  compatibility: 'strict',
+  apiKey: "test-api-key",
+  compatibility: "strict",
 });
 
-const model = provider.completion('openai/gpt-3.5-turbo-instruct');
+const model = provider.completion("openai/gpt-3.5-turbo-instruct");
 
-describe('doGenerate', () => {
+describe("doGenerate", () => {
   const server = createTestServer({
-    'https://openrouter.ai/api/v1/completions': {
-      response: { type: 'json-value', body: {} },
+    "https://openrouter.ai/api/v1/completions": {
+      response: { type: "json-value", body: {} },
     },
   });
 
   function prepareJsonResponse({
-    content = '',
+    content = "",
     usage = {
       prompt_tokens: 4,
       total_tokens: 34,
       completion_tokens: 30,
     },
     logprobs = null,
-    finish_reason = 'stop',
+    finish_reason = "stop",
   }: {
     content?: string;
     usage?: {
@@ -82,13 +74,14 @@ describe('doGenerate', () => {
     } | null;
     finish_reason?: string;
   }) {
-    server.urls['https://openrouter.ai/api/v1/completions']!.response = {
-      type: 'json-value',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+      type: "json-value",
       body: {
-        id: 'cmpl-96cAM1v77r4jXa4qb2NSmRREV5oWB',
-        object: 'text_completion',
+        id: "cmpl-96cAM1v77r4jXa4qb2NSmRREV5oWB",
+        object: "text_completion",
         created: 1711363706,
-        model: 'openai/gpt-3.5-turbo-instruct',
+        model: "openai/gpt-3.5-turbo-instruct",
         choices: [
           {
             text: content,
@@ -102,21 +95,21 @@ describe('doGenerate', () => {
     };
   }
 
-  it('should extract text response', async () => {
-    prepareJsonResponse({ content: 'Hello, World!' });
+  it("should extract text response", async () => {
+    prepareJsonResponse({ content: "Hello, World!" });
 
     const { content } = await model.doGenerate({
       prompt: TEST_PROMPT,
     });
 
-    const text = content[0]?.type === 'text' ? content[0].text : '';
+    const text = content[0]?.type === "text" ? content[0].text : "";
 
-    expect(text).toStrictEqual('Hello, World!');
+    expect(text).toStrictEqual("Hello, World!");
   });
 
-  it('should extract usage', async () => {
+  it("should extract usage", async () => {
     prepareJsonResponse({
-      content: '',
+      content: "",
       usage: { prompt_tokens: 20, total_tokens: 25, completion_tokens: 5 },
     });
 
@@ -139,120 +132,115 @@ describe('doGenerate', () => {
     });
   });
 
-  it('should extract logprobs', async () => {
+  it("should extract logprobs", async () => {
     prepareJsonResponse({ logprobs: TEST_LOGPROBS });
 
-    const provider = createOpenRouter({ apiKey: 'test-api-key' });
+    const provider = createOpenRouter({ apiKey: "test-api-key" });
 
-    await provider
-      .completion('openai/gpt-3.5-turbo', { logprobs: 1 })
-      .doGenerate({
-        prompt: TEST_PROMPT,
-      });
+    await provider.completion("openai/gpt-3.5-turbo", { logprobs: 1 }).doGenerate({
+      prompt: TEST_PROMPT,
+    });
   });
 
-  it('should extract finish reason', async () => {
+  it("should extract finish reason", async () => {
     prepareJsonResponse({
-      content: '',
-      finish_reason: 'stop',
+      content: "",
+      finish_reason: "stop",
     });
 
-    const { finishReason } = await provider
-      .completion('openai/gpt-3.5-turbo-instruct')
-      .doGenerate({
-        prompt: TEST_PROMPT,
-      });
-
-    expect(finishReason).toStrictEqual({ unified: 'stop', raw: 'stop' });
-  });
-
-  it('should support unknown finish reason', async () => {
-    prepareJsonResponse({
-      content: '',
-      finish_reason: 'eos',
+    const { finishReason } = await provider.completion("openai/gpt-3.5-turbo-instruct").doGenerate({
+      prompt: TEST_PROMPT,
     });
 
-    const { finishReason } = await provider
-      .completion('openai/gpt-3.5-turbo-instruct')
-      .doGenerate({
-        prompt: TEST_PROMPT,
-      });
-
-    expect(finishReason).toStrictEqual({ unified: 'other', raw: 'eos' });
+    expect(finishReason).toStrictEqual({ unified: "stop", raw: "stop" });
   });
 
-  it('should pass the model and the prompt', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should support unknown finish reason", async () => {
+    prepareJsonResponse({
+      content: "",
+      finish_reason: "eos",
+    });
+
+    const { finishReason } = await provider.completion("openai/gpt-3.5-turbo-instruct").doGenerate({
+      prompt: TEST_PROMPT,
+    });
+
+    expect(finishReason).toStrictEqual({ unified: "other", raw: "eos" });
+  });
+
+  it("should pass the model and the prompt", async () => {
+    prepareJsonResponse({ content: "" });
 
     await model.doGenerate({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'openai/gpt-3.5-turbo-instruct',
-      prompt: 'Hello',
+      model: "openai/gpt-3.5-turbo-instruct",
+      prompt: "Hello",
     });
   });
 
-  it('should pass the models array when provided', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should pass the models array when provided", async () => {
+    prepareJsonResponse({ content: "" });
 
-    const customModel = provider.completion('openai/gpt-3.5-turbo-instruct', {
-      models: ['openai/gpt-4', 'anthropic/claude-2'],
+    const customModel = provider.completion("openai/gpt-3.5-turbo-instruct", {
+      models: ["openai/gpt-4", "anthropic/claude-2"],
     });
 
     await customModel.doGenerate({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
-      model: 'openai/gpt-3.5-turbo-instruct',
-      models: ['openai/gpt-4', 'anthropic/claude-2'],
-      prompt: 'Hello',
+      model: "openai/gpt-3.5-turbo-instruct",
+      models: ["openai/gpt-4", "anthropic/claude-2"],
+      prompt: "Hello",
     });
   });
 
-  it('should pass headers', async () => {
-    prepareJsonResponse({ content: '' });
+  it("should pass headers", async () => {
+    prepareJsonResponse({ content: "" });
 
     const provider = createOpenRouter({
-      apiKey: 'test-api-key',
+      apiKey: "test-api-key",
       headers: {
-        'Custom-Provider-Header': 'provider-header-value',
+        "Custom-Provider-Header": "provider-header-value",
       },
     });
 
-    await provider.completion('openai/gpt-3.5-turbo-instruct').doGenerate({
+    await provider.completion("openai/gpt-3.5-turbo-instruct").doGenerate({
       prompt: TEST_PROMPT,
       headers: {
-        'Custom-Request-Header': 'request-header-value',
+        "Custom-Request-Header": "request-header-value",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestHeaders = server.calls[0]!.requestHeaders;
 
     expect(requestHeaders).toMatchObject({
-      authorization: 'Bearer test-api-key',
-      'content-type': 'application/json',
-      'custom-provider-header': 'provider-header-value',
-      'custom-request-header': 'request-header-value',
+      authorization: "Bearer test-api-key",
+      "content-type": "application/json",
+      "custom-provider-header": "provider-header-value",
+      "custom-request-header": "request-header-value",
     });
-    expect(requestHeaders['user-agent']).toContain(
-      'ai-sdk/openrouter/0.0.0-test',
-    );
+    expect(requestHeaders["user-agent"]).toContain("ai-sdk/openrouter/0.0.0-test");
   });
 });
 
-describe('doStream', () => {
+describe("doStream", () => {
   const server = createTestServer({
-    'https://openrouter.ai/api/v1/completions': {
-      response: { type: 'stream-chunks', chunks: [] },
+    "https://openrouter.ai/api/v1/completions": {
+      response: { type: "stream-chunks", chunks: [] },
     },
   });
 
   function prepareStreamResponse({
     content,
-    finish_reason = 'stop',
+    finish_reason = "stop",
     usage = {
       prompt_tokens: 10,
       total_tokens: 372,
@@ -283,8 +271,9 @@ describe('doStream', () => {
     } | null;
     finish_reason?: string;
   }) {
-    server.urls['https://openrouter.ai/api/v1/completions']!.response = {
-      type: 'stream-chunks',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         ...content.map((text) => {
           return `data: {"id":"cmpl-96c64EdfhOw8pjFFgVpLuT8k2MtdT","object":"text_completion","created":1711363440,"choices":[{"text":"${text}","index":0,"logprobs":null,"finish_reason":null}],"model":"openai/gpt-3.5-turbo-instruct"}\n\n`;
@@ -295,15 +284,15 @@ describe('doStream', () => {
         `data: {"id":"cmpl-96c3yLQE1TtZCd6n6OILVmzev8M8H","object":"text_completion","created":1711363310,"model":"openai/gpt-3.5-turbo-instruct","usage":${JSON.stringify(
           usage,
         )},"choices":[]}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
   }
 
-  it('should stream text deltas', async () => {
+  it("should stream text deltas", async () => {
     prepareStreamResponse({
-      content: ['Hello', ', ', 'World!'],
-      finish_reason: 'stop',
+      content: ["Hello", ", ", "World!"],
+      finish_reason: "stop",
       usage: {
         prompt_tokens: 10,
         total_tokens: 372,
@@ -319,13 +308,13 @@ describe('doStream', () => {
     // note: space moved to last chunk bc of trimming
     const elements = await convertReadableStreamToArray(stream);
     expect(elements).toStrictEqual([
-      { type: 'text-delta', delta: 'Hello', id: expect.any(String) },
-      { type: 'text-delta', delta: ', ', id: expect.any(String) },
-      { type: 'text-delta', delta: 'World!', id: expect.any(String) },
-      { type: 'text-delta', delta: '', id: expect.any(String) },
+      { type: "text-delta", delta: "Hello", id: expect.any(String) },
+      { type: "text-delta", delta: ", ", id: expect.any(String) },
+      { type: "text-delta", delta: "World!", id: expect.any(String) },
+      { type: "text-delta", delta: "", id: expect.any(String) },
       {
-        type: 'finish',
-        finishReason: { unified: 'stop', raw: 'stop' },
+        type: "finish",
+        finishReason: { unified: "stop", raw: "stop" },
         providerMetadata: {
           openrouter: {
             usage: {
@@ -353,9 +342,9 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should include upstream inference cost when provided', async () => {
+  it("should include upstream inference cost when provided", async () => {
     prepareStreamResponse({
-      content: ['Hello'],
+      content: ["Hello"],
       usage: {
         prompt_tokens: 5,
         total_tokens: 15,
@@ -370,14 +359,10 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
-    const elements = (await convertReadableStreamToArray(
-      stream,
-    )) as LanguageModelV3StreamPart[];
+    const elements = (await convertReadableStreamToArray(stream)) as LanguageModelV3StreamPart[];
     const finishChunk = elements.find(
-      (
-        element,
-      ): element is Extract<LanguageModelV3StreamPart, { type: 'finish' }> =>
-        element.type === 'finish',
+      (element): element is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
+        element.type === "finish",
     );
     const openrouterUsage = (
       finishChunk?.providerMetadata?.openrouter as {
@@ -392,9 +377,9 @@ describe('doStream', () => {
     });
   });
 
-  it('should handle both normal cost and upstream inference cost in finish metadata when both are provided', async () => {
+  it("should handle both normal cost and upstream inference cost in finish metadata when both are provided", async () => {
     prepareStreamResponse({
-      content: ['Hello'],
+      content: ["Hello"],
       usage: {
         prompt_tokens: 5,
         total_tokens: 15,
@@ -410,14 +395,10 @@ describe('doStream', () => {
       prompt: TEST_PROMPT,
     });
 
-    const elements = (await convertReadableStreamToArray(
-      stream,
-    )) as LanguageModelV3StreamPart[];
+    const elements = (await convertReadableStreamToArray(stream)) as LanguageModelV3StreamPart[];
     const finishChunk = elements.find(
-      (
-        element,
-      ): element is Extract<LanguageModelV3StreamPart, { type: 'finish' }> =>
-        element.type === 'finish',
+      (element): element is Extract<LanguageModelV3StreamPart, { type: "finish" }> =>
+        element.type === "finish",
     );
     const openrouterUsage = (
       finishChunk?.providerMetadata?.openrouter as {
@@ -433,13 +414,14 @@ describe('doStream', () => {
     expect(openrouterUsage?.cost).toBe(0.0025);
   });
 
-  it('should handle error stream parts', async () => {
-    server.urls['https://openrouter.ai/api/v1/completions']!.response = {
-      type: 'stream-chunks',
+  it("should handle error stream parts", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+      type: "stream-chunks",
       chunks: [
         `data: {"error":{"message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our ` +
           `help center at help.openrouter.com if you keep seeing this error.","type":"server_error","param":null,"code":null}}\n\n`,
-        'data: [DONE]\n\n',
+        "data: [DONE]\n\n",
       ],
     };
 
@@ -449,25 +431,25 @@ describe('doStream', () => {
 
     expect(await convertReadableStreamToArray(stream)).toStrictEqual([
       {
-        type: 'error',
+        type: "error",
         error: {
           message:
-            'The server had an error processing your request. Sorry about that! ' +
-            'You can retry your request, or contact us through our help center at ' +
-            'help.openrouter.com if you keep seeing this error.',
-          type: 'server_error',
+            "The server had an error processing your request. Sorry about that! " +
+            "You can retry your request, or contact us through our help center at " +
+            "help.openrouter.com if you keep seeing this error.",
+          type: "server_error",
           code: null,
           param: null,
         },
       },
       {
-        finishReason: { unified: 'error', raw: undefined },
+        finishReason: { unified: "error", raw: undefined },
         providerMetadata: {
           openrouter: {
             usage: {},
           },
         },
-        type: 'finish',
+        type: "finish",
         usage: {
           inputTokens: {
             total: undefined,
@@ -485,10 +467,11 @@ describe('doStream', () => {
     ]);
   });
 
-  it('should handle unparsable stream parts', async () => {
-    server.urls['https://openrouter.ai/api/v1/completions']!.response = {
-      type: 'stream-chunks',
-      chunks: ['data: {unparsable}\n\n', 'data: [DONE]\n\n'],
+  it("should handle unparsable stream parts", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    server.urls["https://openrouter.ai/api/v1/completions"]!.response = {
+      type: "stream-chunks",
+      chunks: ["data: {unparsable}\n\n", "data: [DONE]\n\n"],
     };
 
     const { stream } = await model.doStream({
@@ -498,15 +481,15 @@ describe('doStream', () => {
     const elements = await convertReadableStreamToArray(stream);
 
     expect(elements.length).toBe(2);
-    expect(elements[0]?.type).toBe('error');
+    expect(elements[0]?.type).toBe("error");
     expect(elements[1]).toStrictEqual({
-      finishReason: { unified: 'error', raw: undefined },
+      finishReason: { unified: "error", raw: undefined },
       providerMetadata: {
         openrouter: {
           usage: {},
         },
       },
-      type: 'finish',
+      type: "finish",
       usage: {
         inputTokens: {
           total: undefined,
@@ -523,76 +506,74 @@ describe('doStream', () => {
     });
   });
 
-  it('should pass the model and the prompt', async () => {
+  it("should pass the model and the prompt", async () => {
     prepareStreamResponse({ content: [] });
 
     await model.doStream({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(await server.calls[0]!.requestBodyJson).toStrictEqual({
       stream: true,
       stream_options: { include_usage: true },
-      model: 'openai/gpt-3.5-turbo-instruct',
-      prompt: 'Hello',
+      model: "openai/gpt-3.5-turbo-instruct",
+      prompt: "Hello",
     });
   });
 
-  it('should pass headers', async () => {
+  it("should pass headers", async () => {
     prepareStreamResponse({ content: [] });
 
     const provider = createOpenRouter({
-      apiKey: 'test-api-key',
+      apiKey: "test-api-key",
       headers: {
-        'Custom-Provider-Header': 'provider-header-value',
+        "Custom-Provider-Header": "provider-header-value",
       },
     });
 
-    await provider.completion('openai/gpt-3.5-turbo-instruct').doStream({
+    await provider.completion("openai/gpt-3.5-turbo-instruct").doStream({
       prompt: TEST_PROMPT,
       headers: {
-        'Custom-Request-Header': 'request-header-value',
+        "Custom-Request-Header": "request-header-value",
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestHeaders = server.calls[0]!.requestHeaders;
 
     expect(requestHeaders).toMatchObject({
-      authorization: 'Bearer test-api-key',
-      'content-type': 'application/json',
-      'custom-provider-header': 'provider-header-value',
-      'custom-request-header': 'request-header-value',
+      authorization: "Bearer test-api-key",
+      "content-type": "application/json",
+      "custom-provider-header": "provider-header-value",
+      "custom-request-header": "request-header-value",
     });
-    expect(requestHeaders['user-agent']).toContain(
-      'ai-sdk/openrouter/0.0.0-test',
-    );
+    expect(requestHeaders["user-agent"]).toContain("ai-sdk/openrouter/0.0.0-test");
   });
 
-  it('should pass extra body', async () => {
+  it("should pass extra body", async () => {
     prepareStreamResponse({ content: [] });
 
     const provider = createOpenRouter({
-      apiKey: 'test-api-key',
+      apiKey: "test-api-key",
       extraBody: {
-        custom_field: 'custom_value',
+        custom_field: "custom_value",
         providers: {
           anthropic: {
-            custom_field: 'custom_value',
+            custom_field: "custom_value",
           },
         },
       },
     });
 
-    await provider.completion('openai/gpt-4o').doStream({
+    await provider.completion("openai/gpt-4o").doStream({
       prompt: TEST_PROMPT,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const requestBody = await server.calls[0]!.requestBodyJson;
 
-    expect(requestBody).toHaveProperty('custom_field', 'custom_value');
-    expect(requestBody).toHaveProperty(
-      'providers.anthropic.custom_field',
-      'custom_value',
-    );
+    expect(requestBody).toHaveProperty("custom_field", "custom_value");
+    expect(requestBody).toHaveProperty("providers.anthropic.custom_field", "custom_value");
   });
 });

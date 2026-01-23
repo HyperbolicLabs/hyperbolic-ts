@@ -1,28 +1,28 @@
-import type { OpenRouterChatSettings } from '../types/openrouter-chat-settings';
+import { describe, expect, it } from "vitest";
 
-import { describe, expect, it } from 'vitest';
-import { OpenRouterChatLanguageModel } from '../chat';
-import { createTestServer } from '../test-utils/test-server';
+import type { OpenRouterChatSettings } from "../types/openrouter-chat-settings";
+import { OpenRouterChatLanguageModel } from "../chat";
+import { createTestServer } from "../test-utils/test-server";
 
-describe('OpenRouter Usage Accounting', () => {
+describe("OpenRouter Usage Accounting", () => {
   const server = createTestServer({
-    'https://api.openrouter.ai/chat/completions': {
-      response: { type: 'json-value', body: {} },
+    "https://api.openrouter.ai/chat/completions": {
+      response: { type: "json-value", body: {} },
     },
   });
 
   function prepareJsonResponse(includeUsage = true) {
     const response = {
-      id: 'test-id',
-      model: 'test-model',
+      id: "test-id",
+      model: "test-model",
       choices: [
         {
           message: {
-            role: 'assistant',
-            content: 'Hello, I am an AI assistant.',
+            role: "assistant",
+            content: "Hello, I am an AI assistant.",
           },
           index: 0,
-          finish_reason: 'stop',
+          finish_reason: "stop",
         },
       ],
       usage: includeUsage
@@ -44,13 +44,13 @@ describe('OpenRouter Usage Accounting', () => {
         : undefined,
     };
 
-    server.urls['https://api.openrouter.ai/chat/completions']!.response = {
-      type: 'json-value',
+    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+      type: "json-value",
       body: response,
     };
   }
 
-  it('should include usage parameter in the request when enabled', async () => {
+  it("should include usage parameter in the request when enabled", async () => {
     prepareJsonResponse();
 
     // Create model with usage accounting enabled
@@ -58,11 +58,11 @@ describe('OpenRouter Usage Accounting', () => {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
@@ -70,24 +70,21 @@ describe('OpenRouter Usage Accounting', () => {
     await model.doGenerate({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
     });
 
     // Check request contains usage parameter
-    const requestBody = (await server.calls[0]!.requestBodyJson) as Record<
-      string,
-      unknown
-    >;
+    const requestBody = (await server.calls[0]!.requestBodyJson) as Record<string, unknown>;
     expect(requestBody).toBeDefined();
-    expect(requestBody).toHaveProperty('usage');
+    expect(requestBody).toHaveProperty("usage");
     expect(requestBody.usage).toEqual({ include: true });
   });
 
-  it('should include provider-specific metadata in response when usage accounting is enabled', async () => {
+  it("should include provider-specific metadata in response when usage accounting is enabled", async () => {
     prepareJsonResponse();
 
     // Create model with usage accounting enabled
@@ -95,11 +92,11 @@ describe('OpenRouter Usage Accounting', () => {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
@@ -107,8 +104,8 @@ describe('OpenRouter Usage Accounting', () => {
     const result = await model.doGenerate({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
@@ -141,7 +138,7 @@ describe('OpenRouter Usage Accounting', () => {
     });
   });
 
-  it('should not include provider-specific metadata when usage accounting is disabled', async () => {
+  it("should not include provider-specific metadata when usage accounting is disabled", async () => {
     prepareJsonResponse();
 
     // Create model with usage accounting disabled
@@ -149,11 +146,11 @@ describe('OpenRouter Usage Accounting', () => {
       // No usage property
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
@@ -161,8 +158,8 @@ describe('OpenRouter Usage Accounting', () => {
     const result = await model.doGenerate({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
@@ -186,19 +183,19 @@ describe('OpenRouter Usage Accounting', () => {
     });
   });
 
-  it('should exclude token details from providerMetadata when not present in response', async () => {
+  it("should exclude token details from providerMetadata when not present in response", async () => {
     // Prepare a response without token details
     const response = {
-      id: 'test-id',
-      model: 'test-model',
+      id: "test-id",
+      model: "test-model",
       choices: [
         {
           message: {
-            role: 'assistant',
-            content: 'Hello, I am an AI assistant.',
+            role: "assistant",
+            content: "Hello, I am an AI assistant.",
           },
           index: 0,
-          finish_reason: 'stop',
+          finish_reason: "stop",
         },
       ],
       usage: {
@@ -210,8 +207,8 @@ describe('OpenRouter Usage Accounting', () => {
       },
     };
 
-    server.urls['https://api.openrouter.ai/chat/completions']!.response = {
-      type: 'json-value',
+    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+      type: "json-value",
       body: response,
     };
 
@@ -219,27 +216,25 @@ describe('OpenRouter Usage Accounting', () => {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
     const result = await model.doGenerate({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
     });
 
-    const usage = (
-      result.providerMetadata?.openrouter as Record<string, unknown>
-    )?.usage;
+    const usage = (result.providerMetadata?.openrouter as Record<string, unknown>)?.usage;
 
     // Should include basic token counts
     expect(usage).toMatchObject({
@@ -250,24 +245,24 @@ describe('OpenRouter Usage Accounting', () => {
     });
 
     // Should NOT include token details when not present in response
-    expect(usage).not.toHaveProperty('promptTokensDetails');
-    expect(usage).not.toHaveProperty('completionTokensDetails');
-    expect(usage).not.toHaveProperty('costDetails');
+    expect(usage).not.toHaveProperty("promptTokensDetails");
+    expect(usage).not.toHaveProperty("completionTokensDetails");
+    expect(usage).not.toHaveProperty("costDetails");
   });
 
-  it('should include only present token details in providerMetadata', async () => {
+  it("should include only present token details in providerMetadata", async () => {
     // Prepare a response with only cached_tokens (no reasoning or cost details)
     const response = {
-      id: 'test-id',
-      model: 'test-model',
+      id: "test-id",
+      model: "test-model",
       choices: [
         {
           message: {
-            role: 'assistant',
-            content: 'Hello, I am an AI assistant.',
+            role: "assistant",
+            content: "Hello, I am an AI assistant.",
           },
           index: 0,
-          finish_reason: 'stop',
+          finish_reason: "stop",
         },
       ],
       usage: {
@@ -282,8 +277,8 @@ describe('OpenRouter Usage Accounting', () => {
       },
     };
 
-    server.urls['https://api.openrouter.ai/chat/completions']!.response = {
-      type: 'json-value',
+    server.urls["https://api.openrouter.ai/chat/completions"]!.response = {
+      type: "json-value",
       body: response,
     };
 
@@ -291,36 +286,34 @@ describe('OpenRouter Usage Accounting', () => {
       usage: { include: true },
     };
 
-    const model = new OpenRouterChatLanguageModel('test-model', settings, {
-      provider: 'openrouter.chat',
-      url: () => 'https://api.openrouter.ai/chat/completions',
+    const model = new OpenRouterChatLanguageModel("test-model", settings, {
+      provider: "openrouter.chat",
+      url: () => "https://api.openrouter.ai/chat/completions",
       headers: () => ({}),
-      compatibility: 'strict',
+      compatibility: "strict",
       fetch: global.fetch,
     });
 
     const result = await model.doGenerate({
       prompt: [
         {
-          role: 'user',
-          content: [{ type: 'text', text: 'Hello' }],
+          role: "user",
+          content: [{ type: "text", text: "Hello" }],
         },
       ],
       maxOutputTokens: 100,
     });
 
-    const usage = (
-      result.providerMetadata?.openrouter as Record<string, unknown>
-    )?.usage;
+    const usage = (result.providerMetadata?.openrouter as Record<string, unknown>)?.usage;
 
     // Should include promptTokensDetails since cached_tokens is present
-    expect(usage).toHaveProperty('promptTokensDetails');
+    expect(usage).toHaveProperty("promptTokensDetails");
     expect((usage as Record<string, unknown>).promptTokensDetails).toEqual({
       cachedTokens: 5,
     });
 
     // Should NOT include completionTokensDetails or costDetails
-    expect(usage).not.toHaveProperty('completionTokensDetails');
-    expect(usage).not.toHaveProperty('costDetails');
+    expect(usage).not.toHaveProperty("completionTokensDetails");
+    expect(usage).not.toHaveProperty("costDetails");
   });
 });

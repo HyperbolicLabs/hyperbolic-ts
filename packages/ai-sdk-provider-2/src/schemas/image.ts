@@ -1,8 +1,8 @@
-import { z } from 'zod/v4';
+import { z } from "zod/v4";
 
 const ImageResponseSchema = z
   .object({
-    type: z.literal('image_url'),
+    type: z.literal("image_url"),
     image_url: z
       .object({
         url: z.string(),

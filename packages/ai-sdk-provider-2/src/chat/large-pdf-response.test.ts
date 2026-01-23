@@ -1,76 +1,72 @@
-import type { LanguageModelV3Prompt } from '@ai-sdk/provider';
+import type { LanguageModelV3Prompt } from "@ai-sdk/provider";
+import { describe, expect, it } from "vitest";
 
-import { describe, expect, it } from 'vitest';
-import { createOpenRouter } from '../provider';
-import { createTestServer } from '../test-utils/test-server';
+import { createOpenRouter } from "../provider";
+import { createTestServer } from "../test-utils/test-server";
 
 const TEST_PROMPT: LanguageModelV3Prompt = [
-  { role: 'user', content: [{ type: 'text', text: 'Hello' }] },
+  { role: "user", content: [{ type: "text", text: "Hello" }] },
 ];
 
 const provider = createOpenRouter({
-  baseURL: 'https://test.openrouter.ai/api/v1',
-  apiKey: 'test-api-key',
+  baseURL: "https://test.openrouter.ai/api/v1",
+  apiKey: "test-api-key",
 });
 
 const server = createTestServer({
-  'https://test.openrouter.ai/api/v1/chat/completions': {},
+  "https://test.openrouter.ai/api/v1/chat/completions": {},
 });
 
-describe('Large PDF Response Handling', () => {
-  describe('doGenerate', () => {
-    it('should handle HTTP 200 responses with error payloads (500 internal errors)', async () => {
+describe("Large PDF Response Handling", () => {
+  describe("doGenerate", () => {
+    it("should handle HTTP 200 responses with error payloads (500 internal errors)", async () => {
       // This is the actual response OpenRouter returns for large PDF failures
       // HTTP 200 status but contains error object instead of choices
-      server.urls[
-        'https://test.openrouter.ai/api/v1/chat/completions'
-      ]!.response = {
-        type: 'json-value',
+      server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
+        type: "json-value",
         body: {
           error: {
-            message: 'Internal Server Error',
+            message: "Internal Server Error",
             code: 500,
           },
-          user_id: 'org_abc123',
+          user_id: "org_abc123",
         },
       };
 
-      const model = provider('anthropic/claude-3.5-sonnet');
+      const model = provider("anthropic/claude-3.5-sonnet");
 
       await expect(
         model.doGenerate({
           prompt: TEST_PROMPT,
         }),
-      ).rejects.toThrow('Internal Server Error');
+      ).rejects.toThrow("Internal Server Error");
     });
 
-    it('should parse successful large PDF responses with file annotations', async () => {
+    it("should parse successful large PDF responses with file annotations", async () => {
       // Successful response with file annotations from FileParserPlugin
-      server.urls[
-        'https://test.openrouter.ai/api/v1/chat/completions'
-      ]!.response = {
-        type: 'json-value',
+      server.urls["https://test.openrouter.ai/api/v1/chat/completions"]!.response = {
+        type: "json-value",
         body: {
-          id: 'gen-123',
-          model: 'anthropic/claude-3.5-sonnet',
-          provider: 'Anthropic',
+          id: "gen-123",
+          model: "anthropic/claude-3.5-sonnet",
+          provider: "Anthropic",
           choices: [
             {
               index: 0,
               message: {
-                role: 'assistant',
-                content: 'LARGE-M9N3T',
+                role: "assistant",
+                content: "LARGE-M9N3T",
                 annotations: [
                   {
-                    type: 'file_annotation',
+                    type: "file_annotation",
                     file_annotation: {
-                      file_id: 'file_abc123',
-                      quote: 'extracted text',
+                      file_id: "file_abc123",
+                      quote: "extracted text",
                     },
                   },
                 ],
               },
-              finish_reason: 'stop',
+              finish_reason: "stop",
             },
           ],
           usage: {
@@ -81,7 +77,7 @@ describe('Large PDF Response Handling', () => {
         },
       };
 
-      const model = provider('anthropic/claude-3.5-sonnet', {
+      const model = provider("anthropic/claude-3.5-sonnet", {
         usage: { include: true },
       });
 
@@ -91,14 +87,13 @@ describe('Large PDF Response Handling', () => {
 
       expect(result.content).toMatchObject([
         {
-          type: 'text',
-          text: 'LARGE-M9N3T',
+          type: "text",
+          text: "LARGE-M9N3T",
         },
       ]);
-      expect(
-        (result.usage.inputTokens?.total ?? 0) +
-          (result.usage.outputTokens?.total ?? 0),
-      ).toBe(120);
+      expect((result.usage.inputTokens?.total ?? 0) + (result.usage.outputTokens?.total ?? 0)).toBe(
+        120,
+      );
     });
   });
 });

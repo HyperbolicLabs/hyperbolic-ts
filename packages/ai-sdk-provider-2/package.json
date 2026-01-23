@@ -54,6 +54,8 @@
     "@hyperbolic/eslint-config": "workspace:*",
     "@hyperbolic/prettier-config": "workspace:*",
     "@hyperbolic/tsconfig": "workspace:*",
+    "@openrouter/sdk": "^0.1.27",
+    "@types/json-schema": "7.0.15",
     "ai": "^6.0.48",
     "eslint": "catalog:",
     "handlebars": "^4.7.8",
