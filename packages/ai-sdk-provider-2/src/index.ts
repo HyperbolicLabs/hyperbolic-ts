@@ -1,3 +1,3 @@
-export * from "./hyperbolic-provider";
-export * from "./types";
-export * from "./hyperbolic-error";
+export * from './facade';
+export * from './provider';
+export * from './types';
