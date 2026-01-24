@@ -87,9 +87,6 @@ importers:
       '@hyperbolic/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
-      '@openrouter/sdk':
-        specifier: ^0.1.27
-        version: 0.1.27
       '@types/json-schema':
         specifier: 7.0.15
         version: 7.0.15
@@ -126,55 +123,6 @@ importers:
       zod:
         specifier: ^4.0.0
         version: 4.3.6
-
-  packages/ai-sdk-provider-old:
-    dependencies:
-      '@ai-sdk/provider':
-        specifier: ^3.0.5
-        version: 3.0.5
-      '@ai-sdk/provider-utils':
-        specifier: ^4.0.9
-        version: 4.0.9(zod@4.3.6)
-      ai:
-        specifier: ^6.0.48
-        version: 6.0.48(zod@4.3.6)
-      zod:
-        specifier: ^4.0.0
-        version: 4.3.6
-    devDependencies:
-      '@edge-runtime/vm':
-        specifier: ^5.0.0
-        version: 5.0.0
-      '@hyperbolic/api':
-        specifier: workspace:*
-        version: link:../api
-      '@hyperbolic/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@hyperbolic/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@hyperbolic/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      eslint:
-        specifier: 'catalog:'
-        version: 9.19.0(jiti@2.4.2)
-      handlebars:
-        specifier: ^4.7.8
-        version: 4.7.8
-      prettier:
-        specifier: 'catalog:'
-        version: 3.4.2
-      tsup:
-        specifier: 8.5.0
-        version: 8.5.0(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.3)(typescript@5.9.3)(yaml@2.7.0)
-      type-fest:
-        specifier: ^4.37.0
-        version: 4.37.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
 
   packages/api:
     devDependencies:
@@ -990,9 +938,6 @@ packages:
 
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
-
-  '@openrouter/sdk@0.1.27':
-    resolution: {integrity: sha512-RH//L10bSmc81q25zAZudiI4kNkLgxF2E+WU42vghp3N6TEvZ6F0jK7uT3tOxkEn91gzmMw9YVmDENy7SJsajQ==}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -4045,7 +3990,7 @@ snapshots:
       '@types/node': 20.5.1
       chalk: 4.1.2
       cosmiconfig: 8.3.6(typescript@5.9.3)
-      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.9.3))(typescript@5.9.3)
+      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@types/node@22.13.10)(typescript@5.9.3))(typescript@5.9.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -4513,10 +4458,6 @@ snapshots:
       outvariant: 1.4.3
 
   '@open-draft/until@2.1.0': {}
-
-  '@openrouter/sdk@0.1.27':
-    dependencies:
-      zod: 4.3.6
 
   '@opentelemetry/api@1.9.0': {}
 
@@ -5053,7 +4994,7 @@ snapshots:
 
   cookie@1.1.1: {}
 
-  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.9.3))(typescript@5.9.3):
+  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@types/node@22.13.10)(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
       '@types/node': 20.5.1
       cosmiconfig: 8.3.6(typescript@5.9.3)

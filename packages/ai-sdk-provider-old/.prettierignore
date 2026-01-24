@@ -1,3 +1,0 @@
-# Ignore Handlebars template files
-**/*.hbs
-**/*.ts.hbs
