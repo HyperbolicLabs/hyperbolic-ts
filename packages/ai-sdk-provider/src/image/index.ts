@@ -1,8 +1,4 @@
-// Modified by Hyperbolic Labs, Inc. on 2025-03-25
-// Original work Copyright 2025 OpenRouter Inc.
-// Licensed under the Apache License, Version 2.0
-
-import type { ImageModelV1, ImageModelV1CallWarning } from "@ai-sdk/provider";
+import type { ImageModelV3, SharedV3Warning } from "@ai-sdk/provider";
 import { combineHeaders, createJsonResponseHandler, postJsonToApi } from "@ai-sdk/provider-utils";
 import { z } from "zod";
 
@@ -12,19 +8,18 @@ import type {
   HyperbolicImageProviderResponseMetadata,
   HyperbolicImageSettings,
 } from "./hyperbolic-image-settings";
-import { hyperbolicFailedResponseHandler } from "./hyperbolic-error";
+import { hyperbolicFailedResponseHandler } from "../schemas/error-response";
 
 type HyperbolicImageModelConfig = {
   provider: string;
-  compatibility: "strict" | "compatible";
   headers: () => Record<string, string | undefined>;
   url: (options: { modelId: string; path: string }) => string;
   fetch?: typeof fetch;
   extraBody?: Record<string, unknown>;
 };
 
-export class HyperbolicImageModel implements ImageModelV1 {
-  readonly specificationVersion = "v1";
+export class HyperbolicImageModel implements ImageModelV3 {
+  readonly specificationVersion = "v3";
   readonly provider = "hyperbolic.image";
 
   get maxImagesPerCall(): number {
@@ -38,19 +33,19 @@ export class HyperbolicImageModel implements ImageModelV1 {
   ) {}
 
   async doGenerate(
-    options: Omit<Parameters<ImageModelV1["doGenerate"]>[0], "providerOptions"> & {
+    options: Omit<Parameters<ImageModelV3["doGenerate"]>[0], "providerOptions"> & {
       providerOptions: {
         hyperbolic?: HyperbolicImageProviderOptions;
       };
     },
   ): Promise<
-    Omit<Awaited<ReturnType<ImageModelV1["doGenerate"]>>, "response"> & {
-      response: Awaited<ReturnType<ImageModelV1["doGenerate"]>>["response"] & {
+    Omit<Awaited<ReturnType<ImageModelV3["doGenerate"]>>, "response"> & {
+      response: Awaited<ReturnType<ImageModelV3["doGenerate"]>>["response"] & {
         hyperbolic: HyperbolicImageProviderResponseMetadata;
       };
     }
   > {
-    const warnings: Array<ImageModelV1CallWarning> = [];
+    const warnings: Array<SharedV3Warning> = [];
     const [width, height] = options.size ? options.size.split("x").map(Number) : [];
 
     const args = {
@@ -68,22 +63,22 @@ export class HyperbolicImageModel implements ImageModelV1 {
 
     if (options.aspectRatio != undefined) {
       warnings.push({
-        type: "unsupported-setting",
-        setting: "aspectRatio",
+        type: "unsupported",
+        feature: "aspectRatio",
         details: "This model does not support `aspectRatio`. Use `size` instead.",
       });
     }
     if (options.seed != undefined) {
       warnings.push({
-        type: "unsupported-setting",
-        setting: "seed",
+        type: "unsupported",
+        feature: "seed",
         details: "This model does not support `seed`.",
       });
     }
     if (options.n != undefined) {
       warnings.push({
-        type: "unsupported-setting",
-        setting: "n",
+        type: "unsupported",
+        feature: "n",
         details: "This model does not support `n`.",
       });
     }
@@ -128,3 +123,5 @@ const hyperbolicImageResponseSchema = z.object({
   ),
   inference_time: z.number(),
 });
+
+export * from "./hyperbolic-image-settings";

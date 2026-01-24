@@ -1,3 +1,2 @@
-export * from "./hyperbolic-provider";
-export * from "./types";
-export * from "./hyperbolic-error";
+export * from "./provider";
+export * from "./schemas/error-response";

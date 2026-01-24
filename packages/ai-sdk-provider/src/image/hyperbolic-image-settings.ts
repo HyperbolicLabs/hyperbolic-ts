@@ -1,12 +1,8 @@
-// Modified by Hyperbolic Labs, Inc. on 2025-03-25
-// Original work Copyright 2025 OpenRouter Inc.
-// Licensed under the Apache License, Version 2.0
+import type { GenerateImageResult } from "ai";
 
-import type { Experimental_GenerateImageResult } from "ai";
+import type { HyperbolicSharedSettings } from "../types";
 
-import type { HyperbolicSharedSettings } from "./types";
-
-export type HyperbolicImageModelId = string;
+export type { HyperbolicImageModelId } from "../__generated__/models.gen";
 
 export type HyperbolicImageSettings = {
   /**
@@ -30,11 +26,8 @@ export type HyperbolicImageProviderResponseMetadata = {
   randomSeeds: number[];
 };
 
-export type Experimental_HyperbolicGenerateImageResult = Omit<
-  Experimental_GenerateImageResult,
-  "responses"
-> & {
-  responses: (Experimental_GenerateImageResult["responses"][number] & {
+export type HyperbolicGenerateImageResult = Omit<GenerateImageResult, "responses"> & {
+  responses: (GenerateImageResult["responses"][number] & {
     hyperbolic: HyperbolicImageProviderResponseMetadata;
   })[];
 };
