@@ -50,22 +50,3 @@ export type HyperbolicSharedSettings = HyperbolicProviderOptions & {
     include: boolean;
   };
 };
-
-/**
- * Usage accounting response
- */
-export type HyperbolicUsageAccounting = {
-  promptTokens: number;
-  promptTokensDetails?: {
-    cachedTokens: number;
-  };
-  completionTokens: number;
-  completionTokensDetails?: {
-    reasoningTokens: number;
-  };
-  totalTokens: number;
-  cost?: number;
-  costDetails?: {
-    upstreamInferenceCost: number;
-  };
-};

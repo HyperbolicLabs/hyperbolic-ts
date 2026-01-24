@@ -1,8 +1,3 @@
-// Modified by Hyperbolic Labs, Inc. on 2026-01-23
-// Original work Copyright 2025 OpenRouter Inc.
-// Licensed under the Apache License, Version 2.0
-
-import type { ChatErrorError } from "@openrouter/sdk/models";
 import { createJsonErrorResponseHandler } from "@ai-sdk/provider-utils";
 import { z } from "zod/v4";
 
@@ -17,11 +12,9 @@ export const HyperbolicErrorResponseSchema = z
         type: z.string().nullable().optional().default(null),
         param: z.any().nullable().optional().default(null),
       })
-      .passthrough() satisfies z.ZodType<
-      Omit<ChatErrorError, "code"> & { code: string | number | null }
-    >,
+      .loose(),
   })
-  .passthrough();
+  .loose();
 
 export type HyperbolicErrorData = z.infer<typeof HyperbolicErrorResponseSchema>;
 

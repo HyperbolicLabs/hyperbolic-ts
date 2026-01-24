@@ -12,7 +12,6 @@ import { hyperbolicFailedResponseHandler } from "../schemas/error-response";
 
 type HyperbolicImageModelConfig = {
   provider: string;
-  compatibility: "strict" | "compatible";
   headers: () => Record<string, string | undefined>;
   url: (options: { modelId: string; path: string }) => string;
   fetch?: typeof fetch;

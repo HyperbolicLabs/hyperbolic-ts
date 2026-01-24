@@ -1,7 +1,3 @@
-// Modified by Hyperbolic Labs, Inc. on 2026-01-23
-// Original work Copyright 2025 OpenRouter Inc.
-// Licensed under the Apache License, Version 2.0
-
 import { HyperbolicErrorResponseSchema } from "./error-response";
 
 describe("HyperbolicErrorResponseSchema", () => {
