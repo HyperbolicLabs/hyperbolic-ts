@@ -10,22 +10,6 @@ export type HyperbolicProviderOptions = {
   models?: string[];
 
   /**
-   * One of `max_tokens` or `effort` is required.
-   * If `exclude` is true, reasoning will be removed from the response. Default is false.
-   */
-  reasoning?: {
-    enabled?: boolean;
-    exclude?: boolean;
-  } & (
-    | {
-        max_tokens: number;
-      }
-    | {
-        effort: "high" | "medium" | "low";
-      }
-  );
-
-  /**
    * A unique identifier representing your end-user, which can
    * help Hyperbolic to monitor and detect abuse.
    */
@@ -33,11 +17,6 @@ export type HyperbolicProviderOptions = {
 };
 
 export type HyperbolicSharedSettings = HyperbolicProviderOptions & {
-  /**
-   * @deprecated use `reasoning` instead
-   */
-  includeReasoning?: boolean;
-
   extraBody?: Record<string, unknown>;
 
   /**
