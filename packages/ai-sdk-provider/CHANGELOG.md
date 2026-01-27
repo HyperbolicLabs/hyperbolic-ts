@@ -1,5 +1,15 @@
 # @hyperbolic/ai-sdk-provider
 
+## 2.0.0
+
+### Major Changes
+
+- [#23](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/23) [`bd1d4d327d75596f6b7f134b9aa44f203fb67e89`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/bd1d4d327d75596f6b7f134b9aa44f203fb67e89) Thanks [@connorch](https://github.com/connorch)! - Remove support for chat and completion models (our APIs are now entirely compatible with openrouter). Upgrade to AI SDK v6
+
+### Minor Changes
+
+- [#23](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/23) [`bd1d4d327d75596f6b7f134b9aa44f203fb67e89`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/bd1d4d327d75596f6b7f134b9aa44f203fb67e89) Thanks [@connorch](https://github.com/connorch)! - Add speech model support to @hyperbolic/ai-sdk-provider
+
 ## 1.0.0
 
 ### Major Changes
