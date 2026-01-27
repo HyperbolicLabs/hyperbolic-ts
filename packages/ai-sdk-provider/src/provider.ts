@@ -5,14 +5,22 @@ import type {
   HyperbolicImageModelId,
   HyperbolicImageSettings,
 } from "./image/hyperbolic-image-settings";
+import type { HyperbolicSpeechModelId, HyperbolicSpeechSettings } from "./speech";
 import { HyperbolicImageModel } from "./image";
+import { HyperbolicSpeechModel } from "./speech";
 import { withUserAgentSuffix } from "./utils/with-user-agent-suffix";
 import { VERSION } from "./version";
 
 export interface HyperbolicProvider extends ProviderV3 {
-  (modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings): HyperbolicImageModel;
+  imageModel(
+    modelId: HyperbolicImageModelId,
+    settings?: HyperbolicImageSettings,
+  ): HyperbolicImageModel;
 
-  image(modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings): HyperbolicImageModel;
+  speechModel(
+    modelId: HyperbolicSpeechModelId,
+    settings?: HyperbolicSpeechSettings,
+  ): HyperbolicSpeechModel;
 }
 
 export interface HyperbolicProviderSettings {
@@ -92,12 +100,32 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
       extraBody: options.extraBody,
     });
 
-  const provider = (modelId: HyperbolicImageModelId, settings?: HyperbolicImageSettings) =>
-    createImageModel(modelId, settings);
+  const createSpeechModel = (
+    modelId: HyperbolicSpeechModelId,
+    settings: HyperbolicSpeechSettings = {},
+  ) =>
+    new HyperbolicSpeechModel(modelId, settings, {
+      provider: "hyperbolic.speech",
+      url: ({ path }) => `${baseURL}${path}`,
+      headers: getHeaders,
+      fetch: options.fetch,
+      extraBody: options.extraBody,
+    });
 
-  provider.image = createImageModel;
+  const provider: HyperbolicProvider = {
+    specificationVersion: "v3",
+    imageModel: createImageModel,
+    speechModel: createSpeechModel,
 
-  return provider as HyperbolicProvider;
+    embeddingModel: () => {
+      throw new Error("Not implemented");
+    },
+    languageModel: () => {
+      throw new Error("Not implemented");
+    },
+  };
+
+  return provider;
 }
 
 /**
