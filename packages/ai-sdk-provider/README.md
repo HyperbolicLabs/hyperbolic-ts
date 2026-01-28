@@ -1,6 +1,6 @@
 # Hyperbolic Provider for Vercel AI SDK
 
-The [Hyperbolic](https://hyperbolic.xyz/) provider for the [Vercel AI SDK](https://sdk.vercel.ai/docs) gives access to image models found at <https://app.hyperbolic.xyz/models>. For chat and completion models, use the [@openrouter/ai-sdk-provider](https://www.npmjs.com/package/@openrouter/ai-sdk-provider) package instead.
+The [Hyperbolic](https://hyperbolic.xyz/) provider for the [Vercel AI SDK](https://sdk.vercel.ai/docs) gives access to image models and speech (audio) models found at <https://app.hyperbolic.xyz/models>. For chat and completion models, use the [@openrouter/ai-sdk-provider](https://www.npmjs.com/package/@openrouter/ai-sdk-provider) package instead.
 
 ## Setup
 
@@ -23,28 +23,49 @@ You can create a provider instance with `createHyperbolic` from `@hyperbolic/ai-
 import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
 ```
 
-## Example
+## Example - Image Model
 
 ```ts
-import { generateText } from "ai";
+import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
 
+const exampleHyperbolic = createHyperbolic({
+  apiKey: process.env.HYPERBOLIC_API_KEY,
+});
+const imageModel = exampleHyperbolic.imageModel("mistralai/Pixtral-12B-2409");
+const result = await imageModel.doGenerate({
+  prompt: "A man riding a horse in SF.",
+  aspectRatio: "16:9",
+  size: "1024x1024",
+  n: 1,
+  seed: 42,
+  files: [],
+  mask: undefined,
+  providerOptions: {
+    hyperbolic: {
+      steps: 30,
+    },
+  },
+});
+```
+
+## Example - Speech Model
+
+```ts
 import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
 
 const hyperbolic = createHyperbolic({
-  apiKey: process.env.HYPERBOLIC_API_KEY, // Found in settings after logging in at https://app.hyperbolic.ai
+  apiKey: process.env.HYPERBOLIC_API_KEY,
 });
-
-const result = await generateImage({
-  model: hyperbolic.image("FLUX.1-dev"),
-  prompt: "An image of a man riding a horse in SF.",
-  size: `1020x1020`,
+const speechModel = hyperbolic.speechModel("MeloTTS");
+const result = await speechModel.doGenerate({
+  text: "Hello, this is a speech synthesis example.",
   providerOptions: {
     hyperbolic: {
-      cfgScale: 5,
-      steps: 30,
-    } satisfies HyperbolicImageProviderOptions,
+      speed: 1,
+    },
   },
 });
+console.log(result.audio);
 ```
 
 ## Supported models
