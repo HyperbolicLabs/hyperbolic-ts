@@ -1,5 +1,11 @@
 # @hyperbolic/ai-sdk-provider
 
+## 2.0.1
+
+### Patch Changes
+
+- [#25](https://github.com/HyperbolicLabs/hyperbolic-ts/pull/25) [`7dd1baa48ac8e2a69943f41c52670f938073ddd6`](https://github.com/HyperbolicLabs/hyperbolic-ts/commit/7dd1baa48ac8e2a69943f41c52670f938073ddd6) Thanks [@connorch](https://github.com/connorch)! - Update README docs with example for speech models
+
 ## 2.0.0
 
 ### Major Changes
