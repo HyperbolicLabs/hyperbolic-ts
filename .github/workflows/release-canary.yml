@@ -11,6 +11,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+# This workflow only publishes snapshot versions to npm; it does not push commits
+# or tags back to the repository, so the job token does not need write access.
+# Declaring the block also stops the job from inheriting a `write-all` default.
+permissions:
+  contents: read
+
 jobs:
   release:
     if: ${{ github.repository_owner == 'HyperbolicLabs' }}
@@ -41,8 +47,13 @@ jobs:
           echo "Canary subject: ${{ steps.get-canary-subject.outputs.canary-subject }}"
 
       - name: Setup NPM Authentication
+        # See the equivalent step in `release.yml`: writing to the repository's
+        # tracked `.npmrc` with `>` both discarded the committed pnpm settings and
+        # left the token in the working tree. Write to the user-level file
+        # instead, and pass the secret via the environment so it never appears in
+        # the rendered command.
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" >> "$HOME/.npmrc"
           npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
