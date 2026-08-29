@@ -1,6 +1,9 @@
 import type { ImageModelV3, SharedV3Warning } from "@ai-sdk/provider";
 import { combineHeaders, createJsonResponseHandler, postJsonToApi } from "@ai-sdk/provider-utils";
-import { z } from "zod";
+// Import the v4 entry point, matching every other schema in this package. Mixing
+// `zod` and `zod/v4` imports loads two different Zod runtimes into one bundle,
+// and a schema built by one is not recognised by helpers that expect the other.
+import { z } from "zod/v4";
 
 import type {
   HyperbolicImageModelId,
@@ -46,7 +49,27 @@ export class HyperbolicImageModel implements ImageModelV3 {
     }
   > {
     const warnings: Array<SharedV3Warning> = [];
-    const [width, height] = options.size ? options.size.split("x").map(Number) : [];
+
+    // `size` is a free-form string in the AI SDK contract, so it has to be
+    // validated here. `"1024x1024".split("x").map(Number)` silently produced
+    // `NaN` for inputs such as "1024 x 1024" or "large", and `NaN` serialises to
+    // `null` in JSON — the request then failed server-side with an opaque error
+    // instead of telling the caller which value was wrong.
+    let width: number | undefined;
+    let height: number | undefined;
+    if (options.size != undefined) {
+      const parsed = parseImageSize(options.size);
+      if (parsed) {
+        width = parsed.width;
+        height = parsed.height;
+      } else {
+        warnings.push({
+          type: "unsupported",
+          feature: "size",
+          details: `Could not parse \`size\`: "${options.size}". Expected the format "<width>x<height>", e.g. "1024x1024". The model default will be used instead.`,
+        });
+      }
+    }
 
     const args = {
       prompt: options.prompt,
@@ -59,6 +82,13 @@ export class HyperbolicImageModel implements ImageModelV3 {
       steps: options.providerOptions?.hyperbolic?.steps,
       strength: options.providerOptions?.hyperbolic?.strength,
       image: options.providerOptions?.hyperbolic?.image,
+      // `extraBody` exists so callers can reach Hyperbolic and upstream provider
+      // features this provider does not model explicitly. Both levels were
+      // accepted and then never sent, making the option silently inert.
+      // Provider-level values are applied first so the model-level `settings`
+      // (the more specific scope) can override them.
+      ...this.config.extraBody,
+      ...this.settings.extraBody,
     };
 
     if (options.aspectRatio != undefined) {
@@ -110,6 +140,29 @@ export class HyperbolicImageModel implements ImageModelV3 {
       },
     };
   }
+}
+
+/**
+ * Parses an AI SDK `size` string of the form `"<width>x<height>"`.
+ *
+ * @param size - The requested size, e.g. `"1024x1024"`.
+ * @returns The parsed dimensions, or `undefined` if `size` is not two positive
+ * integers separated by `x`. Returning `undefined` rather than `NaN` lets the
+ * caller emit a warning instead of sending an invalid request body.
+ */
+export function parseImageSize(size: string): { width: number; height: number } | undefined {
+  const match = /^(\d+)\s*[x×]\s*(\d+)$/i.exec(size.trim());
+  if (!match) {
+    return undefined;
+  }
+
+  const width = Number(match[1]);
+  const height = Number(match[2]);
+  if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width <= 0 || height <= 0) {
+    return undefined;
+  }
+
+  return { width, height };
 }
 
 // minimal version of the schema, focussed on what is needed for the implementation to avoid breaking changes
