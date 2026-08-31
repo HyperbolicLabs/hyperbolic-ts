@@ -7,6 +7,12 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+# Without an explicit block the job token inherits the repository default, which
+# is `write-all` on older repositories. Each job is narrowed to what it needs;
+# the release job widens it again below[cite: 11].
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -57,6 +63,11 @@ jobs:
     if: ${{ github.repository_owner == 'HyperbolicLabs' }}
     name: Create a PR for release workflow
     runs-on: ubuntu-latest
+    # changesets/action pushes the version branch and opens the release PR, so
+    # this job needs write access where the rest of the workflow does not[cite: 11].
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,8 +80,16 @@ jobs:
         run: pnpm build:ai-sdk-provider
 
       - name: Setup NPM Authentication
+        # The token used to be written to the repository's own `.npmrc` with `>`,
+        # which (a) truncated the tracked file and dropped `auto-install-peers`
+        # and `link-workspace-packages`, changing how pnpm resolves the
+        # workspace, and (b) left a credential in the working tree that
+        # changesets/action then stages when it creates the release commit[cite: 11].
+        # `$HOME/.npmrc` is read by both npm and pnpm and is outside the repo[cite: 11].
+        # The secret is passed through the environment rather than interpolated
+        # into the script body, so it is never part of the command line[cite: 11].
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" >> "$HOME/.npmrc"
           npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
