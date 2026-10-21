@@ -1,74 +1,49 @@
-# Hyperbolic Provider for Vercel AI SDK
+# Hyperbolic Provider for Vercel AI SDK (deprecated)
 
-The [Hyperbolic](https://hyperbolic.xyz/) provider for the [Vercel AI SDK](https://sdk.vercel.ai/docs) gives access to image models and speech (audio) models found at <https://app.hyperbolic.xyz/models>. For chat and completion models, use the [@openrouter/ai-sdk-provider](https://www.npmjs.com/package/@openrouter/ai-sdk-provider) package instead.
+> [!WARNING]
+> This package is deprecated and no longer maintained. It was built for Hyperbolic's previous inference API, which has been decommissioned. Don't use it in new projects.
 
-## Setup
+## What changed
 
-```bash
-# For pnpm
-pnpm add @hyperbolic/ai-sdk-provider
+This package gave access to Hyperbolic image models and speech (text-to-speech) models through `https://api.hyperbolic.xyz/v1`. That API has been decommissioned, and the relaunched Hyperbolic Inference API serves text models only. Image generation and text-to-speech models aren't available, so this package has no models left to call.
 
-# For npm
-npm install @hyperbolic/ai-sdk-provider
+## Use the Hyperbolic Inference API instead
 
-# For yarn
-yarn add @hyperbolic/ai-sdk-provider
-```
+The relaunched API accepts OpenAI-compatible chat completion requests:
 
-## Provider Instance
+|                    |                                               |
+| ------------------ | --------------------------------------------- |
+| **Base URL**       | `https://api.hyperbolic.ai/inference/v1`      |
+| **Endpoints**      | `POST /chat/completions`, `GET /models`       |
+| **Authentication** | An `sk_live_` API key, sent as a Bearer token |
+| **Access**         | A Pro plan or an Organization                 |
 
-You can create a provider instance with `createHyperbolic` from `@hyperbolic/ai-sdk-provider`:
+Keys issued for the previous API aren't accepted. Create an `sk_live_` key in the [dashboard](https://app.hyperbolic.ai/settings/api-keys) under **Settings > API Keys**.
 
-```ts
-import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
-```
-
-## Example - Image Model
+For example, with the official OpenAI Node.js SDK:
 
 ```ts
-import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
+import OpenAI from "openai";
 
-const exampleHyperbolic = createHyperbolic({
+const client = new OpenAI({
   apiKey: process.env.HYPERBOLIC_API_KEY,
+  baseURL: "https://api.hyperbolic.ai/inference/v1",
 });
-const imageModel = exampleHyperbolic.imageModel("mistralai/Pixtral-12B-2409");
-const result = await imageModel.doGenerate({
-  prompt: "A man riding a horse in SF.",
-  aspectRatio: "16:9",
-  size: "1024x1024",
-  n: 1,
-  seed: 42,
-  files: [],
-  mask: undefined,
-  providerOptions: {
-    hyperbolic: {
-      steps: 30,
-    },
-  },
+
+const response = await client.chat.completions.create({
+  model: "glm-5.3-flash",
+  messages: [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "Hello!" },
+  ],
+  max_tokens: 2048,
 });
+
+console.log(response.choices[0].message.content);
 ```
 
-## Example - Speech Model
+## Documentation
 
-```ts
-import { createHyperbolic } from "@hyperbolic/ai-sdk-provider";
-
-const hyperbolic = createHyperbolic({
-  apiKey: process.env.HYPERBOLIC_API_KEY,
-});
-const speechModel = hyperbolic.speechModel("MeloTTS");
-const result = await speechModel.doGenerate({
-  text: "Hello, this is a speech synthesis example.",
-  providerOptions: {
-    hyperbolic: {
-      speed: 1,
-    },
-  },
-});
-console.log(result.audio);
-```
-
-## Supported models
-
-This list is not a definitive list of models supported by Hyperbolic, as it constantly changes as we add new models (and deprecate old ones) to our system.
-You can find the latest list of models supported by Hyperbolic [here](https://app.hyperbolic.ai/models).
+- [Inference overview](https://hyperbolic.ai/docs/inference/overview): models, prices, limits, and who can use inference
+- [Quick start](https://hyperbolic.ai/docs/inference/quickstart): create a key and make your first request
+- [Chat completions](https://hyperbolic.ai/docs/inference/text-apis): parameters, streaming, tool calling, and SDK examples

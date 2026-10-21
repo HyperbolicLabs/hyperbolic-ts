@@ -65,7 +65,9 @@ A JSON object to send as the request body to access Hyperbolic features & upstre
 /**
  * Create an Hyperbolic provider instance.
  *
- * For chat and completion models, use the @openrouter/ai-sdk-provider instead.
+ * @deprecated This package targets Hyperbolic's decommissioned inference API. The relaunched API
+ * serves text models only through OpenAI-compatible chat completions at
+ * `https://api.hyperbolic.ai/inference/v1`. See https://hyperbolic.ai/docs/inference/overview
  */
 export function createHyperbolic(options: HyperbolicProviderSettings = {}): HyperbolicProvider {
   const baseURL =
@@ -130,5 +132,7 @@ export function createHyperbolic(options: HyperbolicProviderSettings = {}): Hype
 
 /**
  * Default Hyperbolic provider instance.  Requires a valid API key set to the `HYPERBOLIC_API_KEY` environment variable.
+ *
+ * @deprecated See {@link createHyperbolic}.
  */
 export const hyperbolic = createHyperbolic();

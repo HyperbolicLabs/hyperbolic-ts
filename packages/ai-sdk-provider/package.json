@@ -1,5 +1,6 @@
 {
   "name": "@hyperbolic/ai-sdk-provider",
+  "description": "Deprecated. Built for Hyperbolic's decommissioned inference API. See https://hyperbolic.ai/docs/inference/overview",
   "private": false,
   "version": "2.0.0",
   "type": "module",

@@ -4,10 +4,10 @@ A place for all typescript projects that support Hyperbolic.
 
 ## Documentation
 
-### AI SDK Provider
-See here for the @hyperbolic/ai-sdk-provider documentation: https://github.com/HyperbolicLabs/hyperbolic-ts/blob/main/packages/ai-sdk-provider/README.md
+### AI SDK Provider (deprecated)
+`@hyperbolic/ai-sdk-provider` is deprecated. It was built for Hyperbolic's previous inference API, which has been decommissioned. See the [package README](https://github.com/HyperbolicLabs/hyperbolic-ts/blob/main/packages/ai-sdk-provider/README.md) for details.
 
-Visit <https://docs.hyperbolic.xyz/docs/getting-started> to view the documentation.
+Visit <https://hyperbolic.ai/docs/inference/overview> to view the Hyperbolic Inference documentation.
 
 ## Contributing
 
